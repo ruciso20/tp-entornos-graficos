@@ -13,10 +13,10 @@ include("../config/db.php");
 
 // Obtener historial de promociones
 $query = "
-    SELECT up.*, p.textoPromo, p.categoriaCliente, l.nombreLocal, l.rubroLocal
+    SELECT up.*, p.titulo, p.descripcion, p.categoria_minima, l.nombreLocal, l.rubroLocal
     FROM uso_promociones up
-    JOIN promociones p ON up.codPromo = p.codPromo
-    JOIN locales l ON p.codLocal = l.codLocal
+    JOIN promociones p ON up.codPromo = p.id
+    JOIN locales l ON p.localid = l.codLocal
     WHERE up.codCliente = $user_id
     ORDER BY up.fechaUsoPromo DESC
 ";
@@ -78,51 +78,4 @@ $historial = $conn->query($query);
                                     <tbody>
                                         <?php while($item = $historial->fetch_assoc()): ?>
                                             <tr>
-                                                <td><?php echo date('d/m/Y', strtotime($item['fechaUsoPromo'])); ?></td>
-                                                <td>
-                                                    <strong><?php echo $item['nombreLocal']; ?></strong><br>
-                                                    <small class="text-muted"><?php echo $item['rubroLocal']; ?></small>
-                                                </td>
-                                                <td><?php echo $item['textoPromo']; ?></td>
-                                                <td>
-                                                    <span class="badge bg-<?php 
-                                                        echo $item['categoriaCliente'] == 'Premium' ? 'danger' : 
-                                                             ($item['categoriaCliente'] == 'Medium' ? 'warning' : 'primary'); 
-                                                    ?>">
-                                                        <?php echo $item['categoriaCliente']; ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-<?php 
-                                                        echo $item['estado'] == 'aceptada' ? 'success' : 
-                                                             ($item['estado'] == 'rechazada' ? 'danger' : 'warning'); 
-                                                    ?>">
-                                                        <?php 
-                                                        $estados = [
-                                                            'enviada' => '🕒 Pendiente',
-                                                            'aceptada' => '✅ Aceptada', 
-                                                            'rechazada' => '❌ Rechazada'
-                                                        ];
-                                                        echo $estados[$item['estado']];
-                                                        ?>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        <?php endwhile; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <div class="alert alert-info text-center">
-                                <h5>No hay historial de promociones</h5>
-                                <p>No has utilizado ninguna promoción todavía.</p>
-                                <a href="promociones.php" class="btn btn-primary">Ver Promociones Disponibles</a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+                                                <td><?php echo date('d/m/Y', strtotime($item['fechaUsoPromo']));

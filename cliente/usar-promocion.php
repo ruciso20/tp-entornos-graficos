@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'cliente') {
 }
 
 $user_id = $_SESSION['user_id'];
-$codPromo = $_GET['codPromo'];
+$idPromo = $_GET['idPromo'];
 
 include("../config/db.php");
 
@@ -14,12 +14,12 @@ include("../config/db.php");
 $promo_query = $conn->prepare("
     SELECT p.*, l.nombreLocal 
     FROM promociones p 
-    JOIN locales l ON p.codLocal = l.codLocal 
-    WHERE p.codPromo = ? AND p.estadoPromo = 'aprobada'
-    AND p.fechaHastaPromo >= CURDATE() 
-    AND p.fechaDesdePromo <= CURDATE()
+    JOIN locales l ON p.localid = l.codLocal 
+    WHERE p.id = ? AND p.estado = 'aprobada'
+    AND p.fecha_fin >= CURDATE() 
+    AND p.fecha_inicio <= CURDATE()
 ");
-$promo_query->bind_param("i", $codPromo);
+$promo_query->bind_param("i", $idPromo);
 $promo_query->execute();
 $promo = $promo_query->get_result()->fetch_assoc();
 
@@ -34,7 +34,7 @@ $usada_query = $conn->prepare("
     SELECT * FROM uso_promociones 
     WHERE codCliente = ? AND codPromo = ? AND estado = 'aceptada'
 ");
-$usada_query->bind_param("ii", $user_id, $codPromo);
+$usada_query->bind_param("ii", $user_id, $idPromo);
 $usada_query->execute();
 $usada = $usada_query->get_result()->fetch_assoc();
 
@@ -49,7 +49,7 @@ $insert_query = $conn->prepare("
     INSERT INTO uso_promociones (codCliente, codPromo, fechaUsoPromo, estado) 
     VALUES (?, ?, CURDATE(), 'enviada')
 ");
-$insert_query->bind_param("ii", $user_id, $codPromo);
+$insert_query->bind_param("ii", $user_id, $idPromo);
 
 if ($insert_query->execute()) {
     $_SESSION['success'] = "Promoción utilizada correctamente. Espera la confirmación del local.";

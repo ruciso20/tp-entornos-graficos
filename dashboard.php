@@ -16,13 +16,14 @@ include("config/db.php");
 $promociones_disponibles = $conn->query("
     SELECT COUNT(*) as total 
     FROM promociones 
-    WHERE estadoPromo = 'aprobada' 
-    AND fechaHastaPromo >= CURDATE()
+    WHERE estado = 'aprobada' 
+    AND fecha_fin >= CURDATE()
+    AND fecha_inicio <= CURDATE()
     AND (
-        categoriaCliente = '$categoria' 
-        OR categoriaCliente = 'Inicial'
-        OR ('$categoria' = 'Premium' AND categoriaCliente IN ('Inicial', 'Medium', 'Premium'))
-        OR ('$categoria' = 'Medium' AND categoriaCliente IN ('Inicial', 'Medium'))
+        categoria_minima = '$categoria' 
+        OR categoria_minima = 'Inicial'
+        OR ('$categoria' = 'Premium' AND categoria_minima IN ('Inicial', 'Medium', 'Premium'))
+        OR ('$categoria' = 'Medium' AND categoria_minima IN ('Inicial', 'Medium'))
     )
 ")->fetch_assoc()['total'];
 
@@ -30,13 +31,14 @@ $promociones_disponibles = $conn->query("
 $novedades_disponibles = $conn->query("
     SELECT COUNT(*) as total 
     FROM novedades 
-    WHERE fecha_fin >= CURDATE() 
+    WHERE fechaHastaNovedad >= CURDATE() 
+    AND fechaDesdeNovedad <= CURDATE()
     AND estado = 'activa'
     AND (
-        categoria_objetivo = '$categoria'
-        OR categoria_objetivo = 'Inicial'
-        OR ('$categoria' = 'Premium' AND categoria_objetivo IN ('Inicial', 'Medium', 'Premium'))
-        OR ('$categoria' = 'Medium' AND categoria_objetivo IN ('Inicial', 'Medium'))
+        tipoUsuario = '$categoria'
+        OR tipoUsuario = 'Inicial'
+        OR ('$categoria' = 'Premium' AND tipoUsuario IN ('Inicial', 'Medium', 'Premium'))
+        OR ('$categoria' = 'Medium' AND tipoUsuario IN ('Inicial', 'Medium'))
     )
 ")->fetch_assoc()['total'];
 ?>
