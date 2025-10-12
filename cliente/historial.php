@@ -78,4 +78,54 @@ $historial = $conn->query($query);
                                     <tbody>
                                         <?php while($item = $historial->fetch_assoc()): ?>
                                             <tr>
-                                                <td><?php echo date('d/m/Y', strtotime($item['fechaUsoPromo']));
+                                                <td><?php echo date('d/m/Y', strtotime($item['fechaUsoPromo'])); ?></td>
+                                                <td>
+                                                    <strong><?php echo $item['nombreLocal']; ?></strong><br>
+                                                    <small class="text-muted"><?php echo $item['rubroLocal']; ?></small>
+                                                </td>
+                                                <td>
+                                                    <strong><?php echo $item['titulo']; ?></strong><br>
+                                                    <small class="text-muted"><?php echo $item['descripcion']; ?></small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-<?php 
+                                                        echo $item['categoria_minima'] == 'Premium' ? 'danger' : 
+                                                             ($item['categoria_minima'] == 'Medium' ? 'warning' : 'primary'); 
+                                                    ?>">
+                                                        <?php echo $item['categoria_minima']; ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-<?php 
+                                                        echo $item['estado'] == 'aceptada' ? 'success' : 
+                                                             ($item['estado'] == 'rechazada' ? 'danger' : 'warning'); 
+                                                    ?>">
+                                                        <?php 
+                                                        $estados = [
+                                                            'enviada' => '🕒 Pendiente',
+                                                            'aceptada' => '✅ Aceptada', 
+                                                            'rechazada' => '❌ Rechazada'
+                                                        ];
+                                                        echo $estados[$item['estado']];
+                                                        ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-info text-center">
+                                <h5>No hay historial de promociones</h5>
+                                <p>No has utilizado ninguna promoción todavía.</p>
+                                <a href="promociones.php" class="btn btn-primary">Ver Promociones Disponibles</a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

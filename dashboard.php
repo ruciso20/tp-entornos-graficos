@@ -31,14 +31,14 @@ $promociones_disponibles = $conn->query("
 $novedades_disponibles = $conn->query("
     SELECT COUNT(*) as total 
     FROM novedades 
-    WHERE fechaHastaNovedad >= CURDATE() 
-    AND fechaDesdeNovedad <= CURDATE()
+    WHERE fecha_fin >= CURDATE() 
+    AND fecha_inicio <= CURDATE()
     AND estado = 'activa'
     AND (
-        tipoUsuario = '$categoria'
-        OR tipoUsuario = 'Inicial'
-        OR ('$categoria' = 'Premium' AND tipoUsuario IN ('Inicial', 'Medium', 'Premium'))
-        OR ('$categoria' = 'Medium' AND tipoUsuario IN ('Inicial', 'Medium'))
+        categoria_objetivo = '$categoria'
+        OR categoria_objetivo = 'Inicial'
+        OR ('$categoria' = 'Premium' AND categoria_objetivo IN ('Inicial', 'Medium', 'Premium'))
+        OR ('$categoria' = 'Medium' AND categoria_objetivo IN ('Inicial', 'Medium'))
     )
 ")->fetch_assoc()['total'];
 ?>
