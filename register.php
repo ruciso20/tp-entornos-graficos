@@ -236,13 +236,6 @@ function enviarEmailVerificacion($email, $nombre, $token, $tipo)
                                         <option value="cliente" <?php echo (isset($_POST['tipo']) && $_POST['tipo'] == 'cliente') ? 'selected' : ''; ?>>👤 Cliente</option>
                                         <option value="dueno" <?php echo (isset($_POST['tipo']) && $_POST['tipo'] == 'dueno') ? 'selected' : ''; ?>>🏪 Dueño de Local</option>
                                     </select>
-                                    <div class="form-text">
-                                        <small>
-                                            ✅ <strong>Cliente:</strong> Acceso después de verificar email<br>
-                                            ⏳ <strong>Dueño:</strong> Verificación email + aprobación administrador<br>
-                                            <em>Los dueños no tienen categoría de cliente</em>
-                                        </small>
-                                    </div>
                                 </div>
                                 <button type="submit" name="register" class="btn btn-primary w-100">Registrarse</button>
                             </form>
