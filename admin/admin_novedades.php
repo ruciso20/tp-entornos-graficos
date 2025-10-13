@@ -13,10 +13,10 @@ if (isset($_POST['crear_novedad'])) {
     $fecha_desde = $_POST['fecha_desde'];
     $fecha_hasta = $_POST['fecha_hasta'];
     $categoria = $_POST['categoria'];
-    
+
     $sql = "INSERT INTO novedades (titulo, descripcion, fecha_inicio, fecha_fin, categoria_objetivo, estado) 
-        VALUES ('$titulo', '$descripcion', '$fecha_inicio', '$fecha_fin', '$categoria', 'activa')"
-    
+        VALUES ('$titulo', '$descripcion', '$fecha_inicio', '$fecha_fin', '$categoria', 'activa')";
+
     if ($conn->query($sql)) {
         $success = "Novedad creada exitosamente";
     } else {
@@ -37,11 +37,13 @@ $novedades = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC")
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Novedades - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
@@ -54,11 +56,11 @@ $novedades = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC")
 
     <div class="container mt-4">
         <h2>Gestión de Novedades</h2>
-        
+
         <?php if (isset($success)): ?>
             <div class="alert alert-success"><?php echo $success; ?></div>
         <?php endif; ?>
-        
+
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
@@ -110,45 +112,45 @@ $novedades = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC")
                         No hay novedades creadas aún.
                     </div>
                 <?php else: ?>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Texto</th>
-                            <th>Vigencia</th>
-                            <th>Categoría</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while($novedad = $novedades->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $novedad['codNovedad']; ?></td>
-                            <td><?php echo $novedad['textoNovedad']; ?></td>
-                            <td>
-                                <?php echo date('d/m/Y', strtotime($novedad['fechaDesdeNovedad'])); ?> -<br>
-                                <?php echo date('d/m/Y', strtotime($novedad['fechaHastaNovedad'])); ?>
-                            </td>
-                            <td>
-                                <span class="badge bg-<?php 
-                                    echo $novedad['categoriaCliente'] == 'Premium' ? 'danger' : 
-                                         ($novedad['categoriaCliente'] == 'Medium' ? 'warning' : 'info'); 
-                                ?>">
-                                    <?php echo $novedad['categoriaCliente']; ?>
-                                </span>
-                            </td>
-                            <td>
-                                <a href="?eliminar=<?php echo $novedad['codNovedad']; ?>" 
-                                   class="btn btn-danger btn-sm"
-                                   onclick="return confirm('¿Eliminar esta novedad?')">Eliminar</a>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Texto</th>
+                                <th>Vigencia</th>
+                                <th>Categoría</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($novedad = $novedades->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo $novedad['codNovedad']; ?></td>
+                                    <td><?php echo $novedad['textoNovedad']; ?></td>
+                                    <td>
+                                        <?php echo date('d/m/Y', strtotime($novedad['fechaDesdeNovedad'])); ?> -<br>
+                                        <?php echo date('d/m/Y', strtotime($novedad['fechaHastaNovedad'])); ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<?php
+                                                                echo $novedad['categoriaCliente'] == 'Premium' ? 'danger' : ($novedad['categoriaCliente'] == 'Medium' ? 'warning' : 'info');
+                                                                ?>">
+                                            <?php echo $novedad['categoriaCliente']; ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="?eliminar=<?php echo $novedad['codNovedad']; ?>"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('¿Eliminar esta novedad?')">Eliminar</a>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 </body>
+
 </html>
