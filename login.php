@@ -15,14 +15,14 @@ if (isset($_POST['login'])) {
         if (password_verify($password, $row['password'])) {
             // Verificar si el email está verificado
             if (!$row['email_verificado']) {
-                $error = "❌ Tu email no ha sido verificado. Revisa tu bandeja de entrada y haz click en el enlace de verificación.";
+                $error = "Tu email no ha sido verificado. Revisa tu bandeja de entrada y haz click en el enlace de verificación.";
                 $email_no_verificado = true;
 
                 // Ofrecer reenviar verificación
                 $token = $row['token_verificacion'];
                 if ($token) {
                     $reenviar_url = "reenviar_verificacion.php?email=" . urlencode($email);
-                    $error .= "<br><br><a href='$reenviar_url' class='btn btn-warning btn-sm'>📧 Reenviar Email de Verificación</a>";
+                    $error .= "<br><br><a href='$reenviar_url' class='btn btn-warning btn-sm'>Reenviar Email de Verificación</a>";
                 }
             }
             // Verificar estado de la cuenta
@@ -42,17 +42,17 @@ if (isset($_POST['login'])) {
                 header("Location: dashboard.php");
                 exit;
             } elseif ($row['estado'] == 'pendiente') {
-                $error = "⏳ Tu cuenta está pendiente de aprobación. Te notificaremos por email cuando sea activada.";
+                $error = "Tu cuenta está pendiente de aprobación. Te notificaremos por email cuando sea activada.";
                 $cuenta_pendiente = true;
             } elseif ($row['estado'] == 'rechazado') {
-                $error = "❌ Tu cuenta fue rechazada. Puedes contactar al administrador o crear una nueva solicitud.";
+                $error = "Tu cuenta fue rechazada. Puedes contactar al administrador o crear una nueva solicitud.";
                 $cuenta_rechazada = true;
             }
         } else {
-            $error = "❌ Contraseña incorrecta";
+            $error = "Contraseña incorrecta";
         }
     } else {
-        $error = "❌ Usuario no encontrado";
+        $error = "Usuario no encontrado";
     }
 }
 

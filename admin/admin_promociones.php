@@ -61,6 +61,7 @@ $promociones = $conn->query("
         <?php endif; ?>
 
         <!-- Menú de navegación entre secciones del admin -->
+
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
@@ -197,6 +198,7 @@ $promociones = $conn->query("
         </div>
 
         <!-- Estadísticas rápidas -->
+
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card text-white bg-warning">

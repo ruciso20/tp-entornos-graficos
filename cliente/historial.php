@@ -26,29 +26,30 @@ $historial = $conn->query($query);
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Mi Historial - Cliente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="../dashboard.php">
-                <strong>🛍️ Shopping Rosario - Mi Historial</strong>
+            <a class="navbar-brand">
+                <strong>Shopping Rosario - Mi Historial</strong>
             </a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text text-white me-3">
-                    <?php echo $nombre; ?> 
-                    <span class="badge bg-<?php 
-                        echo $categoria == 'Premium' ? 'danger' : 
-                             ($categoria == 'Medium' ? 'warning' : 'primary'); 
-                    ?>">
+                    <?php echo $nombre; ?>
+                    <span class="badge bg-<?php
+                                            echo $categoria == 'Premium' ? 'danger' : ($categoria == 'Medium' ? 'warning' : 'primary');
+                                            ?>">
                         <?php echo $categoria; ?>
                     </span>
                 </span>
-                <a href="../dashboard.php" class="btn btn-outline-light me-2">← Volver</a>
+                <a href="../index.php" class="btn btn-outline-light me-2">Volver</a>
                 <a href="../logout.php" class="btn btn-outline-light">Cerrar Sesión</a>
             </div>
         </div>
@@ -59,7 +60,7 @@ $historial = $conn->query($query);
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-secondary text-white">
-                        <h4>📊 Mi Historial de Promociones</h4>
+                        <h4>Mi Historial de Promociones</h4>
                         <p class="mb-0">Todas las promociones que has utilizado</p>
                     </div>
                     <div class="card-body">
@@ -76,7 +77,7 @@ $historial = $conn->query($query);
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php while($item = $historial->fetch_assoc()): ?>
+                                        <?php while ($item = $historial->fetch_assoc()): ?>
                                             <tr>
                                                 <td><?php echo date('d/m/Y', strtotime($item['fechaUsoPromo'])); ?></td>
                                                 <td>
@@ -88,22 +89,20 @@ $historial = $conn->query($query);
                                                     <small class="text-muted"><?php echo $item['descripcion']; ?></small>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-<?php 
-                                                        echo $item['categoria_minima'] == 'Premium' ? 'danger' : 
-                                                             ($item['categoria_minima'] == 'Medium' ? 'warning' : 'primary'); 
-                                                    ?>">
+                                                    <span class="badge bg-<?php
+                                                                            echo $item['categoria_minima'] == 'Premium' ? 'danger' : ($item['categoria_minima'] == 'Medium' ? 'warning' : 'primary');
+                                                                            ?>">
                                                         <?php echo $item['categoria_minima']; ?>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-<?php 
-                                                        echo $item['estado'] == 'aceptada' ? 'success' : 
-                                                             ($item['estado'] == 'rechazada' ? 'danger' : 'warning'); 
-                                                    ?>">
-                                                        <?php 
+                                                    <span class="badge bg-<?php
+                                                                            echo $item['estado'] == 'aceptada' ? 'success' : ($item['estado'] == 'rechazada' ? 'danger' : 'warning');
+                                                                            ?>">
+                                                        <?php
                                                         $estados = [
                                                             'enviada' => '🕒 Pendiente',
-                                                            'aceptada' => '✅ Aceptada', 
+                                                            'aceptada' => '✅ Aceptada',
                                                             'rechazada' => '❌ Rechazada'
                                                         ];
                                                         echo $estados[$item['estado']];
@@ -128,4 +127,5 @@ $historial = $conn->query($query);
         </div>
     </div>
 </body>
+
 </html>

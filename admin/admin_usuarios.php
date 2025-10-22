@@ -49,24 +49,26 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Usuarios - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="../dashboard.php">🛍️ Admin - Usuarios</a>
+            <a class="navbar-brand">Admin - Usuarios</a>
             <div>
-                <a href="../dashboard.php" class="btn btn-outline-light">← Dashboard</a>
+                <a href="../index.php" class="btn btn-outline-light">Dashboard</a>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
         <h2>Gestión de Usuarios</h2>
-        
+
         <?php if (isset($success)): ?>
             <div class="alert alert-success"><?php echo $success; ?></div>
         <?php endif; ?>
@@ -110,56 +112,55 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while($usuario = $usuarios->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $usuario['id']; ?></td>
-                            <td><?php echo $usuario['nombre']; ?></td>
-                            <td><?php echo $usuario['email']; ?></td>
-                            <td>
-                                <span class="badge bg-secondary"><?php echo ucfirst($usuario['rol']); ?></span>
-                            </td>
-                            <td>
-                                <span class="badge bg-<?php 
-                                    echo $usuario['estado'] == 'aprobado' ? 'success' : 
-                                         ($usuario['estado'] == 'pendiente' ? 'warning' : 'danger'); 
-                                ?>">
-                                    <?php echo ucfirst($usuario['estado']); ?>
-                                </span>
-                            </td>
-                            <td><?php echo $usuario['fecha_registro']; ?></td>
-                            <td>
-                                <?php if ($usuario['rol'] == 'dueno'): ?>
-                                    <?php if ($usuario['estado'] == 'pendiente'): ?>
-                                        <!-- Usuario pendiente -->
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="?aprobar=<?php echo $usuario['id']; ?>" class="btn btn-success" title="Aprobar dueño">
-                                                ✅
-                                            </a>
-                                            <a href="?rechazar=<?php echo $usuario['id']; ?>" class="btn btn-danger" title="Rechazar solicitud">
-                                                ❌
-                                            </a>
-                                        </div>
-                                    <?php elseif ($usuario['estado'] == 'rechazado'): ?>
-                                        <!-- Usuario rechazado - opciones -->
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="?reactivar=<?php echo $usuario['id']; ?>" class="btn btn-warning" title="Reactivar para nueva revisión">
-                                                🔄
-                                            </a>
-                                            <a href="?eliminar=<?php echo $usuario['id']; ?>" class="btn btn-outline-danger" 
-                                               title="Eliminar permanentemente"
-                                               onclick="return confirm('¿Eliminar permanentemente a <?php echo $usuario['nombre']; ?>? Esta acción no se puede deshacer.')">
-                                                🗑️
-                                            </a>
-                                        </div>
+                        <?php while ($usuario = $usuarios->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo $usuario['id']; ?></td>
+                                <td><?php echo $usuario['nombre']; ?></td>
+                                <td><?php echo $usuario['email']; ?></td>
+                                <td>
+                                    <span class="badge bg-secondary"><?php echo ucfirst($usuario['rol']); ?></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<?php
+                                                            echo $usuario['estado'] == 'aprobado' ? 'success' : ($usuario['estado'] == 'pendiente' ? 'warning' : 'danger');
+                                                            ?>">
+                                        <?php echo ucfirst($usuario['estado']); ?>
+                                    </span>
+                                </td>
+                                <td><?php echo $usuario['fecha_registro']; ?></td>
+                                <td>
+                                    <?php if ($usuario['rol'] == 'dueno'): ?>
+                                        <?php if ($usuario['estado'] == 'pendiente'): ?>
+                                            <!-- Usuario pendiente -->
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="?aprobar=<?php echo $usuario['id']; ?>" class="btn btn-success" title="Aprobar dueño">
+                                                    ✅
+                                                </a>
+                                                <a href="?rechazar=<?php echo $usuario['id']; ?>" class="btn btn-danger" title="Rechazar solicitud">
+                                                    ❌
+                                                </a>
+                                            </div>
+                                        <?php elseif ($usuario['estado'] == 'rechazado'): ?>
+                                            <!-- Usuario rechazado - opciones -->
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="?reactivar=<?php echo $usuario['id']; ?>" class="btn btn-warning" title="Reactivar para nueva revisión">
+                                                    🔄
+                                                </a>
+                                                <a href="?eliminar=<?php echo $usuario['id']; ?>" class="btn btn-outline-danger"
+                                                    title="Eliminar permanentemente"
+                                                    onclick="return confirm('¿Eliminar permanentemente a <?php echo $usuario['nombre']; ?>? Esta acción no se puede deshacer.')">
+                                                    🗑️
+                                                </a>
+                                            </div>
+                                        <?php else: ?>
+                                            <!-- Usuario aprobado -->
+                                            <span class="text-success">✅ Aprobado</span>
+                                        <?php endif; ?>
                                     <?php else: ?>
-                                        <!-- Usuario aprobado -->
-                                        <span class="text-success">✅ Aprobado</span>
+                                        <span class="text-muted">-</span>
                                     <?php endif; ?>
-                                <?php else: ?>
-                                    <span class="text-muted">-</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
@@ -192,4 +193,5 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
         </div>
     </div>
 </body>
+
 </html>

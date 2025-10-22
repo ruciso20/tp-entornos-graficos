@@ -203,16 +203,16 @@ if ($rol == 'cliente') {
                     <?php
                     switch ($rol) {
                         case 'administrador':
-                            echo '👑 ' . $titulo_dashboard;
+                            echo '' . $titulo_dashboard;
                             break;
                         case 'dueno':
-                            echo '🏪 ' . $titulo_dashboard;
+                            echo '' . $titulo_dashboard;
                             break;
                         case 'cliente':
-                            echo '🛍️ ' . $titulo_dashboard;
+                            echo '' . $titulo_dashboard;
                             break;
                         default:
-                            echo '🛍️ ' . $titulo_dashboard;
+                            echo '' . $titulo_dashboard;
                     }
                     ?>
                 </strong>
@@ -269,7 +269,10 @@ if ($rol == 'cliente') {
             </div>
 
         <?php elseif ($rol == 'admin'): ?>
+
+
             <!-- Estadísticas para Administrador -->
+
             <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="card card-stat text-white bg-primary">
@@ -306,7 +309,10 @@ if ($rol == 'cliente') {
             </div>
 
         <?php elseif ($rol == 'dueno' && isset($local_id)): ?>
+
+
             <!-- Estadísticas para Dueño -->
+
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card card-stat text-white bg-primary">
@@ -341,7 +347,11 @@ if ($rol == 'cliente') {
                     <div class="card-body">
                         <h2><i class="fas fa-tachometer-alt"></i> Panel de Control</h2>
                         <?php if ($rol == 'admin'): ?>
+
+
                             <!-- PANEL ADMINISTRADOR -->
+
+
                             <div class="alert alert-info">
                                 <h5><i class="fas fa-crown"></i> Panel de Administrador</h5>
                                 <p class="mb-3">¡Bienvenido! Gestiona todo el sistema del shopping.</p>
@@ -371,7 +381,9 @@ if ($rol == 'cliente') {
                             </div>
 
                         <?php elseif ($rol == 'cliente'): ?>
+
                             <!-- PANEL CLIENTE COMPLETO -->
+
                             <div class="alert alert-success">
                                 <h5><i class="fas fa-user"></i> Panel de Cliente</h5>
                                 <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios como cliente <strong><?php echo $categoria; ?></strong>.</p>
@@ -402,6 +414,7 @@ if ($rol == 'cliente') {
                                 </div>
 
                                 <!-- Progreso de categoría -->
+
                                 <div class="card mt-4">
                                     <div class="card-header">
                                         <h6><i class="fas fa-chart-line"></i> Tu Progreso de Categoría</h6>
@@ -411,7 +424,7 @@ if ($rol == 'cliente') {
                                             <div class="col-md-4">
                                                 <div class="card <?php echo $categoria == 'Inicial' ? 'bg-primary text-white' : 'bg-light'; ?>">
                                                     <div class="card-body">
-                                                        <h5>👤 Inicial</h5>
+                                                        <h5>Inicial</h5>
                                                         <p>Promociones básicas</p>
                                                         <?php echo $categoria == 'Inicial' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
                                                     </div>
@@ -420,7 +433,7 @@ if ($rol == 'cliente') {
                                             <div class="col-md-4">
                                                 <div class="card <?php echo $categoria == 'Medium' ? 'bg-warning text-dark' : 'bg-light'; ?>">
                                                     <div class="card-body">
-                                                        <h5>👥 Medium</h5>
+                                                        <h5>Medium</h5>
                                                         <p>+ Promociones exclusivas</p>
                                                         <?php echo $categoria == 'Medium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
                                                     </div>
@@ -429,7 +442,7 @@ if ($rol == 'cliente') {
                                             <div class="col-md-4">
                                                 <div class="card <?php echo $categoria == 'Premium' ? 'bg-danger text-white' : 'bg-light'; ?>">
                                                     <div class="card-body">
-                                                        <h5>⭐ Premium</h5>
+                                                        <h5>Premium</h5>
                                                         <p>Todas las promociones + beneficios VIP</p>
                                                         <?php echo $categoria == 'Premium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
                                                     </div>
@@ -446,7 +459,9 @@ if ($rol == 'cliente') {
                             </div>
 
                         <?php elseif ($rol == 'dueno' && isset($local_id)): ?>
+
                             <!-- PANEL DUEÑO COMPLETO -->
+
                             <div class="alert alert-warning">
                                 <h5><i class="fas fa-store"></i> Panel de Dueño de Local</h5>
                                 <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona las promociones de tu Locales</p>
@@ -470,7 +485,9 @@ if ($rol == 'cliente') {
                                 </div>
                             </div>
                         <?php elseif ($rol == 'dueno'): ?>
+
                             <!-- Dueño sin local asignado -->
+
                             <div class="alert alert-danger">
                                 <h5><i class="fas fa-exclamation-triangle"></i> Dueño sin Local Asignado</h5>
                                 <p>No tienes un local asignado. Contacta al administrador del sistema para que te asigne un local.</p>

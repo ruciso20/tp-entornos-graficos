@@ -1,6 +1,6 @@
 <?php
 $servername = "localhost";
-$username = "root";      
+$username = "root";
 $password = "7350";
 $dbname = "shopping_db";
 
@@ -57,4 +57,3 @@ if ($conn->query($sql)) {
 
 $conn->close();
 echo "<hr><h2>🎉 INSTALACIÓN COMPLETADA</h2>";
-?>

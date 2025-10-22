@@ -1,7 +1,7 @@
 <?php
-// install.php - Configuración completa de la base de datos
+// install.php - Configuración completa para la base de datos
 $servername = "localhost";
-$username = "root";      
+$username = "root";
 $password = "7350";
 $dbname = "shopping_db";
 
@@ -79,7 +79,7 @@ $result = $conn->query($check_admin);
 if ($result && $result->num_rows == 0) {
     $sql = "INSERT INTO usuarios (nombreUsuario, claveUsuario, tipoUsuario, estado) 
             VALUES ('$admin_email', '$admin_password', 'administrador', 'aprobado')";
-    
+
     if ($conn->query($sql) === TRUE) {
         echo "<div class='alert alert-success'>✅ Usuario administrador creado</div>";
         echo "<div class='alert alert-info'>";
@@ -109,4 +109,3 @@ echo "</div>";
 
 echo "</body>";
 echo "</html>";
-?>

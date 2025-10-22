@@ -662,7 +662,7 @@ try {
         <div class="container">
             <div class="row text-center mb-4">
                 <div class="col">
-                    <h2 class="fw-bold">🏪 Nuestros Locales</h2>
+                    <h2 class="fw-bold">Nuestros Locales</h2>
                     <p class="text-muted">Descubre la variedad de locales en nuestro shopping</p>
                 </div>
             </div>

@@ -47,9 +47,9 @@ $novedades = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC")
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.php">🛍️ Admin - Novedades</a>
+            <a class="navbar-brand">Admin - Novedades</a>
             <div>
-                <a href="dashboard.php" class="btn btn-outline-light">← Dashboard</a>
+                <a href="../index.php" class="btn btn-outline-light">Inicio</a>
             </div>
         </div>
     </nav>
@@ -109,7 +109,7 @@ $novedades = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC")
             <div class="card-body">
                 <?php if ($novedades->num_rows == 0): ?>
                     <div class="alert alert-info">
-                        No hay novedades creadas aún.
+                        No hay novedades creadas aún
                     </div>
                 <?php else: ?>
                     <table class="table table-striped">

@@ -12,10 +12,10 @@ if (isset($_POST['crear_local'])) {
     $nombre = $_POST['nombre'];
     $ubicacion = $_POST['ubicacion'];
     $rubro = $_POST['rubro'];
-    
+
     $sql = "INSERT INTO locales (nombreLocal, ubicacionLocal, rubroLocal, estado) 
             VALUES ('$nombre', '$ubicacion', '$rubro', 'activo')";
-    
+
     if ($conn->query($sql)) {
         $success = "Local creado exitosamente";
     } else {
@@ -37,28 +37,30 @@ $locales = $conn->query("SELECT * FROM locales ORDER BY nombreLocal");
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Locales - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.php">🛍️ Admin - Locales</a>
+            <a class="navbar-brand" href="dashboard.php">Admin - Locales</a>
             <div>
-                <a href="dashboard.php" class="btn btn-outline-light">← Dashboard</a>
+                <a href="dashboard.php" class="btn btn-outline-light">Inicio</a>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
         <h2>Gestión de Locales</h2>
-        
+
         <?php if (isset($success)): ?>
             <div class="alert alert-success"><?php echo $success; ?></div>
         <?php endif; ?>
-        
+
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
@@ -116,29 +118,29 @@ $locales = $conn->query("SELECT * FROM locales ORDER BY nombreLocal");
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while($local = $locales->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $local['codLocal']; ?></td>
-                            <td><strong><?php echo $local['nombreLocal']; ?></strong></td>
-                            <td><?php echo $local['ubicacionLocal']; ?></td>
-                            <td>
-                                <span class="badge bg-info"><?php echo ucfirst($local['rubroLocal']); ?></span>
-                            </td>
-                            <td>
-                                <span class="badge bg-<?php echo $local['estado'] == 'activo' ? 'success' : 'secondary'; ?>">
-                                    <?php echo ucfirst($local['estado']); ?>
-                                </span>
-                            </td>
-                            <td>
-                                <?php if ($local['estado'] == 'activo'): ?>
-                                    <a href="?cambiar_estado=<?php echo $local['codLocal']; ?>&estado=inactivo" 
-                                       class="btn btn-warning btn-sm">Desactivar</a>
-                                <?php else: ?>
-                                    <a href="?cambiar_estado=<?php echo $local['codLocal']; ?>&estado=activo" 
-                                       class="btn btn-success btn-sm">Activar</a>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+                        <?php while ($local = $locales->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo $local['codLocal']; ?></td>
+                                <td><strong><?php echo $local['nombreLocal']; ?></strong></td>
+                                <td><?php echo $local['ubicacionLocal']; ?></td>
+                                <td>
+                                    <span class="badge bg-info"><?php echo ucfirst($local['rubroLocal']); ?></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<?php echo $local['estado'] == 'activo' ? 'success' : 'secondary'; ?>">
+                                        <?php echo ucfirst($local['estado']); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php if ($local['estado'] == 'activo'): ?>
+                                        <a href="?cambiar_estado=<?php echo $local['codLocal']; ?>&estado=inactivo"
+                                            class="btn btn-warning btn-sm">Desactivar</a>
+                                    <?php else: ?>
+                                        <a href="?cambiar_estado=<?php echo $local['codLocal']; ?>&estado=activo"
+                                            class="btn btn-success btn-sm">Activar</a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
@@ -146,4 +148,5 @@ $locales = $conn->query("SELECT * FROM locales ORDER BY nombreLocal");
         </div>
     </div>
 </body>
+
 </html>
