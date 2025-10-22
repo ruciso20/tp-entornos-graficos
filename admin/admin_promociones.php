@@ -41,16 +41,11 @@ $promociones = $conn->query("
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.php">
-                <i class="fas fa-crown"></i> Admin - Gestión de Promociones
-            </a>
+            <a class="navbar-brand">Admin - Gestión de Promociones</a>
             <div>
-                <a href="dashboard.php" class="btn btn-outline-light">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
+                <a href="../index.php" class="btn btn-outline-light">Inicio</a>
                 <a href="../logout.php" class="btn btn-outline-light">
-                    <i class="fas fa-sign-out-alt"></i> Salir
-                </a>
+                    <i class="fas fa-sign-out-alt"></i> Salir</a>
             </div>
         </div>
     </nav>
@@ -71,22 +66,17 @@ $promociones = $conn->query("
                 <div class="card">
                     <div class="card-body">
                         <div class="row text-center">
-                            <div class="col-md-3 mb-2">
-                                <a href="dashboard.php" class="btn btn-outline-primary w-100">
-                                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-4 mb-3">
                                 <a href="admin_locales.php" class="btn btn-outline-secondary w-100">
                                     <i class="fas fa-store"></i> Locales
                                 </a>
                             </div>
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-4 mb-3">
                                 <a href="admin_usuarios.php" class="btn btn-outline-info w-100">
                                     <i class="fas fa-users"></i> Usuarios
                                 </a>
                             </div>
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-4 mb-3">
                                 <a href="admin_novedades.php" class="btn btn-outline-warning w-100">
                                     <i class="fas fa-newspaper"></i> Novedades
                                 </a>
