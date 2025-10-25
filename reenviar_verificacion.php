@@ -31,8 +31,8 @@ function enviarEmailVerificacion(string $email, string $nombre, string $token): 
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'tu_correo@gmail.com';           // <-- TU Gmail real
-        $mail->Password = 'tu_password_de_aplicacion';     // <-- Contraseña de aplicación
+        $mail->Username = 'joaquingarciaforestello@gmail.com';           // <-- TU Gmail real
+        $mail->Password = 'fcyt bvju nlte smek';     // <-- Contraseña de aplicación
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
