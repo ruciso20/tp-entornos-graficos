@@ -5,27 +5,42 @@ include("config/db.php");
 $mensaje = "";
 
 if (isset($_GET['token'])) {
+  if (!isset($_GET['token']) || trim($_GET['token']) === '') {
+    die("Token inválido o faltante.");
+  }
   $token = $_GET['token'];
 
-  // Buscar usuario con el token
-  $sql = "SELECT * FROM usuarios WHERE token_verificacion = '$token'";
-  $result = $conn->query($sql);
+  $stmt = $conn->prepare("SELECT id, email_verificado FROM usuarios WHERE token_verificacion = ? LIMIT 1");
+  $stmt->bind_param("s", $token);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
+  if ($result->num_rows === 0) {
+      // Token inexistente o ya usado
+      die("Enlace de verificación inválido o expirado.");
+  }
+
+  $usuario = $result->fetch_assoc();
+
+  if ((int)$usuario['email_verificado'] === 1) {
+      // Ya estaba verificado
+      echo "Tu email ya está verificado. Ya podés iniciar sesión.";
+      exit;
+  }
+}
   if ($result->num_rows > 0) {
     $usuario = $result->fetch_assoc();
 
     // Actualizar usuario como verificado
-    $update_sql = "UPDATE usuarios SET email_verificado = TRUE, token_verificacion = NULL WHERE id = " . $usuario['id'];
+    $update_stmt = $conn->prepare("UPDATE usuarios SET email_verificado = 1, token_verificacion = NULL WHERE id = ?");
+    $update_stmt->bind_param("i", $usuario['id']);
 
-    if ($conn->query($update_sql)) {
-      $mensaje = "success";
-      $tipo_usuario = $usuario['rol'];
+    if ($update_stmt->execute()) {
+        echo "✅ ¡Listo! Tu email fue verificado. Ya podés iniciar sesión.";
     } else {
-      $mensaje = "error";
+        error_log("Error UPDATE verificar_email: " . $conn->error);
+        echo "Ocurrió un error al verificar tu email. Intentá de nuevo más tarde.";
     }
-  } else {
-    $mensaje = "invalid";
-  }
 } else {
   $mensaje = "notoken";
 }
