@@ -20,13 +20,14 @@ if (isset($_POST['login'])) {
                 $error = "Tu email no ha sido verificado. Revisa tu bandeja de entrada y haz click en el enlace de verificación.";
                 $email_no_verificado = true;
 
-                // Ofrecer reenviar verificación
-                $token = $row['token_verificacion'];
-                if ($token) {
-                    $reenviar_url = "reenviar_verificacion.php?email=" . urlencode($email);
-                    $error .= "<br><br><a href='$reenviar_url' class='btn btn-warning btn-sm'>Reenviar Email de Verificación</a>";
-                }
-            }
+                // Construir URL absoluta (corrige rutas locales)
+                $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                $host = $_SERVER['HTTP_HOST'];
+                $dir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/';
+                $reenviar_url = $scheme . '://' . $host . $dir . 'reenviar_verificacion.php?email=' . urlencode($email);
+
+                $error .= "<br><br><a href='$reenviar_url' class='btn btn-warning btn-sm'>📧 Reenviar Email de Verificación</a>";
+}
             // Verificar estado de la cuenta
             elseif ($row['estado'] == 'aprobado' || $row['rol'] == 'cliente') {
                 $_SESSION['user_id'] = $row['id'];
