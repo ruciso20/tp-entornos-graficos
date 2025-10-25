@@ -57,7 +57,7 @@ if (isset($_POST['register'])) {
                 // carpeta del proyecto a partir de la ruta del script actual
                 $projectRoot = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/\\');
                 // URL final a verificar_email.php en la raíz del proyecto
-                $enlace_verificacion = $scheme . '://' . $host . $projectRoot . 'verificar_email.php?token=' . $token;
+                $enlace_verificacion = $scheme . '://' . $host . rtrim($projectRoot, '/\\') . '/verificar_email.php?token=' . $token;
 
                 $tipo_usuario = ($tipo == 'dueno') ? 'Dueño de Local' : 'Cliente';
 
