@@ -88,7 +88,7 @@ if (isset($_POST['login'])) {
                                 <div class="mt-3">
                                     <a href="index.php" class="btn btn-outline-primary">🏠 Volver al Inicio</a>
                                     <?php if (isset($email_no_verificado)): ?>
-                                        <a href="register.php" class="btn btn-outline-warning">📧 Reenviar Verificación</a>
+                                        <!-- <a href="register.php" class="btn btn-outline-warning">📧 Reenviar Verificación</a> -->
                                     <?php elseif (isset($cuenta_rechazada)): ?>
                                         <a href="register.php" class="btn btn-outline-warning">📝 Nueva Solicitud</a>
                                     <?php elseif (isset($cuenta_pendiente)): ?>
