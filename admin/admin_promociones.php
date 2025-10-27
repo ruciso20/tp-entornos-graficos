@@ -45,13 +45,13 @@ $promociones = $conn->query("
             <div>
                 <a href="../index.php" class="btn btn-outline-light">Inicio</a>
                 <a href="../logout.php" class="btn btn-outline-light">
-                    <i class="fas fa-sign-out-alt"></i> Salir</a>
+                    <i class="fas fa-sign-out-alt"></i> Volver</a>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <h2><i class="fas fa-tags"></i> Gestión de Promociones</h2>
+        <h2></i> Gestión de Promociones</h2>
 
         <?php if (isset($success)): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -60,38 +60,10 @@ $promociones = $conn->query("
             </div>
         <?php endif; ?>
 
-        <!-- Menú de navegación entre secciones del admin -->
-
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-md-4 mb-3">
-                                <a href="admin_locales.php" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-store"></i> Locales
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="admin_usuarios.php" class="btn btn-outline-info w-100">
-                                    <i class="fas fa-users"></i> Usuarios
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="admin_novedades.php" class="btn btn-outline-warning w-100">
-                                    <i class="fas fa-newspaper"></i> Novedades
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">
-                    <i class="fas fa-list"></i> Lista de Promociones
+                    Lista de Promociones
                 </h5>
             </div>
             <div class="card-body">

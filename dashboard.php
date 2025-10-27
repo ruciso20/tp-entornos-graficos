@@ -9,7 +9,7 @@ $rol = $_SESSION['rol'];
 $nombre = $_SESSION['nombre'];
 $categoria = $_SESSION['categoria'];
 
-// Determinar el título según el rol
+// determinar el titulo según el tipo de usuario
 $titulo_dashboard = "Shopping Rosario - ";
 switch ($rol) {
     case 'admin':
@@ -25,12 +25,13 @@ switch ($rol) {
         $titulo_dashboard .= "Usuario";
 }
 
-// Incluir conexión a la base de datos
+// conexión a la base de datos
 include("config/db.php");
 
-// Estadísticas específicas por rol
+// estadisticas específicas por tipo de usuario
+
 if ($rol == 'cliente') {
-    // Contar promociones disponibles para cliente
+    // contar promociones disponibles para el cliente segun su categoria
     $promociones_disponibles = $conn->query("
         SELECT COUNT(*) as total 
         FROM promociones 
@@ -45,7 +46,7 @@ if ($rol == 'cliente') {
         )
     ")->fetch_assoc()['total'];
 
-    // Contar novedades disponibles para cliente
+    // contar las novedades disponibles para cliente
     $novedades_disponibles = $conn->query("
         SELECT COUNT(*) as total 
         FROM novedades 
@@ -60,7 +61,7 @@ if ($rol == 'cliente') {
         )
     ")->fetch_assoc()['total'];
 
-    // Obtener promociones recientes para cliente
+    // obtener las promociones recientes para cliente
     $promociones_recientes = $conn->query("
         SELECT p.*, l.nombre as local_nombre 
         FROM promociones p 
@@ -77,7 +78,7 @@ if ($rol == 'cliente') {
         ORDER BY p.id DESC LIMIT 5
     ");
 
-    // Obtener novedades recientes para cliente
+    // obtener las novedades recientes para cliente
     $novedades_recientes = $conn->query("
         SELECT * FROM novedades 
         WHERE fecha_fin >= CURDATE() 
@@ -92,36 +93,38 @@ if ($rol == 'cliente') {
         ORDER BY id DESC LIMIT 5
     ");
 } elseif ($rol == 'admin') {
-    // Estadísticas para administrador
+
+    // estadísticas para administrador
     $total_locales = $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'activo'")->fetch_assoc()['total'];
     $dueños_pendientes = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'dueno' AND estado = 'pendiente'")->fetch_assoc()['total'];
     $promociones_pendientes = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'pendiente'")->fetch_assoc()['total'];
     $total_clientes = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'cliente' AND estado = 'aprobado'")->fetch_assoc()['total'];
 
-    // Obtener datos para las listas
+    // obtener datos para las listas
     $locales = $conn->query("SELECT l.*, u.nombre as dueno_nombre FROM locales l LEFT JOIN usuarios u ON l.dueno_id = u.id WHERE l.estado = 'activo' ORDER BY l.id DESC LIMIT 5");
     $usuarios_pendientes = $conn->query("SELECT * FROM usuarios WHERE estado = 'pendiente' AND rol = 'dueno' ORDER BY fecha_registro DESC LIMIT 5");
     $promociones_recientes = $conn->query("SELECT p.*, l.nombre as local_nombre FROM promociones p LEFT JOIN locales l ON p.local_id = l.id ORDER BY p.id DESC LIMIT 5");
     $novedades_recientes = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC LIMIT 5");
 } elseif ($rol == 'dueno') {
-    // Estadísticas para dueño
+
+    // estadísticas para dueño
     $dueño_id = $_SESSION['user_id'];
 
-    // Obtener el local del dueño
+    // obtener el local del dueño
     $local_query = $conn->query("SELECT * FROM locales WHERE dueno_id = $dueño_id AND estado = 'activo'");
     if ($local_query->num_rows > 0) {
         $local = $local_query->fetch_assoc();
         $local_id = $local['id'];
         $nombre_local = $local['nombre'];
 
-        // Promociones activas del dueño
+        // promociones activas del dueño
         $promociones_activas = $conn->query("
             SELECT COUNT(*) as total FROM promociones 
             WHERE local_id = $local_id AND estado = 'aprobada' 
             AND fecha_inicio <= CURDATE() AND fecha_fin >= CURDATE()
         ")->fetch_assoc()['total'];
 
-        // Solicitudes pendientes del dueño
+        // solicitudes pendientes del dueño
         $solicitudes_pendientes = $conn->query("
             SELECT COUNT(*) as total FROM uso_promociones up
             JOIN promociones p ON up.promocion_id = p.id
@@ -225,11 +228,12 @@ if ($rol == 'cliente') {
                     <?php endif; ?>
                 </span>
 
-                <!-- BOTÓN HOME AL LADO DEL DE CERRAR SESIÓN -->
+                <!-- boton home -->
                 <a href="index.php" class="btn btn-outline-light me-2">
                     <i class="fas fa-home"></i> Inicio
                 </a>
 
+                <!-- boton logout -->
                 <a href="logout.php" class="btn btn-outline-light">
                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </a>
@@ -238,9 +242,11 @@ if ($rol == 'cliente') {
     </nav>
 
     <div class="container mt-4">
-        <!-- Estadísticas según el rol -->
+
+        <!-- estadisticas propias segun el tipo de usuario -->
         <?php if ($rol == 'cliente'): ?>
-            <!-- Estadísticas para Cliente -->
+
+            <!-- estadisticas para el cliente -->
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card card-stat text-white bg-primary">
@@ -271,7 +277,7 @@ if ($rol == 'cliente') {
         <?php elseif ($rol == 'admin'): ?>
 
 
-            <!-- Estadísticas para Administrador -->
+            <!-- estadisticas para admin -->
 
             <div class="row mb-4">
                 <div class="col-md-3">
@@ -311,7 +317,7 @@ if ($rol == 'cliente') {
         <?php elseif ($rol == 'dueno' && isset($local_id)): ?>
 
 
-            <!-- Estadísticas para Dueño -->
+            <!-- estadisticas para dueño -->
 
             <div class="row mb-4">
                 <div class="col-md-4">
@@ -349,7 +355,7 @@ if ($rol == 'cliente') {
                         <?php if ($rol == 'admin'): ?>
 
 
-                            <!-- PANEL ADMINISTRADOR -->
+                            <!-- panel admin -->
 
 
                             <div class="alert alert-info">
@@ -382,7 +388,7 @@ if ($rol == 'cliente') {
 
                         <?php elseif ($rol == 'cliente'): ?>
 
-                            <!-- PANEL CLIENTE COMPLETO -->
+                            <!-- panel cliente -->
 
                             <div class="alert alert-success">
                                 <h5><i class="fas fa-user"></i> Panel de Cliente</h5>
@@ -413,7 +419,7 @@ if ($rol == 'cliente') {
                                     </div>
                                 </div>
 
-                                <!-- Progreso de categoría -->
+                                <!-- progreso de categoria de un cliente -->
 
                                 <div class="card mt-4">
                                     <div class="card-header">
@@ -460,7 +466,7 @@ if ($rol == 'cliente') {
 
                         <?php elseif ($rol == 'dueno' && isset($local_id)): ?>
 
-                            <!-- PANEL DUEÑO COMPLETO -->
+                            <!-- panel dueño (con local) -->
 
                             <div class="alert alert-warning">
                                 <h5><i class="fas fa-store"></i> Panel de Dueño de Local</h5>
@@ -486,11 +492,11 @@ if ($rol == 'cliente') {
                             </div>
                         <?php elseif ($rol == 'dueno'): ?>
 
-                            <!-- Dueño sin local asignado -->
+                            <!-- panel dueño (sin local) -->
 
                             <div class="alert alert-danger">
                                 <h5><i class="fas fa-exclamation-triangle"></i> Dueño sin Local Asignado</h5>
-                                <p>No tienes un local asignado. Contacta al administrador del sistema para que te asigne un local.</p>
+                                <p>No tienes un local asignado ¡Contacta al administrador del sistema para que te asigne un local!</p>
                             </div>
                         <?php endif; ?>
                     </div>
