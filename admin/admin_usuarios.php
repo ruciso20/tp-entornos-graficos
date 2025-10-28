@@ -61,7 +61,7 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
         <div class="container">
             <a class="navbar-brand">Admin - Usuarios</a>
             <div>
-                <a href="../index.php" class="btn btn-outline-light">Dashboard</a>
+                <a href="../dashboard.php" class="btn btn-outline-light">Dashboard</a>
             </div>
         </div>
     </nav>

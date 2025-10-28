@@ -5,39 +5,39 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'cliente') {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$categoria = $_SESSION['categoria'];
-$nombre = $_SESSION['nombre'];
-
 include("../config/db.php");
+$user_id = $_SESSION['user_id'];
+$mensaje = "";
 
-// Obtener estadísticas del cliente
-$stats_query = $conn->query("
-    SELECT 
-        COUNT(*) as total_promociones,
-        SUM(CASE WHEN estado = 'aceptada' THEN 1 ELSE 0 END) as promociones_aceptadas,
-        SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as promociones_rechazadas,
-        SUM(CASE WHEN estado = 'enviada' THEN 1 ELSE 0 END) as promociones_pendientes
-    FROM uso_promociones 
-    WHERE codCliente = $user_id
-");
-$stats = $stats_query->fetch_assoc();
+// Obtener datos actuales del cliente
+$cliente_query = $conn->prepare("SELECT * FROM usuarios WHERE id = ?");
+$cliente_query->bind_param("i", $user_id);
+$cliente_query->execute();
+$cliente = $cliente_query->get_result()->fetch_assoc();
 
-// Calcular progreso para siguiente categoría
-$progreso = 0;
-$siguiente_categoria = '';
-$promociones_requeridas = 0;
+// Procesar actualización del perfil
+if ($_POST && isset($_POST['actualizar_perfil'])) {
+    $nombre = trim($_POST['nombre']);
+    $telefono = trim($_POST['telefono']);
+    $direccion = trim($_POST['direccion']);
+    $preferencias = trim($_POST['preferencias']);
 
-if ($categoria == 'Inicial') {
-    $promociones_requeridas = 5; // Ejemplo: 5 promociones para subir a Medium
-    $siguiente_categoria = 'Medium';
-    $progreso = min(100, ($stats['promociones_aceptadas'] / $promociones_requeridas) * 100);
-} elseif ($categoria == 'Medium') {
-    $promociones_requeridas = 15; // Ejemplo: 15 promociones para subir a Premium
-    $siguiente_categoria = 'Premium';
-    $progreso = min(100, ($stats['promociones_aceptadas'] / $promociones_requeridas) * 100);
-} else {
-    $progreso = 100;
+    $update_query = $conn->prepare("
+        UPDATE usuarios 
+        SET nombre = ?, telefono = ?, direccion = ?, preferencias = ? 
+        WHERE id = ?
+    ");
+    $update_query->bind_param("ssssi", $nombre, $telefono, $direccion, $preferencias, $user_id);
+
+    if ($update_query->execute()) {
+        $_SESSION['nombre'] = $nombre;
+        $mensaje = "✅ Perfil actualizado correctamente";
+        // Recargar datos
+        $cliente_query->execute();
+        $cliente = $cliente_query->get_result()->fetch_assoc();
+    } else {
+        $mensaje = "❌ Error al actualizar el perfil";
+    }
 }
 ?>
 
@@ -48,148 +48,72 @@ if ($categoria == 'Inicial') {
     <meta charset="UTF-8">
     <title>Mi Perfil - Cliente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand">
-                <strong>Shopping Rosario - Mi Perfil</strong>
-            </a>
-            <div class="navbar-nav ms-auto">
-                <span class="navbar-text text-white me-3">
-                    <?php echo $nombre; ?>
-                    <span class="badge bg-<?php
-                                            echo $categoria == 'Premium' ? 'danger' : ($categoria == 'Medium' ? 'warning' : 'primary');
-                                            ?>">
-                        <?php echo $categoria; ?>
-                    </span>
-                </span>
-                <a href="../index.php" class="btn btn-outline-light me-2">Volver</a>
-                <a href="../logout.php" class="btn btn-outline-light">Cerrar Sesión</a>
-            </div>
+            <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Mi Perfil</a>
+            <a href="../dashboard.php" class="btn btn-outline-light">← Volver al Dashboard</a>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-4">
-                <!-- Información del perfil -->
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5>Información Personal</h5>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Nombre:</strong> <?php echo $nombre; ?></p>
-                        <p><strong>Categoría Actual:</strong>
-                            <span class="badge bg-<?php
-                                                    echo $categoria == 'Premium' ? 'danger' : ($categoria == 'Medium' ? 'warning' : 'primary');
-                                                    ?>">
-                                <?php echo $categoria; ?>
-                            </span>
-                        </p>
-                        <p><strong>Usuario ID:</strong> #<?php echo $user_id; ?></p>
-                    </div>
-                </div>
-
-                <!-- Estadísticas -->
-                <div class="card mt-4">
-                    <div class="card-header bg-success text-white">
-                        <h5>Mis Estadísticas</h5>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Promociones utilizadas:</strong> <?php echo $stats['promociones_aceptadas']; ?></p>
-                        <p><strong>Promociones pendientes:</strong> <?php echo $stats['promociones_pendientes']; ?></p>
-                        <p><strong>Promociones rechazadas:</strong> <?php echo $stats['promociones_rechazadas']; ?></p>
-                        <p><strong>Total solicitudes:</strong> <?php echo $stats['total_promociones']; ?></p>
-                    </div>
-                </div>
-            </div>
-
+        <div class="row justify-content-center">
             <div class="col-md-8">
-                <!-- Progreso de categoría -->
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <h5>Progreso de Categoría</h5>
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="fas fa-user-circle"></i> Mi Perfil</h4>
                     </div>
                     <div class="card-body">
-                        <?php if ($categoria != 'Premium'): ?>
-                            <p>Progreso hacia <strong><?php echo $siguiente_categoria; ?></strong>:</p>
-                            <div class="progress mb-3" style="height: 25px;">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                    role="progressbar"
-                                    style="width: <?php echo $progreso; ?>%"
-                                    aria-valuenow="<?php echo $progreso; ?>"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100">
-                                    <?php echo number_format($progreso, 1); ?>%
-                                </div>
-                            </div>
-                            <p class="text-muted">
-                                <small>
-                                    Has utilizado <?php echo $stats['promociones_aceptadas']; ?> de <?php echo $promociones_requeridas; ?> promociones requeridas para subir a <?php echo $siguiente_categoria; ?>.
-                                </small>
-                            </p>
-                        <?php else: ?>
-                            <div class="alert alert-success">
-                                <h6>¡Felicidades!</h6>
-                                <p class="mb-0">Has alcanzado la categoría máxima. Disfruta de todos los beneficios Premium.</p>
-                            </div>
+                        <?php if ($mensaje): ?>
+                            <div class="alert alert-info"><?php echo $mensaje; ?></div>
                         <?php endif; ?>
 
-                        <!-- Beneficios por categoría -->
-                        <div class="row mt-4 text-center">
-                            <div class="col-md-4">
-                                <div class="card <?php echo $categoria == 'Inicial' ? 'border-primary' : ''; ?>">
-                                    <div class="card-body">
-                                        <h6>👤 Inicial</h6>
-                                        <small class="text-muted">
-                                            • Promociones básicas<br>
-                                            • Acceso limitado
-                                        </small>
+                        <form method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre Completo *</label>
+                                        <input type="text" class="form-control" name="nombre"
+                                            value="<?php echo htmlspecialchars($cliente['nombre']); ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control"
+                                            value="<?php echo htmlspecialchars($cliente['email']); ?>" readonly>
+                                        <small class="text-muted">El email no se puede modificar</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" name="telefono"
+                                            value="<?php echo htmlspecialchars($cliente['telefono'] ?? ''); ?>"
+                                            placeholder="+54 341 123-4567">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Dirección</label>
+                                        <textarea class="form-control" name="direccion" rows="3"
+                                            placeholder="Calle, número, ciudad"><?php echo htmlspecialchars($cliente['direccion'] ?? ''); ?></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Preferencias de Compras</label>
+                                        <textarea class="form-control" name="preferencias" rows="3"
+                                            placeholder="Ej: Ropa, tecnología, comida, etc."><?php echo htmlspecialchars($cliente['preferencias'] ?? ''); ?></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Categoría Actual</label>
+                                        <input type="text" class="form-control"
+                                            value="<?php echo ucfirst($cliente['categoria_cliente']); ?>" readonly>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card <?php echo $categoria == 'Medium' ? 'border-warning' : ''; ?>">
-                                    <div class="card-body">
-                                        <h6>Medium</h6>
-                                        <small class="text-muted">
-                                            • + Promociones exclusivas<br>
-                                            • Beneficios adicionales
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card <?php echo $categoria == 'Premium' ? 'border-danger' : ''; ?>">
-                                    <div class="card-body">
-                                        <h6>Premium</h6>
-                                        <small class="text-muted">
-                                            • Todas las promociones<br>
-                                            • Beneficios VIP<br>
-                                            • Atención preferencial
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Consejos -->
-                <div class="card mt-4">
-                    <div class="card-header bg-info text-white">
-                        <h6>💡 Consejos para subir de categoría</h6>
-                    </div>
-                    <div class="card-body">
-                        <ul class="mb-0">
-                            <li>Utiliza promociones regularmente</li>
-                            <li>Visita diferentes locales del shopping</li>
-                            <li>Revisa las novedades frecuentemente</li>
-                            <li>Las promociones se cuentan solo cuando son aceptadas por el local</li>
-                        </ul>
+                            <button type="submit" name="actualizar_perfil" class="btn btn-success w-100">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

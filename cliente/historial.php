@@ -5,23 +5,28 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'cliente') {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$nombre = $_SESSION['nombre'];
-$categoria = $_SESSION['categoria'];
-
 include("../config/db.php");
+$user_id = $_SESSION['user_id'];
 
-// Obtener historial de promociones
-$query = "
-    SELECT up.*, p.titulo, p.descripcion, p.categoria_minima, l.nombreLocal, l.rubroLocal
+// Obtener historial de promociones usadas
+$historial_query = $conn->prepare("
+    SELECT up.*, p.titulo, p.descripcion, l.nombre as local_nombre, 
+           DATE(up.fecha_uso) as fecha, TIME(up.fecha_uso) as hora
     FROM uso_promociones up
-    JOIN promociones p ON up.codPromo = p.id
-    JOIN locales l ON p.localid = l.codLocal
-    WHERE up.codCliente = $user_id
-    ORDER BY up.fechaUsoPromo DESC
-";
+    JOIN promociones p ON up.promocion_id = p.id
+    JOIN locales l ON p.local_id = l.id
+    WHERE up.cliente_id = ?
+    ORDER BY up.fecha_uso DESC
+");
+$historial_query->bind_param("i", $user_id);
+$historial_query->execute();
+$historial = $historial_query->get_result();
 
-$historial = $conn->query($query);
+// Contar estadísticas
+$total_usadas = $conn->query("
+    SELECT COUNT(*) as total FROM uso_promociones 
+    WHERE cliente_id = $user_id AND estado = 'usada'
+")->fetch_assoc()['total'];
 ?>
 
 <!DOCTYPE html>
@@ -31,98 +36,85 @@ $historial = $conn->query($query);
     <meta charset="UTF-8">
     <title>Mi Historial - Cliente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand">
-                <strong>Shopping Rosario - Mi Historial</strong>
-            </a>
-            <div class="navbar-nav ms-auto">
-                <span class="navbar-text text-white me-3">
-                    <?php echo $nombre; ?>
-                    <span class="badge bg-<?php
-                                            echo $categoria == 'Premium' ? 'danger' : ($categoria == 'Medium' ? 'warning' : 'primary');
-                                            ?>">
-                        <?php echo $categoria; ?>
-                    </span>
-                </span>
-                <a href="../index.php" class="btn btn-outline-light me-2">Volver</a>
-                <a href="../logout.php" class="btn btn-outline-light">Cerrar Sesión</a>
-            </div>
+            <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Mi Historial</a>
+            <a href="../dashboard.php" class="btn btn-outline-light">← Volver al Dashboard</a>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-secondary text-white">
-                        <h4>Mi Historial de Promociones</h4>
-                        <p class="mb-0">Todas las promociones que has utilizado</p>
-                    </div>
-                    <div class="card-body">
-                        <?php if ($historial->num_rows > 0): ?>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Local</th>
-                                            <th>Promoción</th>
-                                            <th>Categoría</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php while ($item = $historial->fetch_assoc()): ?>
-                                            <tr>
-                                                <td><?php echo date('d/m/Y', strtotime($item['fechaUsoPromo'])); ?></td>
-                                                <td>
-                                                    <strong><?php echo $item['nombreLocal']; ?></strong><br>
-                                                    <small class="text-muted"><?php echo $item['rubroLocal']; ?></small>
-                                                </td>
-                                                <td>
-                                                    <strong><?php echo $item['titulo']; ?></strong><br>
-                                                    <small class="text-muted"><?php echo $item['descripcion']; ?></small>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-<?php
-                                                                            echo $item['categoria_minima'] == 'Premium' ? 'danger' : ($item['categoria_minima'] == 'Medium' ? 'warning' : 'primary');
-                                                                            ?>">
-                                                        <?php echo $item['categoria_minima']; ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-<?php
-                                                                            echo $item['estado'] == 'aceptada' ? 'success' : ($item['estado'] == 'rechazada' ? 'danger' : 'warning');
-                                                                            ?>">
-                                                        <?php
-                                                        $estados = [
-                                                            'enviada' => '🕒 Pendiente',
-                                                            'aceptada' => '✅ Aceptada',
-                                                            'rechazada' => '❌ Rechazada'
-                                                        ];
-                                                        echo $estados[$item['estado']];
-                                                        ?>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        <?php endwhile; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <div class="alert alert-info text-center">
-                                <h5>No hay historial de promociones</h5>
-                                <p>No has utilizado ninguna promoción todavía.</p>
-                                <a href="promociones.php" class="btn btn-primary">Ver Promociones Disponibles</a>
-                            </div>
-                        <?php endif; ?>
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2><i class="fas fa-history"></i> Mi Historial de Promociones</h2>
+                <p class="text-muted">Revisa todas las promociones que has utilizado</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body text-center py-2">
+                        <h4 class="mb-0"><?php echo $total_usadas; ?></h4>
+                        <small>Promociones Usadas</small>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-list"></i> Historial de Uso</h5>
+            </div>
+            <div class="card-body">
+                <?php if ($historial->num_rows > 0): ?>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y Hora</th>
+                                    <th>Promoción</th>
+                                    <th>Local</th>
+                                    <th>Estado</th>
+                                    <th>Código</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($uso = $historial->fetch_assoc()): ?>
+                                    <tr>
+                                        <td>
+                                            <strong><?php echo date('d/m/Y', strtotime($uso['fecha'])); ?></strong><br>
+                                            <small class="text-muted"><?php echo $uso['hora']; ?></small>
+                                        </td>
+                                        <td>
+                                            <strong><?php echo htmlspecialchars($uso['titulo']); ?></strong><br>
+                                            <small class="text-muted"><?php echo htmlspecialchars($uso['descripcion']); ?></small>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($uso['local_nombre']); ?></td>
+                                        <td>
+                                            <span class="badge bg-<?php
+                                                                    echo $uso['estado'] == 'usada' ? 'success' : ($uso['estado'] == 'pendiente' ? 'warning' : 'danger');
+                                                                    ?>">
+                                                <?php echo ucfirst($uso['estado']); ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <code>PROMO-<?php echo $uso['promocion_id']; ?></code>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-5">
+                        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Aún no has utilizado promociones</h5>
+                        <p class="text-muted">¡Descubre las promociones disponibles y comienza a disfrutar de los beneficios!</p>
+                        <a href="promociones.php" class="btn btn-primary">Ver Promociones Disponibles</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

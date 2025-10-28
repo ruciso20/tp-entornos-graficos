@@ -10,7 +10,7 @@ try {
     include("config/db.php");
 
     // Obtener locales activos
-    $locales_activos = $conn->query("SELECT * FROM locales WHERE estado='activo' ORDER BY nombre");
+    $locales_activos = $conn->query("SELECT * FROM locales WHERE estado='aprobado' ORDER BY nombre");
 
     // Obtener novedades
     $novedades_publicas = $conn->query("
@@ -22,41 +22,22 @@ try {
     ");
 
     // Obtener promociones destacadas según si el usuario está logueado o no
-    if (isset($_SESSION['user_id']) && isset($_SESSION['categoria'])) {
-        $categoria = $_SESSION['categoria'];
-        $promociones_destacadas = $conn->query("
-            SELECT p.*, l.nombre as local_nombre 
-            FROM promociones p 
-            LEFT JOIN locales l ON p.local_id = l.id 
-            WHERE p.estado = 'aprobada' 
-            AND p.fecha_fin >= CURDATE()
-            AND (
-                p.categoria_minima = '$categoria' 
-                OR p.categoria_minima = 'Inicial'
-                OR ('$categoria' = 'Premium' AND p.categoria_minima IN ('Inicial', 'Medium', 'Premium'))
-                OR ('$categoria' = 'Medium' AND p.categoria_minima IN ('Inicial', 'Medium'))
-            )
-            ORDER BY 
-                CASE 
-                    WHEN p.categoria_minima = 'Premium' THEN 1
-                    WHEN p.categoria_minima = 'Medium' THEN 2
-                    ELSE 3
-                END,
-                p.fecha_inicio DESC 
-            LIMIT 8
-        ");
-    } else {
-        $promociones_destacadas = $conn->query("
-            SELECT p.*, l.nombre as local_nombre 
-            FROM promociones p 
-            LEFT JOIN locales l ON p.local_id = l.id 
-            WHERE p.estado = 'aprobada' 
-            AND p.fecha_fin >= CURDATE()
-            AND p.categoria_minima = 'Inicial'
-            ORDER BY p.fecha_inicio DESC 
-            LIMIT 8
-        ");
-    }
+    $promociones_destacadas = $conn->query("
+        SELECT p.*, l.nombre as local_nombre 
+        FROM promociones p 
+        LEFT JOIN locales l ON p.local_id = l.id 
+        WHERE p.estado = 'aprobada' 
+        AND p.fecha_fin >= CURDATE()
+        AND l.estado = 'aprobado'
+        ORDER BY 
+            CASE 
+                WHEN p.categoria_minima = 'Premium' THEN 1
+                WHEN p.categoria_minima = 'Medium' THEN 2
+                ELSE 3
+            END,
+            p.fecha_inicio DESC 
+        LIMIT 12
+    ");
 } catch (Exception $e) {
     // Si hay error, continuar sin datos
     error_log("Error en index.php: " . $e->getMessage());
@@ -416,75 +397,131 @@ try {
         <div class="container">
             <div class="row text-center mb-4">
                 <div class="col">
-                    <h2 class="fw-bold">🔥 Promociones Destacadas</h2>
+                    <h2 class="fw-bold">🔥 Todas las Promociones Disponibles</h2>
                     <p class="text-muted fs-5">
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            Las mejores ofertas para tu categoría <span class="badge bg-info"><?php echo $_SESSION['categoria']; ?></span>
-                        <?php else: ?>
-                            Ofertas especiales disponibles para todos
-                        <?php endif; ?>
+                        Descubre todas las ofertas del shopping. Regístrate para acceder a las promociones de tu categoría.
                     </p>
+                </div>
+            </div>
+
+            <!-- Información sobre categorías -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="info-box">
+                        <h6><i class="fas fa-info-circle me-2"></i>¿Cómo funcionan las categorías?</h6>
+                        <p class="mb-0 small">
+                            <span class="badge bg-info me-2">Inicial</span> Disponible para todos los clientes registrados
+                            <span class="badge bg-warning text-dark mx-2">Medium</span> Para clientes con compras frecuentes
+                            <span class="badge bg-danger mx-2">Premium</span> Exclusivo para nuestros mejores clientes
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <div class="row">
                 <?php if (isset($promociones_destacadas) && $promociones_destacadas->num_rows > 0): ?>
                     <?php while ($promo = $promociones_destacadas->fetch_assoc()):
-                        // CORREGIDO: usando categoria_minima en lugar de categoria_cliente
-                        $es_premium = $promo['categoria_minima'] == 'Premium';
-                        $es_medium = $promo['categoria_minima'] == 'Medium';
-                        $es_exclusiva = isset($_SESSION['user_id']) && $promo['categoria_minima'] == $_SESSION['categoria'] && $_SESSION['categoria'] != 'Inicial';
+                        // Determinar clase CSS según categoría
+                        $clase_categoria = '';
+                        $texto_categoria = '';
+
+                        switch ($promo['categoria_minima']) {
+                            case 'Premium':
+                                $clase_categoria = 'promo-premium';
+                                $texto_categoria = 'Premium';
+                                $icono_categoria = 'fas fa-crown';
+                                break;
+                            case 'Medium':
+                                $clase_categoria = 'promo-medium';
+                                $texto_categoria = 'Medium';
+                                $icono_categoria = 'fas fa-star';
+                                break;
+                            default:
+                                $clase_categoria = 'promo-inicial';
+                                $texto_categoria = 'Inicial';
+                                $icono_categoria = 'fas fa-user';
+                        }
                     ?>
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <div class="card card-hover h-100 <?php echo $es_exclusiva ? 'destacada-card' : ''; ?>">
-                                <?php if ($es_exclusiva): ?>
-                                    <span class="promo-badge badge bg-danger">
-                                        <i class="fas fa-crown"></i> Exclusiva
-                                    </span>
-                                <?php elseif ($es_premium): ?>
-                                    <span class="promo-badge badge bg-danger">Premium</span>
-                                <?php elseif ($es_medium): ?>
-                                    <span class="promo-badge badge bg-warning text-dark">Medium</span>
-                                <?php else: ?>
-                                    <span class="promo-badge badge bg-info">Inicial</span>
-                                <?php endif; ?>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card promo-card h-100 <?php echo $clase_categoria; ?>">
+                                <!-- Badge de categoría -->
+                                <span class="categoria-badge badge bg-<?php
+                                                                        echo $promo['categoria_minima'] == 'Premium' ? 'danger' : ($promo['categoria_minima'] == 'Medium' ? 'warning' : 'info');
+                                                                        ?>">
+                                    <i class="<?php echo $icono_categoria; ?> me-1"></i>
+                                    <?php echo $texto_categoria; ?>
+                                </span>
 
                                 <div class="card-body">
-                                    <!-- CORREGIDO: usando titulo en lugar de textoPromo -->
                                     <h5 class="card-title"><?php echo htmlspecialchars($promo['titulo']); ?></h5>
                                     <p class="card-text">
                                         <strong><i class="fas fa-store"></i> Local:</strong> <?php echo htmlspecialchars($promo['local_nombre']); ?><br>
-                                        <!-- CORREGIDO: usando fecha_fin en lugar de fechaHastaPromo -->
                                         <strong><i class="fas fa-calendar"></i> Válida hasta:</strong> <?php echo date('d/m/Y', strtotime($promo['fecha_fin'])); ?>
                                     </p>
+
+                                    <?php if (!empty($promo['descripcion'])): ?>
+                                        <p class="card-text small text-muted">
+                                            <?php echo htmlspecialchars($promo['descripcion']); ?>
+                                        </p>
+                                    <?php endif; ?>
+
                                     <div class="mb-3">
-                                        <!-- CORREGIDO: usando dias_validos en lugar de diasSemana -->
                                         <span class="badge bg-secondary">
                                             <i class="fas fa-calendar-day"></i> <?php echo $promo['dias_validos']; ?>
                                         </span>
                                     </div>
 
-                                    <?php if (!isset($_SESSION['user_id'])): ?>
-                                        <div class="alert alert-warning mt-3 mb-0">
-                                            <small><i class="fas fa-lock"></i> Regístrate para usar esta promoción</small>
-                                        </div>
-                                    <?php else: ?>
-                                        <div class="alert alert-success mt-3 mb-2">
-                                            <small>
-                                                <i class="fas fa-check-circle"></i>
-                                                <!-- CORREGIDO: usando categoria_minima en lugar de categoria_cliente -->
-                                                <?php if ($promo['categoria_minima'] == $_SESSION['categoria']): ?>
-                                                    Disponible para tu categoría
-                                                <?php else: ?>
-                                                    Disponible (categoría inferior)
-                                                <?php endif; ?>
-                                            </small>
-                                        </div>
-                                        <!-- CORREGIDO: usando id en lugar de codPromo -->
-                                        <button class="btn btn-primary btn-sm w-100" onclick="usarPromocion(<?php echo $promo['id']; ?>)">
-                                            <i class="fas fa-shopping-cart"></i> Usar Promoción
-                                        </button>
-                                    <?php endif; ?>
+                                    <!-- Información de acceso -->
+                                    <div class="access-info mt-3">
+                                        <?php if (!isset($_SESSION['user_id'])): ?>
+                                            <div class="alert alert-warning mb-0">
+                                                <small>
+                                                    <i class="fas fa-lock me-1"></i>
+                                                    <?php if ($promo['categoria_minima'] == 'Inicial'): ?>
+                                                        Regístrate para acceder a esta promoción
+                                                    <?php else: ?>
+                                                        Regístrate y sube de categoría para acceder
+                                                    <?php endif; ?>
+                                                </small>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="alert alert-<?php
+                                                                    // Verificar si el usuario puede acceder
+                                                                    $puede_acceder = false;
+                                                                    switch ($_SESSION['categoria']) {
+                                                                        case 'Premium':
+                                                                            $puede_acceder = true;
+                                                                            break;
+                                                                        case 'Medium':
+                                                                            $puede_acceder = in_array($promo['categoria_minima'], ['Inicial', 'Medium']);
+                                                                            break;
+                                                                        case 'Inicial':
+                                                                            $puede_acceder = $promo['categoria_minima'] == 'Inicial';
+                                                                            break;
+                                                                    }
+
+                                                                    echo $puede_acceder ? 'success' : 'warning';
+                                                                    ?> mb-0">
+                                                <small>
+                                                    <i class="fas fa-<?php echo $puede_acceder ? 'check-circle' : 'info-circle'; ?> me-1"></i>
+                                                    <?php if ($puede_acceder): ?>
+                                                        Disponible para tu categoría (<?php echo $_SESSION['categoria']; ?>)
+                                                    <?php else: ?>
+                                                        Requiere categoría <?php echo $promo['categoria_minima']; ?> (tienes <?php echo $_SESSION['categoria']; ?>)
+                                                    <?php endif; ?>
+                                                </small>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <!-- Botón de acción -->
+                                    <div class="mt-3">
+                                        <?php if (!isset($_SESSION['user_id'])): ?>
+                                            <a href="register.php" class="btn btn-primary btn-sm w-100">
+                                                Regístrate para Usar
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -492,20 +529,30 @@ try {
                 <?php else: ?>
                     <div class="col-12 text-center">
                         <div class="alert alert-info">
-                            <h5><i class="fas fa-info-circle"></i> No hay promociones destacadas en este momento</h5>
-                            <p class="mb-0">
-                                <?php if (!isset($_SESSION['user_id'])): ?>
-                                    Regístrate para acceder a ofertas exclusivas
-                                <?php else: ?>
-                                    Vuelve más tarde para descubrir nuevas ofertas
-                                <?php endif; ?>
-                            </p>
+                            <h5><i class="fas fa-info-circle"></i> No hay promociones disponibles en este momento</h5>
+                            <p class="mb-0">Vuelve más tarde para descubrir nuevas ofertas exclusivas.</p>
                         </div>
                     </div>
                 <?php endif; ?>
             </div>
+
+            <!-- Llamada a la acción -->
+            <?php if (!isset($_SESSION['user_id'])): ?>
+                <div class="text-center mt-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body py-4">
+                            <h4><i class="fas fa-gift me-2"></i> ¿Listo para empezar a ahorrar?</h4>
+                            <p class="mb-3">Regístrate gratis y accede a todas las promociones disponibles para tu categoría</p>
+                            <a href="register.php" class="btn btn-light btn-lg">
+                                <i class="fas fa-rocket me-2"></i> Crear Mi Cuenta Gratis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
+
 
     <!-- SECCIÓN: Novedades del Shopping - CORREGIDA -->
     <section class="py-5 bg-light" id="novedades">
@@ -515,7 +562,7 @@ try {
                     <h2 class="fw-bold">📢 Novedades del Shopping</h2>
                     <p class="text-muted fs-5">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            Información importante para tu categoría <span class="badge bg-info"><?php echo $_SESSION['categoria']; ?></span>
+                            Información importante para ti
                         <?php else: ?>
                             Mantente informado de las últimas noticias
                         <?php endif; ?>
@@ -662,7 +709,7 @@ try {
         <div class="container">
             <div class="row text-center mb-4">
                 <div class="col">
-                    <h2 class="fw-bold">Nuestros Locales</h2>
+                    <h2 class="fw-bold">🏪 Nuestros Locales</h2>
                     <p class="text-muted">Descubre la variedad de locales en nuestro shopping</p>
                 </div>
             </div>
@@ -679,7 +726,6 @@ try {
 
                         while ($local = $locales_activos->fetch_assoc()):
                             // Categoría simple
-                            $categoria_local = "General";
                             $icono = "🏪";
 
                             if ($locales_count % $locales_per_slide == 0):
@@ -698,10 +744,6 @@ try {
                                                 <p class="card-text small text-muted">
                                                     <?php echo $local['descripcion'] ?: 'Ofertas especiales disponibles'; ?>
                                                 </p>
-                                                <div class="mb-3">
-                                                    <span class="badge bg-primary"><?php echo $local['codigo_local']; ?></span>
-                                                    <span class="badge bg-secondary"><?php echo $categoria_local; ?></span>
-                                                </div>
                                                 <?php if (!isset($_SESSION['user_id'])): ?>
                                                     <small class="text-warning">
                                                         <i class="fas fa-lock"></i> Regístrate para promociones

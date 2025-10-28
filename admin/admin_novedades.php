@@ -49,7 +49,7 @@ $novedades = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC")
         <div class="container">
             <a class="navbar-brand">Admin - Novedades</a>
             <div>
-                <a href="../index.php" class="btn btn-outline-light">Inicio</a>
+                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
             </div>
         </div>
     </nav>

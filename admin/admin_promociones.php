@@ -43,9 +43,7 @@ $promociones = $conn->query("
         <div class="container">
             <a class="navbar-brand">Admin - Gestión de Promociones</a>
             <div>
-                <a href="../index.php" class="btn btn-outline-light">Inicio</a>
-                <a href="../logout.php" class="btn btn-outline-light">
-                    <i class="fas fa-sign-out-alt"></i> Volver</a>
+                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
             </div>
         </div>
     </nav>

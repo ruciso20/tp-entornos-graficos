@@ -92,10 +92,18 @@ if ($rol == 'cliente') {
         )
         ORDER BY id DESC LIMIT 5
     ");
+
+    //contar promociones usadas por el cliente
+    $promociones_usadas = $conn->query("
+        SELECT COUNT(*) as total 
+        FROM uso_promociones 
+        WHERE cliente_id = {$_SESSION['user_id']} 
+        AND estado = 'usada'
+    ")->fetch_assoc()['total'];
 } elseif ($rol == 'admin') {
 
     // estadísticas para administrador
-    $total_locales = $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'activo'")->fetch_assoc()['total'];
+    $total_locales = $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'aprobado'")->fetch_assoc()['total'];
     $dueños_pendientes = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'dueno' AND estado = 'pendiente'")->fetch_assoc()['total'];
     $promociones_pendientes = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'pendiente'")->fetch_assoc()['total'];
     $total_clientes = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'cliente' AND estado = 'aprobado'")->fetch_assoc()['total'];
@@ -110,62 +118,78 @@ if ($rol == 'cliente') {
     // estadísticas para dueño
     $dueño_id = $_SESSION['user_id'];
 
-    // CORREGIDO: Obtener TODOS los locales del dueño
-    $locales_query = $conn->query("SELECT * FROM locales WHERE dueno_id = $dueño_id AND estado = 'activo'");
+    // Obtener TODOS los locales del dueño con sus estados
+    $locales_query = $conn->query("
+        SELECT *, 
+            CASE 
+                WHEN estado = 'aprobado' THEN 1
+                WHEN estado = 'pendiente' THEN 2 
+                WHEN estado = 'rechazado' THEN 3
+                ELSE 4
+            END as orden
+        FROM locales 
+        WHERE dueno_id = $dueño_id 
+        ORDER BY orden, nombre
+    ");
     $locales_data = $locales_query->fetch_all(MYSQLI_ASSOC);
 
-    // CORREGIDO: Contar TODOS los locales activos del dueño
-    $locales_activas = count($locales_data);
+    // Contar locales por estado
+    $locales_aprobados = 0;
+    $locales_pendientes = 0;
+    $locales_rechazados = 0;
 
-    // Si tiene al menos un local, usar el primero como principal
-    if ($locales_activas > 0) {
-        $local_principal = $locales_data[0];
-        $local_id = $local_principal['id'];
-        $nombre_local = $local_principal['nombre'];
+    foreach ($locales_data as $local) {
+        switch ($local['estado']) {
+            case 'aprobado':
+                $locales_aprobados++;
+                break;
+            case 'pendiente':
+                $locales_pendientes++;
+                break;
+            case 'rechazado':
+                $locales_rechazados++;
+                break;
+        }
+    }
 
-        // CORREGIDO: Promociones activas de TODOS los locales del dueño
+    $total_locales = count($locales_data);
+
+    // Si tiene locales aprobados, calcular estadísticas
+    if ($locales_aprobados > 0) {
+        // Promociones activas de TODOS los locales aprobados del dueño
         $promociones_activas = $conn->query("
             SELECT COUNT(*) as total FROM promociones 
-            WHERE local_id IN (SELECT id FROM locales WHERE dueno_id = $dueño_id) 
+            WHERE local_id IN (
+                SELECT id FROM locales WHERE dueno_id = $dueño_id AND estado = 'aprobado'
+            ) 
             AND estado = 'aprobada' 
             AND fecha_inicio <= CURDATE() AND fecha_fin >= CURDATE()
         ")->fetch_assoc()['total'];
 
-        // CORREGIDO: Solicitudes pendientes de TODOS los locales del dueño
+        // Solicitudes pendientes de TODOS los locales aprobados del dueño
         $solicitudes_pendientes = $conn->query("
             SELECT COUNT(*) as total FROM uso_promociones up
             JOIN promociones p ON up.promocion_id = p.id
-            WHERE p.local_id IN (SELECT id FROM locales WHERE dueno_id = $dueño_id) 
+            WHERE p.local_id IN (
+                SELECT id FROM locales WHERE dueno_id = $dueño_id AND estado = 'aprobado'
+            ) 
             AND up.estado = 'pendiente'
         ")->fetch_assoc()['total'];
 
-        // CORREGIDO: Total de usos aprobados de TODOS los locales del dueño
+        // Total de usos aprobados de TODOS los locales aprobados del dueño
         $usos_totales = $conn->query("
             SELECT COUNT(*) as total FROM uso_promociones up
             JOIN promociones p ON up.promocion_id = p.id
-            WHERE p.local_id IN (SELECT id FROM locales WHERE dueno_id = $dueño_id) 
+            WHERE p.local_id IN (
+                SELECT id FROM locales WHERE dueno_id = $dueño_id AND estado = 'aprobado'
+            ) 
             AND up.estado = 'usada'
         ")->fetch_assoc()['total'];
-
-        // Obtener promociones del dueño (de todos los locales)
-        $mis_promociones = $conn->query("
-            SELECT p.*, l.nombre as local_nombre 
-            FROM promociones p 
-            JOIN locales l ON p.local_id = l.id 
-            WHERE l.dueno_id = $dueño_id 
-            ORDER BY p.id DESC LIMIT 5
-        ");
-
-        // Obtener solicitudes recientes del dueño (de todos los locales)
-        $solicitudes_recientes = $conn->query("
-            SELECT up.*, u.nombre as cliente_nombre, p.titulo as promocion_titulo, l.nombre as local_nombre
-            FROM uso_promociones up
-            JOIN promociones p ON up.promocion_id = p.id
-            JOIN usuarios u ON up.cliente_id = u.id
-            JOIN locales l ON p.local_id = l.id
-            WHERE l.dueno_id = $dueño_id
-            ORDER BY up.fecha_uso DESC LIMIT 5
-        ");
+    } else {
+        // Si no tiene locales aprobados, las estadísticas son 0
+        $promociones_activas = 0;
+        $solicitudes_pendientes = 0;
+        $usos_totales = 0;
     }
 }
 ?>
@@ -264,7 +288,7 @@ if ($rol == 'cliente') {
                     <div class="card card-stat text-white bg-primary">
                         <div class="card-body text-center">
                             <h3><?php echo $promociones_disponibles; ?></h3>
-                            <p><i class="fas fa-tags"></i> Promociones Disponibles</p>
+                            <p>Promociones Disponibles</p>
                         </div>
                     </div>
                 </div>
@@ -272,7 +296,7 @@ if ($rol == 'cliente') {
                     <div class="card card-stat text-white bg-success">
                         <div class="card-body text-center">
                             <h3><?php echo $novedades_disponibles; ?></h3>
-                            <p><i class="fas fa-newspaper"></i> Novedades Activas</p>
+                            <p>Novedades Activas</p>
                         </div>
                     </div>
                 </div>
@@ -280,7 +304,7 @@ if ($rol == 'cliente') {
                     <div class="card card-stat text-white bg-info">
                         <div class="card-body text-center">
                             <h3><?php echo $categoria; ?></h3>
-                            <p><i class="fas fa-star"></i> Tu Categoría</p>
+                            <p>Tu Categoría</p>
                         </div>
                     </div>
                 </div>
@@ -296,23 +320,7 @@ if ($rol == 'cliente') {
                     <div class="card card-stat text-white bg-primary">
                         <div class="card-body text-center">
                             <h3><?php echo $total_locales; ?></h3>
-                            <p><i class="fas fa-store"></i> Locales Activos</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-stat text-white bg-warning">
-                        <div class="card-body text-center">
-                            <h3><?php echo $dueños_pendientes; ?></h3>
-                            <p><i class="fas fa-user-clock"></i> Dueños Pendientes</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-stat text-white bg-danger">
-                        <div class="card-body text-center">
-                            <h3><?php echo $promociones_pendientes; ?></h3>
-                            <p><i class="fas fa-tags"></i> Promociones Pendientes</p>
+                            <p>Locales Activos</p>
                         </div>
                     </div>
                 </div>
@@ -320,7 +328,23 @@ if ($rol == 'cliente') {
                     <div class="card card-stat text-white bg-success">
                         <div class="card-body text-center">
                             <h3><?php echo $total_clientes; ?></h3>
-                            <p><i class="fas fa-users"></i> Total Clientes</p>
+                            <p>Total Clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-stat text-white bg-warning">
+                        <div class="card-body text-center">
+                            <h3><?php echo $dueños_pendientes; ?></h3>
+                            <p>Dueños Pendientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-stat text-white bg-danger">
+                        <div class="card-body text-center">
+                            <h3><?php echo $promociones_pendientes; ?></h3>
+                            <p>Promociones Pendientes</p>
                         </div>
                     </div>
                 </div>
@@ -371,28 +395,28 @@ if ($rol == 'cliente') {
 
 
                             <div class="alert alert-info">
-                                <h5><i class="fas fa-crown"></i> Panel de Administrador</h5>
+                                <h5>Panel de Administrador</h5>
                                 <p class="mb-3">¡Bienvenido! Gestiona todo el sistema del shopping.</p>
 
                                 <div class="row mt-3">
                                     <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_usuarios.php" class="btn btn-primary w-100">
-                                            <i class="fas fa-users"></i> Gestionar Usuarios
+                                        <a href="admin/admin_locales.php" class="btn btn-primary w-100">
+                                            Gestionar Locales
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_locales.php" class="btn btn-success w-100">
-                                            <i class="fas fa-store"></i> Gestionar Locales
+                                        <a href="admin/admin_usuarios.php" class="btn btn-success w-100">
+                                            Gestionar Usuarios
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_promociones.php" class="btn btn-warning w-100">
-                                            <i class="fas fa-tags"></i> Aprobar Promociones
+                                        <a href="admin/admin_promociones.php" class="btn btn-danger w-100">
+                                            Aprobar Promociones
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <a href="admin/admin_novedades.php" class="btn btn-info w-100">
-                                            <i class="fas fa-newspaper"></i> Gestionar Novedades
+                                            Gestionar Novedades
                                         </a>
                                     </div>
                                 </div>
@@ -407,7 +431,8 @@ if ($rol == 'cliente') {
                                 <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios como cliente <strong><?php echo $categoria; ?></strong>.</p>
 
                                 <div class="row mt-4">
-                                    <div class="col-md-6 mb-3">
+                                    <!-- Fila 1: Funcionalidades principales -->
+                                    <div class="col-md-4 mb-3">
                                         <div class="card card-hover h-100">
                                             <div class="card-body text-center">
                                                 <h3><i class="fas fa-tags"></i> Promociones</h3>
@@ -418,13 +443,50 @@ if ($rol == 'cliente') {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <div class="card card-hover h-100">
                                             <div class="card-body text-center">
                                                 <h3><i class="fas fa-newspaper"></i> Novedades</h3>
                                                 <p>Mantente informado de las últimas novedades del shopping</p>
                                                 <a href="cliente/novedades.php" class="btn btn-info w-100">
                                                     Ver Novedades (<?php echo $novedades_disponibles; ?>)
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card card-hover h-100">
+                                            <div class="card-body text-center">
+                                                <h3><i class="fas fa-user-circle"></i> Mi Perfil</h3>
+                                                <p>Gestiona tu información personal y preferencias</p>
+                                                <a href="cliente/perfil.php" class="btn btn-success w-100">
+                                                    Editar Perfil
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 2: Funcionalidades secundarias -->
+                                <div class="row mt-3">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card card-hover h-100">
+                                            <div class="card-body text-center">
+                                                <h3><i class="fas fa-history"></i> Historial</h3>
+                                                <p>Revisa todas las promociones que has utilizado</p>
+                                                <a href="cliente/historial.php" class="btn btn-warning w-100">
+                                                    Ver Historial (<?php echo $promociones_usadas; ?>)
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card card-hover h-100">
+                                            <div class="card-body text-center">
+                                                <h3><i class="fas fa-chart-line"></i> Mi Progreso</h3>
+                                                <p>Consulta tu avance y beneficios por categoría</p>
+                                                <a href="#progreso" class="btn btn-secondary w-100">
+                                                    Ver Progreso
                                                 </a>
                                             </div>
                                         </div>
@@ -476,53 +538,79 @@ if ($rol == 'cliente') {
                                 </div>
                             </div>
 
-                        <?php elseif ($rol == 'dueno' && isset($local_id)): ?>
+                            <!-- panel dueño  -->
 
-                            <!-- panel dueño (con local) -->
-
+                        <?php elseif ($rol == 'dueno'): ?>
+                            <!-- PANEL DUEÑO - NAVEGACIÓN SEPARADA -->
                             <div class="alert alert-warning">
-                                <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>!</p>
+                                <h5>Panel de Dueño de Locales</h5>
+                                <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona tus locales y promociones.</p>
+
                                 <div class="row mt-3">
+                                    <!-- Gestión de Locales - SIEMPRE DISPONIBLE -->
                                     <div class="col-md-3 mb-3">
                                         <a href="dueno/locales.php" class="btn btn-primary w-100">
                                             Gestionar Locales
-                                        </a>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <a href="dueno/promociones.php" class="btn btn-success w-100">
-                                            Gestionar Promociones
-                                        </a>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <a href="dueno/solicitudes.php" class="btn btn-warning w-100">
-                                            Gestionar Solicitudes
-                                            <?php if ($solicitudes_pendientes > 0): ?>
-                                                <span class="badge bg-danger"><?php echo $solicitudes_pendientes; ?></span>
+                                            <?php if ($total_locales > 0): ?>
+                                                <span class="badge bg-light text-dark"><?php echo $total_locales; ?></span>
                                             <?php endif; ?>
                                         </a>
                                     </div>
+
+                                    <!-- Promociones - SOLO SI TIENE LOCALES APROBADOS -->
                                     <div class="col-md-3 mb-3">
-                                        <a href="dueno/reportes.php" class="btn btn-info w-100">
-                                            Ver Reportes
-                                        </a>
+                                        <?php if ($locales_aprobados > 0): ?>
+                                            <a href="dueno/promociones.php" class="btn btn-info w-100">
+                                                Gestionar Promociones
+                                                <?php if ($promociones_activas > 0): ?>
+                                                    <span class="badge bg-light text-dark"><?php echo $promociones_activas; ?></span>
+                                                <?php endif; ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <button class="btn btn-secondary w-100" disabled>
+                                                Gestionar Promociones
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <!-- Solicitudes - SOLO SI TIENE LOCALES APROBADOS -->
+                                    <div class="col-md-3 mb-3">
+                                        <?php if ($locales_aprobados > 0): ?>
+                                            <a href="dueno/solicitudes.php" class="btn btn-warning w-100">
+                                                Gestionar Solicitudes
+                                                <?php if ($solicitudes_pendientes > 0): ?>
+                                                    <span class="badge bg-danger"><?php echo $solicitudes_pendientes; ?></span>
+                                                <?php endif; ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <button class="btn btn-secondary w-100" disabled>
+                                                Gestionar Solicitudes
+                                            </button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                <!-- Reportes - SOLO SI TIENE LOCALES APROBADOS -->
+                                <div class="col-md-3 mb-3">
+                                    <?php if ($locales_aprobados > 0): ?>
+                                        <a href="dueno/reportes.php" class="btn btn-dark w-100">
+                                            Reportes
+                                        </a>
+                                    <?php else: ?>
+                                        <button class="btn btn-secondary w-100" disabled>
+                                            Reportes
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-
-                        <?php elseif ($rol == 'dueno'): ?>
-
-                            <!-- panel dueño (sin local) -->
-
-                            <div class="alert alert-danger">
-                                <h5><i class="fas fa-exclamation-triangle"></i>Dueño sin Local Asignado</h5>
-                                <p>No tienes un local asignado ¡Contacta al administrador del sistema para que te asigne un local!</p>
-                            </div>
-                        <?php endif; ?>
                     </div>
+                <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

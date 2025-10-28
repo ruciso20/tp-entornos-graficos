@@ -18,6 +18,10 @@ if (count($locales) == 0) {
   die("No tienes locales asignados o activos.");
 }
 
+if ($local['estado'] != 'aprobado') {
+  die("Tu local no está aprobado. No puedes crear promociones hasta que el administrador apruebe tu local.");
+}
+
 // Determinar el local actual (por defecto el primero, o el seleccionado)
 $local_actual_id = $locales[0]['id'];
 if (isset($_POST['local_id']) && is_numeric($_POST['local_id'])) {

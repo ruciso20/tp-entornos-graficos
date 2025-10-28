@@ -166,7 +166,6 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5>Solicitudes Pendientes</h5>
-        <span class="badge bg-warning"><?php echo $solicitudes->num_rows; ?> pendiente<?php echo $solicitudes->num_rows != 1 ? 's' : ''; ?></span>
       </div>
       <div class="card-body">
         <?php if ($solicitudes->num_rows > 0): ?>
