@@ -7,15 +7,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'dueno') {
 
 include("../config/db.php");
 
-$dueno_id = $_SESSION['user_id'];
+$dueno_idd = $_SESSION['user_id'];
 $mensaje = "";
 
 // Obtener todos los locales del dueño
-$locales_query = $conn->query("SELECT id, nombre FROM locales WHERE dueno_id = $dueno_id AND estado = 'activo'");
+$locales_query = $conn->query("SELECT id, nombre FROM locales WHERE dueno_id = $dueno_idd AND estado = 'activo'");
 $locales = $locales_query->fetch_all(MYSQLI_ASSOC);
 
 // Obtener nombre dueño
-$dueno_query = $conn->query("SELECT id, nombre FROM usuarios WHERE id = $dueno_id AND rol = 'dueno'");
+$dueno_query = $conn->query("SELECT id, nombre FROM usuarios WHERE id = $dueno_idd AND rol = 'dueno'");
 $dueno = $dueno_query->fetch_all(MYSQLI_ASSOC);
 
 if (count($locales) == 0) {
@@ -56,8 +56,7 @@ $locales = $conn->query("
     SELECT l.*, u.nombre as nombre_dueno 
     FROM locales l 
     LEFT JOIN usuarios u ON l.dueno_id = u.id
-    WHERE l.dueno_id = $dueno_id 
-    ORDER BY l.nombre
+    WHERE u.id = $dueno_idd
 ");
 ?>
 
