@@ -123,6 +123,11 @@ if ($rol == 'cliente') {
             WHERE local_id = $local_id AND estado = 'aprobada' 
             AND fecha_inicio <= CURDATE() AND fecha_fin >= CURDATE()
         ")->fetch_assoc()['total'];
+        // locales activos del dueño
+            $locales_activas = $conn->query("
+            SELECT COUNT(*) as total FROM locales 
+            WHERE id = $local_id AND estado = 'activo' 
+        ")->fetch_assoc()['total'];
 
         // solicitudes pendientes del dueño
         $solicitudes_pendientes = $conn->query("
@@ -318,7 +323,15 @@ if ($rol == 'cliente') {
 
 
             <!-- estadisticas para dueño -->
-
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card card-stat text-white bg-primary">
+                        <div class="card-body text-center">
+                            <h3><?php echo $locales_activas; ?></h3>
+                            <p><i class="fas fa-tags"></i> Locales Activos</p>
+                        </div>
+                    </div>
+                </div>
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card card-stat text-white bg-primary">
@@ -473,6 +486,11 @@ if ($rol == 'cliente') {
                                 <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona las promociones de tu Locales</p>
 
                                 <div class="row mt-3">
+                                    <div class="col-md-4 mb-3">
+                                        <a href="dueno/locales.php" class="btn btn-primary w-100">
+                                        <i class="fas fa-tags"></i> Mis Locales
+                                        </a>
+                                    </div>
                                     <div class="col-md-4 mb-3">
                                         <a href="dueno/promociones.php" class="btn btn-primary w-100">
                                             <i class="fas fa-tags"></i> Mis Promociones
