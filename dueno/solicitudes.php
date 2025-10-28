@@ -126,7 +126,7 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
   <nav class="navbar navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="../dashboard.php">🛍️ Dueño - Solicitudes</a>
-      <a href="../dashboard.php" class="btn btn-outline-light">← Volver al Dashboard</a>
+      <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
     </div>
   </nav>
 

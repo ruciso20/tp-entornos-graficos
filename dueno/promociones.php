@@ -220,7 +220,6 @@ $promociones = $conn->query("
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5>Promociones de <?php echo htmlspecialchars($local_actual['nombre']); ?></h5>
-        <span class="badge bg-primary"><?php echo $promociones->num_rows; ?> promociones</span>
       </div>
       <div class="card-body">
         <?php if ($promociones->num_rows == 0): ?>

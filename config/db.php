@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root";      
-$password = "Alem105800";
+$username = "root";
+$password = "7350";
 $dbname = "shopping_db";
 
 // $servername = processs.env.DB_HOST;
@@ -15,4 +15,3 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
-?>

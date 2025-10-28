@@ -26,28 +26,28 @@ if (count($locales) == 0) {
 
 // Crear local
 if (isset($_POST['crear_local'])) {
-    $nombre = trim($_POST['nombre']);
-    $descripcion = trim($_POST['descripcion']);
-    $codigo_local = trim($_POST['codigo_local']);
-    $dueno_id = $_POST['dueno_id'];
+  $nombre = trim($_POST['nombre']);
+  $descripcion = trim($_POST['descripcion']);
+  $codigo_local = trim($_POST['codigo_local']);
+  $dueno_id = $_POST['dueno_id'];
 
-    // Validaciones
-    if (!is_numeric($codigo_local)) {
-        $error = "El código debe ser un número";
-    } elseif (empty($dueno_id)) {
-        $error = "Debes seleccionar un dueño";
-    } else {
-        // INSERT con dueño_id válido
-        $sql = "INSERT INTO locales (nombre, descripcion, codigo_local, dueno_id, estado) 
+  // Validaciones
+  if (!is_numeric($codigo_local)) {
+    $error = "El código debe ser un número";
+  } elseif (empty($dueno_id)) {
+    $error = "Debes seleccionar un dueño";
+  } else {
+    // INSERT con dueño_id válido
+    $sql = "INSERT INTO locales (nombre, descripcion, codigo_local, dueno_id, estado) 
                 VALUES ('$nombre', '$descripcion', $codigo_local, $dueno_id, 'inactivo')";
 
-        if ($conn->query($sql) === TRUE) {
-            $success = "Local '$nombre' creado, pendiente de aprobación del administrador";
-            $_POST['nombre'] = $_POST['descripcion'] = $_POST['codigo_local'] = '';
-        } else {
-            $error = "Error: " . $conn->error;
-        }
+    if ($conn->query($sql) === TRUE) {
+      $success = "Local '$nombre' creado, pendiente de aprobación del administrador";
+      $_POST['nombre'] = $_POST['descripcion'] = $_POST['codigo_local'] = '';
+    } else {
+      $error = "Error: " . $conn->error;
     }
+  }
 }
 
 
@@ -84,43 +84,43 @@ $locales = $conn->query("
       <div class="alert alert-info"><?php echo $mensaje; ?></div>
     <?php endif; ?>
 
-        <!-- Formulario crear local -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>Crear Nuevo Local</h5>
+    <!-- Formulario crear local -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5>Crear Nuevo Local</h5>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="row">
+            <div class="col-md-3">
+              <label>Nombre del Local *</label>
+              <input type="text" name="nombre" class="form-control" placeholder="Ej: Ropa Fashion"
+                value="<?php echo isset($_POST['nombre']) ? htmlspecialchars($_POST['nombre']) : ''; ?>" required>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label>Nombre del Local *</label>
-                            <input type="text" name="nombre" class="form-control" placeholder="Ej: Ropa Fashion"
-                                value="<?php echo isset($_POST['nombre']) ? htmlspecialchars($_POST['nombre']) : ''; ?>" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Descripción</label>
-                            <input type="text" name="descripcion" class="form-control" placeholder="Descripción del local"
-                                value="<?php echo isset($_POST['descripcion']) ? htmlspecialchars($_POST['descripcion']) : ''; ?>">
-                        </div>
-                        <div class="col-md-2">
-                            <label>Código *</label>
-                            <input type="number" name="codigo_local" class="form-control" placeholder="Ej: 1001"
-                                value="<?php echo isset($_POST['codigo_local']) ? htmlspecialchars($_POST['codigo_local']) : ''; ?>"
-                                min="1" max="9999" required>
-                        </div>
-            
-                        <div class="col-md-1">
-                            <label>&nbsp;</label>
-                            <button type="submit" name="crear_local" class="btn btn-primary w-100">Crear</button>
-                        </div>
-                    </div>
-                </form>
+            <div class="col-md-3">
+              <label>Descripción</label>
+              <input type="text" name="descripcion" class="form-control" placeholder="Descripción del local"
+                value="<?php echo isset($_POST['descripcion']) ? htmlspecialchars($_POST['descripcion']) : ''; ?>">
             </div>
-        </div>
+            <div class="col-md-2">
+              <label>Código *</label>
+              <input type="number" name="codigo_local" class="form-control" placeholder="Ej: 1001"
+                value="<?php echo isset($_POST['codigo_local']) ? htmlspecialchars($_POST['codigo_local']) : ''; ?>"
+                min="1" max="9999" required>
+            </div>
+
+            <div class="col-md-1">
+              <label>&nbsp;</label>
+              <button type="submit" name="crear_local" class="btn btn-primary w-100">Crear</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Lista de promociones existentes -->
     <div class="card">
-     
+
       <div class="card-body">
         <?php if ($locales->num_rows == 0): ?>
           <div class="alert alert-info">
@@ -139,12 +139,12 @@ $locales = $conn->query("
               </thead>
               <tbody>
                 <?php while ($local = $locales->fetch_assoc()):
-           
+
                 ?>
                   <tr>
                     <td><strong><?php echo htmlspecialchars($local['nombre']); ?></strong></td>
                     <td><?php echo htmlspecialchars($local['descripcion']); ?></td>
-            
+
                     <td>
                       <span class="badge bg-<?php
                                             switch ($local['estado']) {
@@ -159,7 +159,7 @@ $locales = $conn->query("
                                             }
                                             ?>">
                         <?php echo ucfirst($local['estado']); ?>
-                        </span>
+                      </span>
                     </td>
                     <td>
                       <?php if ($local['estado'] == 'inactivo'): ?>

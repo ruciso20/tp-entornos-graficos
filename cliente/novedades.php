@@ -53,8 +53,7 @@ $novedades = $conn->query($query);
                         <?php echo $categoria; ?>
                     </span>
                 </span>
-                <a href="../index.php" class="btn btn-outline-light me-2">Volver</a>
-                <a href="../logout.php" class="btn btn-outline-light">Cerrar Sesión</a>
+                <a href="../dashboard.php" class="btn btn-outline-light me-2">Volver</a>
             </div>
         </div>
     </nav>
