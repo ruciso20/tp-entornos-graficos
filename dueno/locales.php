@@ -6,16 +6,51 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'dueno') {
 }
 
 include("../config/db.php");
-
-$dueno_idd = $_SESSION['user_id'];
+$dueno_id= $_SESSION['user_id'];
 $mensaje = "";
+// --- Eliminar local (acepta GET ?eliminar=ID o POST eliminar=ID) ---
+$valorEliminar = null;
+if (isset($_POST['eliminar'])) {
+    $valorEliminar = filter_input(INPUT_POST, 'eliminar', FILTER_VALIDATE_INT);
+} elseif (isset($_GET['eliminar'])) {
+    $valorEliminar = filter_input(INPUT_GET, 'eliminar', FILTER_VALIDATE_INT);
+}
+
+if ($valorEliminar !== null) {
+    if ($valorEliminar === false) {
+        $mensaje = "ID de local inválido.";
+    } else {
+        // IMPORTANTE: si antes exigías estado='inactivo' y no elimina, quitalo o asegurate de marcarlo inactivo antes.
+        $stmt = $conn->prepare("DELETE FROM locales WHERE id = ? AND dueno_id = ?");
+        $stmt->bind_param("ii", $valorEliminar, $dueno_id);
+
+        if (!$stmt->execute()) {
+            // Si hay error (p.ej. clave foránea), lo mostramos:
+            $mensaje = "Error al eliminar: " . $conn->error;
+        } else {
+            if ($stmt->affected_rows > 0) {
+                // Redirigimos para evitar re-envío del formulario y refrescar la lista
+                header("Location: locales.php?msg=eliminado");
+                exit;
+            } else {
+                $mensaje = "No se pudo eliminar: no existe o no te pertenece.";
+            }
+        }
+        $stmt->close();
+    }
+}
+
+// Mensaje por querystring (tras redirect)
+if (isset($_GET['msg']) && $_GET['msg'] === 'eliminado') {
+    $mensaje = "Local eliminado correctamente.";
+}
 
 // Obtener todos los locales del dueño
-$locales_query = $conn->query("SELECT id, nombre FROM locales WHERE dueno_id = $dueno_idd AND estado = 'activo'");
+$locales_query = $conn->query("SELECT id, nombre FROM locales WHERE dueno_id = $dueno_id AND estado = 'activo'");
 $locales = $locales_query->fetch_all(MYSQLI_ASSOC);
 
 // Obtener nombre dueño
-$dueno_query = $conn->query("SELECT id, nombre FROM usuarios WHERE id = $dueno_idd AND rol = 'dueno'");
+$dueno_query = $conn->query("SELECT id, nombre FROM usuarios WHERE id = $dueno_id AND rol = 'dueno'");
 $dueno = $dueno_query->fetch_all(MYSQLI_ASSOC);
 
 if (count($locales) == 0) {
@@ -29,9 +64,8 @@ if (isset($_POST['crear_local'])) {
     $nombre = trim($_POST['nombre']);
     $descripcion = trim($_POST['descripcion']);
     $codigo_local = trim($_POST['codigo_local']);
-    $dueno_id = $_POST['dueno_id'];
-
-    // Validaciones
+    $dueno_id = (int)$_SESSION['user_id'];
+        // Validaciones
     if (!is_numeric($codigo_local)) {
         $error = "El código debe ser un número";
     } elseif (empty($dueno_id)) {
@@ -39,10 +73,10 @@ if (isset($_POST['crear_local'])) {
     } else {
         // INSERT con dueño_id válido
         $sql = "INSERT INTO locales (nombre, descripcion, codigo_local, dueno_id, estado) 
-                VALUES ('$nombre', '$descripcion', $codigo_local, $dueno_id, 'inactivo')";
+                VALUES ('$nombre', '$descripcion', $codigo_local, $dueno_id, 'activo')";
 
         if ($conn->query($sql) === TRUE) {
-            $success = "Local '$nombre' creado, pendiente de aprobación del administrador";
+            $success = "Local '$nombre' creado y asignado al dueño exitosamente";
             $_POST['nombre'] = $_POST['descripcion'] = $_POST['codigo_local'] = '';
         } else {
             $error = "Error: " . $conn->error;
@@ -51,12 +85,13 @@ if (isset($_POST['crear_local'])) {
 }
 
 
+
 // Obtener locales con información del dueño
 $locales = $conn->query("
     SELECT l.*, u.nombre as nombre_dueno 
     FROM locales l 
     LEFT JOIN usuarios u ON l.dueno_id = u.id
-    WHERE u.id = $dueno_idd
+    WHERE u.id = $dueno_id
 ");
 ?>
 
