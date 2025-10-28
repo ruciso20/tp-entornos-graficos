@@ -1,7 +1,12 @@
 <?php
 session_start();
 include("config/db.php");
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 $error = "";
 $success = "";
 
@@ -47,51 +52,62 @@ if (isset($_POST['register'])) {
             $stmt->bind_param("sssssss", $nombre, $email, $hashed_password, $tipo, $estado, $categoria_cliente, $token);
 
             if ($stmt->execute()) {
-                // Enviar email con mail() nativo
-                $enlace_verificacion = "http://localhost/tpentornosgraficos/verificar_email.php?token=" . $token;
+                $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                $host   = $_SERVER['HTTP_HOST'];
+                // carpeta del proyecto a partir de la ruta del script actual
+                $projectRoot = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/\\');
+                // URL final a verificar_email.php en la raíz del proyecto
+                $enlace_verificacion = $scheme . '://' . $host . rtrim($projectRoot, '/\\') . '/verificar_email.php?token=' . $token;
+
                 $tipo_usuario = ($tipo == 'dueno') ? 'Dueño de Local' : 'Cliente';
 
-                $asunto = "Verifica tu cuenta - Shopping Rosario";
+                $mail = new PHPMailer(true);
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'joaquingarciaforestello@gmail.com';           // <-- tu Gmail
+                    $mail->Password = 'fcyt bvju nlte smek';     // <-- contraseña de aplicación (Gmail con 2FA)
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
 
-                $mensaje = "
-                ¡Hola $nombre!
+                    $mail->setFrom('no-reply@shoppingrosario.com', 'Shopping Rosario');
+                    $mail->addAddress($email, $nombre);
 
-                Gracias por registrarte en Shopping Rosario como $tipo_usuario.
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Verifica tu cuenta - Shopping Rosario';
 
-                Para activar tu cuenta, haz clic en el siguiente enlace:
-                $enlace_verificacion
+                    $mail->Body = "
+                        <p>¡Hola $nombre!</p>
+                        <p>Gracias por registrarte en <strong>Shopping Rosario</strong> como <strong>$tipo_usuario</strong>.</p>
+                        <p>Para activar tu cuenta, hacé click aquí:</p>
+                        <p><a href='$enlace_verificacion'>$enlace_verificacion</a></p>
+                        <p>Si no te registraste, ignorá este email.</p>
+                    ";
+                    $mail->AltBody = "Hola $nombre!\n\nVerificá tu cuenta con este enlace:\n$enlace_verificacion";
 
-                O copia y pega la URL en tu navegador.
-
-                Si no te registraste en Shopping Rosario, por favor ignora este email.
-
-                --
-                Shopping Rosario
-                ";
-
-                $headers = "From: no-reply@shoppingrosario.com\r\n";
-                $headers .= "Reply-To: no-reply@shoppingrosario.com\r\n";
-                $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-                if (mail($email, $asunto, $mensaje, $headers)) {
-                    if ($tipo == 'dueno') {
-                        $success = "✅ Registro exitoso. Te hemos enviado un email de verificación a <strong>$email</strong>. Una vez verificado, tu cuenta estará pendiente de aprobación del administrador.";
+                    if ($mail->send()) {
+                        if ($tipo == 'dueno') {
+                            $success = "✅ Registro exitoso. Te enviamos un email de verificación a <strong>$email</strong>. Como Dueño de Local, tu cuenta quedará pendiente de aprobación del administrador.";
+                        } else {
+                            $success = "✅ Registro exitoso. Te enviamos un email de verificación a <strong>$email</strong>. Revisá tu bandeja de entrada.";
+                        }
                     } else {
-                        $success = "✅ Registro exitoso. Te hemos enviado un email de verificación a <strong>$email</strong>. Una vez verificado, podrás acceder a todas las promociones.";
+                        // Fallback: si por alguna razón no se envía el correo, mostramos el enlace
+                        $success = "✅ Registro exitoso. No pudimos enviar el email automáticamente.<br>
+                                    <strong>Verificá tu cuenta desde este enlace:</strong><br>
+                                    <div class='mt-3 p-3 bg-light border rounded'>
+                                        <a href='$enlace_verificacion' class='btn btn-success'>Verificar cuenta</a>
+                                    </div>";
                     }
-                } else {
-                    // Fallback: mostrar enlace directamente
-                    $success = "✅ Registro exitoso. No pudimos enviar el email automáticamente.";
-                    $success .= "<br><br><strong>Para activar tu cuenta, haz clic en este enlace:</strong><br>
+                } catch (Exception $e) {
+                    error_log("Error PHPMailer (register): " . $mail->ErrorInfo);
+                    $success = "✅ Registro exitoso. No pudimos enviar el email automáticamente.<br>
+                                <strong>Verificá tu cuenta desde este enlace:</strong><br>
                                 <div class='mt-3 p-3 bg-light border rounded'>
-                                    <a href='$enlace_verificacion' class='btn btn-success btn-lg w-100' target='_blank'>
-                                        ✅ Verificar Mi Cuenta
-                                    </a>
-                                    <div class='mt-2 text-muted small'>
-                                        O copia esta URL: <code>$enlace_verificacion</code>
-                                    </div>
+                                    <a href='$enlace_verificacion' class='btn btn-success'>Verificar cuenta</a>
                                 </div>";
-                }
+}
             } else {
                 $error = "Error en el registro: " . $conn->error;
             }
