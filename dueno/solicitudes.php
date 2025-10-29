@@ -11,15 +11,11 @@ $dueno_id = $_SESSION['user_id'];
 $mensaje = "";
 
 // Obtener todos los locales del dueño
-$locales_query = $conn->prepare("SELECT id, nombre FROM locales WHERE dueno_id = ? AND estado = 'activo'");
+$locales_query = $conn->prepare("SELECT id, nombre FROM locales WHERE dueno_id = ? AND estado = 'aprobado'");
 $locales_query->bind_param("i", $dueno_id);
 $locales_query->execute();
 $locales_result = $locales_query->get_result();
 $locales = $locales_result->fetch_all(MYSQLI_ASSOC);
-
-if (count($locales) == 0) {
-  die("No tienes locales asignados o activos.");
-}
 
 // Determinar el local actual (por defecto el primero, o el seleccionado)
 $local_actual_id = $locales[0]['id'];
@@ -53,14 +49,20 @@ foreach ($locales as $local) {
 if (isset($_POST['accion_solicitud'])) {
   $solicitud_id = $_POST['solicitud_id'];
   $accion = $_POST['accion'];
-  $nuevo_estado = ($accion == 'aceptar') ? 'aceptada' : 'rechazada';
+
+  if ($accion == 'aceptar') {
+    $nuevo_estado = 'usada';
+    $mensaje = "✅ Solicitud aceptada correctamente";
+  } else {
+    $nuevo_estado = 'rechazada';
+    $mensaje = "❌ Solicitud rechazada";
+  }
 
   // Verificar que la solicitud pertenece a una promoción del dueño
   $verificar = $conn->prepare("
         SELECT up.id 
         FROM uso_promociones up 
-        JOIN promociones p ON up.promocion_id = p.id 
-        WHERE up.id = ? AND p.local_id IN (
+        WHERE up.id = ? AND up.local_id IN (
             SELECT id FROM locales WHERE dueno_id = ?
         )
     ");
@@ -81,28 +83,29 @@ if (isset($_POST['accion_solicitud'])) {
   }
 }
 
-// Obtener solicitudes pendientes del local actual
+// Obtener solicitudes pendientes del local actual - CORREGIDO: estado = 'pendiente'
 $solicitudes_query = $conn->prepare("
     SELECT up.id, up.fecha_uso, up.estado, 
            p.titulo as promocion_titulo,
+           p.descripcion as promocion_descripcion,
            u.nombre as cliente_nombre,
+           u.email as cliente_email,
            u.categoria_cliente as cliente_categoria
     FROM uso_promociones up
     JOIN promociones p ON up.promocion_id = p.id
     JOIN usuarios u ON up.cliente_id = u.id
-    WHERE p.local_id = ? AND up.estado = 'enviada'
+    WHERE up.local_id = ? AND up.estado = 'pendiente'
     ORDER BY up.fecha_uso DESC
 ");
 $solicitudes_query->bind_param("i", $local_actual_id);
 $solicitudes_query->execute();
 $solicitudes = $solicitudes_query->get_result();
 
-// Contar solicitudes por local para el badge
+// Contar solicitudes por local para el badge - CORREGIDO: estado = 'pendiente'
 $contador_query = $conn->prepare("
     SELECT l.id, l.nombre, COUNT(up.id) as pendientes
     FROM locales l
-    LEFT JOIN promociones p ON l.id = p.local_id
-    LEFT JOIN uso_promociones up ON p.id = up.promocion_id AND up.estado = 'enviada'
+    LEFT JOIN uso_promociones up ON l.id = up.local_id AND up.estado = 'pendiente'
     WHERE l.dueno_id = ?
     GROUP BY l.id, l.nombre
     ORDER BY l.nombre
@@ -120,6 +123,17 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solicitudes de Descuento - Dueño</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .solicitud-card {
+      border-left: 4px solid #ffc107;
+      transition: all 0.3s ease;
+    }
+
+    .solicitud-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 
 <body>
@@ -146,7 +160,7 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
                     <?php echo $local_contador['id'] == $local_actual_id ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($local_contador['nombre']); ?>
                     <?php if ($local_contador['pendientes'] > 0): ?>
-                      (<?php echo $local_contador['pendientes']; ?> pendiente<?php echo $local_contador['pendientes'] > 1 ? 's' : ''; ?>)
+                      <span class="badge bg-warning ms-1"><?php echo $local_contador['pendientes']; ?> pendiente<?php echo $local_contador['pendientes'] > 1 ? 's' : ''; ?></span>
                     <?php endif; ?>
                   </option>
                 <?php endforeach; ?>
@@ -166,67 +180,68 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5>Solicitudes Pendientes</h5>
+        <span class="badge bg-warning">
+          <?php echo $solicitudes->num_rows; ?> solicitud(es)
+        </span>
       </div>
       <div class="card-body">
         <?php if ($solicitudes->num_rows > 0): ?>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Categoría</th>
-                  <th>Promoción</th>
-                  <th>Fecha Solicitud</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php while ($solicitud = $solicitudes->fetch_assoc()): ?>
-                  <tr>
-                    <td><strong><?php echo htmlspecialchars($solicitud['cliente_nombre']); ?></strong></td>
-                    <td>
+          <div class="row">
+            <?php while ($solicitud = $solicitudes->fetch_assoc()): ?>
+              <div class="col-md-6 mb-3">
+                <div class="card solicitud-card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title"><?php echo htmlspecialchars($solicitud['promocion_titulo']); ?></h5>
+                    <p class="card-text text-muted"><?php echo htmlspecialchars($solicitud['promocion_descripcion']); ?></p>
+
+                    <div class="mb-2">
+                      <strong>👤 Cliente:</strong> <?php echo htmlspecialchars($solicitud['cliente_nombre']); ?>
+                    </div>
+                    <div class="mb-2">
+                      <strong>📧 Email:</strong> <?php echo htmlspecialchars($solicitud['cliente_email']); ?>
+                    </div>
+                    <div class="mb-2">
+                      <strong>🎯 Categoría:</strong>
                       <span class="badge bg-<?php
-                                            switch ($solicitud['cliente_categoria']) {
-                                              case 'premium':
-                                                echo 'success';
-                                                break;
-                                              case 'medium':
-                                                echo 'warning';
-                                                break;
-                                              default:
-                                                echo 'secondary';
-                                            }
+                                            echo $solicitud['cliente_categoria'] == 'premium' ? 'danger' : ($solicitud['cliente_categoria'] == 'medium' ? 'warning' : 'info');
                                             ?>">
                         <?php echo ucfirst($solicitud['cliente_categoria']); ?>
                       </span>
-                    </td>
-                    <td><?php echo htmlspecialchars($solicitud['promocion_titulo']); ?></td>
-                    <td><?php echo date('d/m/Y H:i', strtotime($solicitud['fecha_uso'])); ?></td>
-                    <td>
-                      <span class="badge bg-warning"><?php echo ucfirst($solicitud['estado']); ?></span>
-                    </td>
-                    <td>
-                      <form method="POST" class="d-inline">
-                        <input type="hidden" name="solicitud_id" value="<?php echo $solicitud['id']; ?>">
-                        <button type="submit" name="accion_solicitud" value="aceptar" class="btn btn-sm btn-success">✅ Aceptar</button>
-                        <button type="submit" name="accion_solicitud" value="rechazar" class="btn btn-sm btn-danger">❌ Rechazar</button>
-                      </form>
-                    </td>
-                  </tr>
-                <?php endwhile; ?>
-              </tbody>
-            </table>
+                    </div>
+                    <div class="mb-3">
+                      <strong>📅 Solicitado:</strong>
+                      <?php echo date('d/m/Y H:i', strtotime($solicitud['fecha_uso'])); ?>
+                    </div>
+
+                    <form method="POST" class="text-end">
+                      <input type="hidden" name="solicitud_id" value="<?php echo $solicitud['id']; ?>">
+                      <button type="submit" name="accion_solicitud" value="aceptar"
+                        class="btn btn-success btn-sm"
+                        onclick="return confirm('¿Aceptar esta solicitud?')">
+                        ✅ Aceptar
+                      </button>
+                      <button type="submit" name="accion_solicitud" value="rechazar"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('¿Rechazar esta solicitud?')">
+                        ❌ Rechazar
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <?php endwhile; ?>
           </div>
         <?php else: ?>
-          <div class="alert alert-info">
-            No hay solicitudes pendientes para <strong><?php echo htmlspecialchars($local_actual['nombre']); ?></strong> en este momento.
+          <div class="alert alert-info text-center py-4">
+            <h5>🎉 No hay solicitudes pendientes</h5>
+            <p class="text-muted mb-0">Cuando los clientes usen promociones de <strong><?php echo htmlspecialchars($local_actual['nombre']); ?></strong>, aparecerán aquí.</p>
           </div>
         <?php endif; ?>
       </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

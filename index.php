@@ -404,20 +404,6 @@ try {
                 </div>
             </div>
 
-            <!-- Información sobre categorías -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="info-box">
-                        <h6><i class="fas fa-info-circle me-2"></i>¿Cómo funcionan las categorías?</h6>
-                        <p class="mb-0 small">
-                            <span class="badge bg-info me-2">Inicial</span> Disponible para todos los clientes registrados
-                            <span class="badge bg-warning text-dark mx-2">Medium</span> Para clientes con compras frecuentes
-                            <span class="badge bg-danger mx-2">Premium</span> Exclusivo para nuestros mejores clientes
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <div class="row">
                 <?php if (isset($promociones_destacadas) && $promociones_destacadas->num_rows > 0): ?>
                     <?php while ($promo = $promociones_destacadas->fetch_assoc()):

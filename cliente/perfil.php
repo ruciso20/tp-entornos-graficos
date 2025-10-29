@@ -55,7 +55,7 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Mi Perfil</a>
-            <a href="../dashboard.php" class="btn btn-outline-light">← Volver al Dashboard</a>
+            <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
         </div>
     </nav>
 
@@ -63,8 +63,8 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow">
-                    <div class="card-header bg-success text-white">
-                        <h4 class="mb-0"><i class="fas fa-user-circle"></i> Mi Perfil</h4>
+                    <div class="card-header text-dark">
+                        <h4 class="mb-0">Mi Perfil</h4>
                     </div>
                     <div class="card-body">
                         <?php if ($mensaje): ?>
@@ -111,7 +111,7 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
                                 </div>
                             </div>
                             <button type="submit" name="actualizar_perfil" class="btn btn-success w-100">
-                                <i class="fas fa-save"></i> Guardar Cambios
+                                Guardar Cambios
                             </button>
                         </form>
                     </div>

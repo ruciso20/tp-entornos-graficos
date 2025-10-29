@@ -59,22 +59,47 @@ $promociones = $promociones_query->get_result();
         .categoria-badge {
             font-size: 0.8em;
         }
+
+        /* Estilos para la impresión */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .comprobante-content {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-dark bg-dark no-print">
         <div class="container">
             <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Promociones</a>
             <div>
-                <a href="../dashboard.php" class="btn btn-outline-light">← Volver</a>
+                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <h2>🤑 Promociones Disponibles</h2>
+    <div class="container mt-4 no-print">
+        <h2>Promociones Disponibles</h2>
         <p class="text-muted">Estas son las promociones a las que tienes acceso según tu categoría <strong><?php echo ucfirst($categoria_cliente); ?></strong></p>
+
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <?php echo $_SESSION['success']; ?>
+                <?php unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger">
+                <?php echo $_SESSION['error']; ?>
+                <?php unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
 
         <div class="row">
             <?php if ($promociones->num_rows > 0): ?>
@@ -146,6 +171,101 @@ $promociones = $promociones_query->get_result();
                 // Redirigir a la página de uso de promoción
                 window.location.href = `usar_promocion.php?promo_id=${promoId}`;
             }
+        }
+
+        function imprimirComprobante(usoId, promoId, localNombre, promoTitulo, promoDescripcion, fechaFin, diasValidos, categoria) {
+            // Crear ventana de impresión
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+
+            // Usar concatenación de strings en lugar de template literal para evitar problemas de terminación
+            var comprobanteHTML = '';
+            comprobanteHTML += '<!DOCTYPE html>';
+            comprobanteHTML += '<html>';
+            comprobanteHTML += '<head>';
+            comprobanteHTML += '    <title>Comprobante de Promoción - Stella Shopping</title>';
+            comprobanteHTML += '    <style>';
+            comprobanteHTML += '        body { font-family: Arial, sans-serif; margin: 20px; background: white; }';
+            comprobanteHTML += '        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; border-radius: 10px; margin-bottom: 20px; }';
+            comprobanteHTML += '        .logo { font-size: 28px; font-weight: bold; margin-bottom: 10px; }';
+            comprobanteHTML += '        .comprobante-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3498db; }';
+            comprobanteHTML += '        .promo-details { border: 2px solid #3498db; padding: 20px; border-radius: 8px; margin-bottom: 20px; }';
+            comprobanteHTML += '        .qr-section { text-align: center; margin: 25px 0; padding: 20px; border: 2px dashed #bdc3c7; border-radius: 10px; }';
+            comprobanteHTML += '        .footer { text-align: center; margin-top: 30px; color: #7f8c8d; font-size: 12px; border-top: 1px solid #ecf0f1; padding-top: 15px; }';
+            comprobanteHTML += '        .badge { background: #e74c3c; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; font-weight: bold; }';
+            comprobanteHTML += '        .instructions { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }';
+            comprobanteHTML += '        table { width: 100%; border-collapse: collapse; }';
+            comprobanteHTML += '        table td { padding: 8px; border-bottom: 1px solid #ecf0f1; }';
+            comprobanteHTML += "        .code-display { font-family: 'Courier New', monospace; font-size: 18px; background: #34495e; color: white; padding: 15px; border-radius: 5px; letter-spacing: 2px; margin: 10px 0; }";
+            comprobanteHTML += '        @media print { body { margin: 0; } .header { margin: 0 0 20px 0; border-radius: 0; } }';
+            comprobanteHTML += '    </style>';
+            comprobanteHTML += '</head>';
+            comprobanteHTML += '<body>';
+            comprobanteHTML += '    <div class="header">';
+            comprobanteHTML += '        <div class="logo">🛍️ STELLA SHOPPING</div>';
+            comprobanteHTML += '        <h2>COMPROBANTE DE PROMOCIÓN</h2>';
+            comprobanteHTML += '    </div>';
+            comprobanteHTML += '    <div class="comprobante-info">';
+            comprobanteHTML += '        <table>';
+            comprobanteHTML += '            <tr>';
+            comprobanteHTML += '                <td width="50%"><strong>N° Comprobante:</strong> ' + usoId + '</td>';
+            comprobanteHTML += '                <td width="50%"><strong>Fecha:</strong> ' + new Date().toLocaleString('es-AR') + '</td>';
+            comprobanteHTML += '            </tr>';
+            comprobanteHTML += '            <tr>';
+            comprobanteHTML += '                <td><strong>Código:</strong> PROMO-' + promoId + '-' + usoId + '</td>';
+            comprobanteHTML += '                <td><strong>Estado:</strong> <span class="badge">PENDIENTE</span></td>';
+            comprobanteHTML += '            </tr>';
+            comprobanteHTML += '        </table>';
+            comprobanteHTML += '    </div>';
+            comprobanteHTML += '    <div class="promo-details">';
+            comprobanteHTML += '        <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 15px; margin-bottom: 20px;">' + promoTitulo + '</h3>';
+            comprobanteHTML += '        <table>';
+            comprobanteHTML += '            <tr>';
+            comprobanteHTML += '                <td width="30%"><strong>🏪 Local:</strong></td>';
+            comprobanteHTML += '                <td width="70%"><strong>' + localNombre + '</strong></td>';
+            comprobanteHTML += '            </tr>';
+            comprobanteHTML += '            <tr>';
+            comprobanteHTML += '                <td><strong>📅 Válida hasta:</strong></td>';
+            comprobanteHTML += '                <td>' + fechaFin + '</td>';
+            comprobanteHTML += '            </tr>';
+            comprobanteHTML += '            <tr>';
+            comprobanteHTML += '                <td><strong>📆 Días válidos:</strong></td>';
+            comprobanteHTML += '                <td>' + diasValidos + '</td>';
+            comprobanteHTML += '            </tr>';
+            comprobanteHTML += '            <tr>';
+            comprobanteHTML += '                <td><strong>🎯 Categoría:</strong></td>';
+            comprobanteHTML += '                <td>' + (categoria.charAt(0).toUpperCase() + categoria.slice(1)) + '</td>';
+            comprobanteHTML += '            </tr>';
+            comprobanteHTML += '        </table>';
+            comprobanteHTML += '        <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-top: 15px;">';
+            comprobanteHTML += '            <strong>📝 Descripción:</strong><br>' + promoDescripcion;
+            comprobanteHTML += '        </div>';
+            comprobanteHTML += '    </div>';
+            comprobanteHTML += '    <div class="qr-section">';
+            comprobanteHTML += '        <div style="margin-bottom: 15px; font-size: 16px; font-weight: bold; color: #2c3e50;">CÓDIGO DE USO</div>';
+            comprobanteHTML += '        <div class="code-display">PROMO-' + promoId + '-' + usoId + '</div>';
+            comprobanteHTML += '        <div style="margin-top: 10px; font-size: 14px; color: #7f8c8d;">Presenta este código en el local para validar tu promoción</div>';
+            comprobanteHTML += '    </div>';
+            comprobanteHTML += '    <div class="instructions">';
+            comprobanteHTML += '        <strong>💡 INSTRUCCIONES:</strong><br>';
+            comprobanteHTML += '        1. Presenta este comprobante en <strong>' + localNombre + '</strong><br>';
+            comprobanteHTML += '        2. Muestra el código de uso al personal del local<br>';
+            comprobanteHTML += '        3. El dueño validará y aceptará tu promoción<br>';
+            comprobanteHTML += '        4. ¡Disfruta de tu descuento!';
+            comprobanteHTML += '    </div>';
+            comprobanteHTML += '    <div class="footer">';
+            comprobanteHTML += '        <strong>Stella Shopping - Sistema de Promociones</strong><br>';
+            comprobanteHTML += '        Av. San Martín 1234, Rosario • Tel: (341) 123-4567<br>';
+            comprobanteHTML += '        Comprobante generado automáticamente • ' + new Date().toLocaleString('es-AR');
+            comprobanteHTML += '    </div>';
+            comprobanteHTML += '    <script>';
+            comprobanteHTML += '        window.onload = function() { window.print(); setTimeout(function(){ window.close(); }, 1000); };';
+            comprobanteHTML += '    </' + 'script>'; // avoid closing tag confusion in concatenation
+            comprobanteHTML += '</body>';
+            comprobanteHTML += '</html>';
+
+            printWindow.document.open();
+            printWindow.document.write(comprobanteHTML);
+            printWindow.document.close();
         }
     </script>
 

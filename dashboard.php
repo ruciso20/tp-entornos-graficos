@@ -109,7 +109,7 @@ if ($rol == 'cliente') {
     $total_clientes = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'cliente' AND estado = 'aprobado'")->fetch_assoc()['total'];
 
     // obtener datos para las listas
-    $locales = $conn->query("SELECT l.*, u.nombre as dueno_nombre FROM locales l LEFT JOIN usuarios u ON l.dueno_id = u.id WHERE l.estado = 'activo' ORDER BY l.id DESC LIMIT 5");
+    $locales = $conn->query("SELECT l.*, u.nombre as dueno_nombre FROM locales l LEFT JOIN usuarios u ON l.dueno_id = u.id WHERE l.estado = 'aprobado' ORDER BY l.id DESC LIMIT 5");
     $usuarios_pendientes = $conn->query("SELECT * FROM usuarios WHERE estado = 'pendiente' AND rol = 'dueno' ORDER BY fecha_registro DESC LIMIT 5");
     $promociones_recientes = $conn->query("SELECT p.*, l.nombre as local_nombre FROM promociones p LEFT JOIN locales l ON p.local_id = l.id ORDER BY p.id DESC LIMIT 5");
     $novedades_recientes = $conn->query("SELECT * FROM novedades ORDER BY fecha_inicio DESC LIMIT 5");
@@ -293,7 +293,7 @@ if ($rol == 'cliente') {
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card card-stat text-white bg-success">
+                    <div class="card card-stat text-white bg-info">
                         <div class="card-body text-center">
                             <h3><?php echo $novedades_disponibles; ?></h3>
                             <p>Novedades Activas</p>
@@ -301,7 +301,7 @@ if ($rol == 'cliente') {
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card card-stat text-white bg-info">
+                    <div class="card card-stat text-white bg-success">
                         <div class="card-body text-center">
                             <h3><?php echo $categoria; ?></h3>
                             <p>Tu Categoría</p>
@@ -350,15 +350,16 @@ if ($rol == 'cliente') {
                 </div>
             </div>
 
-        <?php elseif ($rol == 'dueno' && isset($local_id)): ?>
+        <?php elseif ($rol == 'dueno'): ?>
 
 
             <!-- estadisticas para dueño -->
+
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card card-stat text-white bg-primary">
                         <div class="card-body text-center">
-                            <h3><?php echo $locales_activas; ?></h3>
+                            <h3><?php echo $locales_aprobados; ?></h3>
                             <p>Locales Activos</p>
                         </div>
                     </div>
@@ -425,39 +426,53 @@ if ($rol == 'cliente') {
                         <?php elseif ($rol == 'cliente'): ?>
 
                             <!-- panel cliente -->
-
                             <div class="alert alert-success">
-                                <h5><i class="fas fa-user"></i> Panel de Cliente</h5>
-                                <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios como cliente <strong><?php echo $categoria; ?></strong>.</p>
+                                <h5>Panel de Cliente</h5>
+                                <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios</p>
 
-                                <div class="row mt-4">
-                                    <!-- Fila 1: Funcionalidades principales -->
-                                    <div class="col-md-4 mb-3">
+                                <!-- Fila 1 con las funcionalidades principales -->
+                                <div class="row mt-4 justify-content-center">
+                                    <div class="col-md-5 mb-3">
                                         <div class="card card-hover h-100">
                                             <div class="card-body text-center">
-                                                <h3><i class="fas fa-tags"></i> Promociones</h3>
+                                                <h3>Promociones</h3>
                                                 <p>Descubre y utiliza promociones exclusivas según tu categoría</p>
                                                 <a href="cliente/promociones.php" class="btn btn-primary w-100">
-                                                    Ver Promociones (<?php echo $promociones_disponibles; ?>)
+                                                    Ver Promociones
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-5 mb-3">
                                         <div class="card card-hover h-100">
                                             <div class="card-body text-center">
-                                                <h3><i class="fas fa-newspaper"></i> Novedades</h3>
+                                                <h3>Novedades</h3>
                                                 <p>Mantente informado de las últimas novedades del shopping</p>
                                                 <a href="cliente/novedades.php" class="btn btn-info w-100">
-                                                    Ver Novedades (<?php echo $novedades_disponibles; ?>)
+                                                    Ver Novedades
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                </div>
+
+                                <!-- Fila 2 con funcionalidades secundarias -->
+                                <div class="row mt-4 justify-content-center">
+                                    <div class="col-md-5 mb-3">
                                         <div class="card card-hover h-100">
                                             <div class="card-body text-center">
-                                                <h3><i class="fas fa-user-circle"></i> Mi Perfil</h3>
+                                                <h3>Historial</h3>
+                                                <p>Revisa todas las promociones que has utilizado</p>
+                                                <a href="cliente/historial.php" class="btn btn-warning w-100">
+                                                    Ver Historial
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 mb-3">
+                                        <div class="card card-hover h-100">
+                                            <div class="card-body text-center">
+                                                <h3>Mi Perfil</h3>
                                                 <p>Gestiona tu información personal y preferencias</p>
                                                 <a href="cliente/perfil.php" class="btn btn-success w-100">
                                                     Editar Perfil
@@ -467,148 +482,115 @@ if ($rol == 'cliente') {
                                     </div>
                                 </div>
 
-                                <!-- Fila 2: Funcionalidades secundarias -->
-                                <div class="row mt-3">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card card-hover h-100">
-                                            <div class="card-body text-center">
-                                                <h3><i class="fas fa-history"></i> Historial</h3>
-                                                <p>Revisa todas las promociones que has utilizado</p>
-                                                <a href="cliente/historial.php" class="btn btn-warning w-100">
-                                                    Ver Historial (<?php echo $promociones_usadas; ?>)
-                                                </a>
+                                <!-- Progreso de categoría de un cliente -->
+
+
+                                <div class="row justify-content-center">
+                                    <div class="col-md-10"> <!-- Mismo ancho que las cards de arriba -->
+                                        <div class="card mt-4">
+                                            <div class="card-header text-center">
+                                                <h6 class="mb-0">Tu Progreso de Categoría</h6>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card card-hover h-100">
-                                            <div class="card-body text-center">
-                                                <h3><i class="fas fa-chart-line"></i> Mi Progreso</h3>
-                                                <p>Consulta tu avance y beneficios por categoría</p>
-                                                <a href="#progreso" class="btn btn-secondary w-100">
-                                                    Ver Progreso
-                                                </a>
+                                            <div class="card-body">
+                                                <div class="row justify-content-center">
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card <?php echo $categoria == 'Inicial' ? 'bg-primary text-white' : 'bg-light'; ?> h-100">
+                                                            <div class="card-body text-center">
+                                                                <h5>Inicial</h5>
+                                                                <p class="small">Promociones básicas</p>
+                                                                <?php echo $categoria == 'Inicial' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card <?php echo $categoria == 'Medium' ? 'bg-warning text-dark' : 'bg-light'; ?> h-100">
+                                                            <div class="card-body text-center">
+                                                                <h5>Medium</h5>
+                                                                <p class="small">+ Promociones exclusivas</p>
+                                                                <?php echo $categoria == 'Medium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card <?php echo $categoria == 'Premium' ? 'bg-danger text-white' : 'bg-light'; ?> h-100">
+                                                            <div class="card-body text-center">
+                                                                <h5>Premium</h5>
+                                                                <p class="small">Todas las promociones + beneficios VIP</p>
+                                                                <?php echo $categoria == 'Premium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center mt-3">
+                                                    <p class="text-muted mb-0">
+                                                        <small>💡 <strong>Consejo:</strong> Usa más promociones para subir de categoría y desbloquear beneficios exclusivos.</small>
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- progreso de categoria de un cliente -->
+                                <!-- panel dueño  -->
 
-                                <div class="card mt-4">
-                                    <div class="card-header">
-                                        <h6><i class="fas fa-chart-line"></i> Tu Progreso de Categoría</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row text-center">
-                                            <div class="col-md-4">
-                                                <div class="card <?php echo $categoria == 'Inicial' ? 'bg-primary text-white' : 'bg-light'; ?>">
-                                                    <div class="card-body">
-                                                        <h5>Inicial</h5>
-                                                        <p>Promociones básicas</p>
-                                                        <?php echo $categoria == 'Inicial' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="card <?php echo $categoria == 'Medium' ? 'bg-warning text-dark' : 'bg-light'; ?>">
-                                                    <div class="card-body">
-                                                        <h5>Medium</h5>
-                                                        <p>+ Promociones exclusivas</p>
-                                                        <?php echo $categoria == 'Medium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="card <?php echo $categoria == 'Premium' ? 'bg-danger text-white' : 'bg-light'; ?>">
-                                                    <div class="card-body">
-                                                        <h5>Premium</h5>
-                                                        <p>Todas las promociones + beneficios VIP</p>
-                                                        <?php echo $categoria == 'Premium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
+                            <?php elseif ($rol == 'dueno'): ?>
+                                <div class="alert alert-warning">
+                                    <h5>Panel de Dueño de Locales</h5>
+                                    <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona tus locales y promociones.</p>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-3 mb-3">
+                                            <a href="dueno/locales.php" class="btn btn-primary w-100">
+                                                Gestionar Locales
+                                            </a>
                                         </div>
-                                        <div class="mt-3">
-                                            <p class="text-muted">
-                                                <small>💡 <strong>Consejo:</strong> Usa más promociones para subir de categoría y desbloquear beneficios exclusivos.</small>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- panel dueño  -->
-
-                        <?php elseif ($rol == 'dueno'): ?>
-                            <!-- PANEL DUEÑO - NAVEGACIÓN SEPARADA -->
-                            <div class="alert alert-warning">
-                                <h5>Panel de Dueño de Locales</h5>
-                                <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona tus locales y promociones.</p>
-
-                                <div class="row mt-3">
-                                    <!-- Gestión de Locales - SIEMPRE DISPONIBLE -->
-                                    <div class="col-md-3 mb-3">
-                                        <a href="dueno/locales.php" class="btn btn-primary w-100">
-                                            Gestionar Locales
-                                            <?php if ($total_locales > 0): ?>
-                                                <span class="badge bg-light text-dark"><?php echo $total_locales; ?></span>
+                                        <div class="col-md-3 mb-3">
+                                            <?php if ($locales_aprobados > 0): ?>
+                                                <a href="dueno/promociones.php" class="btn btn-success w-100">
+                                                    Gestionar Promociones
+                                                </a>
+                                            <?php else: ?>
+                                                <button class="btn btn-secondary w-100" disabled>
+                                                    Gestionar Promociones
+                                                </button>
                                             <?php endif; ?>
-                                        </a>
-                                    </div>
+                                        </div>
 
-                                    <!-- Promociones - SOLO SI TIENE LOCALES APROBADOS -->
-                                    <div class="col-md-3 mb-3">
-                                        <?php if ($locales_aprobados > 0): ?>
-                                            <a href="dueno/promociones.php" class="btn btn-info w-100">
-                                                Gestionar Promociones
-                                                <?php if ($promociones_activas > 0): ?>
-                                                    <span class="badge bg-light text-dark"><?php echo $promociones_activas; ?></span>
-                                                <?php endif; ?>
-                                            </a>
-                                        <?php else: ?>
-                                            <button class="btn btn-secondary w-100" disabled>
-                                                Gestionar Promociones
-                                            </button>
-                                        <?php endif; ?>
-                                    </div>
+                                        <div class="col-md-3 mb-3">
+                                            <?php if ($locales_aprobados > 0): ?>
+                                                <a href="dueno/solicitudes.php" class="btn btn-warning w-100">
+                                                    Gestionar Solicitudes
+                                                    <?php if ($solicitudes_pendientes > 0): ?>
+                                                        <span class="badge bg-danger"><?php echo $solicitudes_pendientes; ?></span>
+                                                    <?php endif; ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <button class="btn btn-secondary w-100" disabled>
+                                                    Gestionar Solicitudes
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
 
-                                    <!-- Solicitudes - SOLO SI TIENE LOCALES APROBADOS -->
-                                    <div class="col-md-3 mb-3">
-                                        <?php if ($locales_aprobados > 0): ?>
-                                            <a href="dueno/solicitudes.php" class="btn btn-warning w-100">
-                                                Gestionar Solicitudes
-                                                <?php if ($solicitudes_pendientes > 0): ?>
-                                                    <span class="badge bg-danger"><?php echo $solicitudes_pendientes; ?></span>
-                                                <?php endif; ?>
-                                            </a>
-                                        <?php else: ?>
-                                            <button class="btn btn-secondary w-100" disabled>
-                                                Gestionar Solicitudes
-                                            </button>
-                                        <?php endif; ?>
+                                        <div class="col-md-3 mb-3">
+                                            <?php if ($locales_aprobados > 0): ?>
+                                                <a href="dueno/reportes.php" class="btn btn-dark w-100">
+                                                    Reportes
+                                                </a>
+                                            <?php else: ?>
+                                                <button class="btn btn-secondary w-100" disabled>
+                                                    Reportes
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
-                                <!-- Reportes - SOLO SI TIENE LOCALES APROBADOS -->
-                                <div class="col-md-3 mb-3">
-                                    <?php if ($locales_aprobados > 0): ?>
-                                        <a href="dueno/reportes.php" class="btn btn-dark w-100">
-                                            Reportes
-                                        </a>
-                                    <?php else: ?>
-                                        <button class="btn btn-secondary w-100" disabled>
-                                            Reportes
-                                        </button>
-                                    <?php endif; ?>
-                                </div>
+                            <?php endif; ?>
                             </div>
                     </div>
-                <?php endif; ?>
                 </div>
             </div>
         </div>
-    </div>
-    </div>
     </div>
 
 

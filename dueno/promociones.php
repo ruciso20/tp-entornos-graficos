@@ -11,30 +11,52 @@ $dueno_id = $_SESSION['user_id'];
 $mensaje = "";
 
 // Obtener todos los locales del dueño
-$locales_query = $conn->query("SELECT id, nombre FROM locales WHERE dueno_id = $dueno_id AND estado = 'activo'");
+$locales_query = $conn->query("SELECT id, nombre, estado FROM locales WHERE dueno_id = $dueno_id");
 $locales = $locales_query->fetch_all(MYSQLI_ASSOC);
 
-if (count($locales) == 0) {
-  die("No tienes locales asignados o activos.");
-}
-
-if ($local['estado'] != 'aprobado') {
-  die("Tu local no está aprobado. No puedes crear promociones hasta que el administrador apruebe tu local.");
-}
-
-// Determinar el local actual (por defecto el primero, o el seleccionado)
-$local_actual_id = $locales[0]['id'];
-if (isset($_POST['local_id']) && is_numeric($_POST['local_id'])) {
-  $local_actual_id = $_POST['local_id'];
-}
-
-// Obtener datos del local actual
-$local_actual = null;
+// Verificar si hay locales aprobados - CORREGIDO: mover esta validación después de obtener los locales
+$tiene_locales_aprobados = false;
 foreach ($locales as $local) {
-  if ($local['id'] == $local_actual_id) {
+  if ($local['estado'] == 'aprobado') {
+    $tiene_locales_aprobados = true;
+    break;
+  }
+}
+
+if (!$tiene_locales_aprobados) {
+  die("No tienes locales aprobados. No puedes crear promociones hasta que el administrador apruebe tu local.");
+}
+
+// Determinar el local actual (por defecto el primero aprobado, o el seleccionado)
+$local_actual_id = null;
+$local_actual = null;
+
+// Buscar el primer local aprobado
+foreach ($locales as $local) {
+  if ($local['estado'] == 'aprobado') {
+    $local_actual_id = $local['id'];
     $local_actual = $local;
     break;
   }
+}
+
+// Si se selecciona un local por POST, validar que esté aprobado
+if (isset($_POST['local_id']) && is_numeric($_POST['local_id'])) {
+  $local_seleccionado_id = $_POST['local_id'];
+
+  // Verificar que el local seleccionado existe, pertenece al dueño y está aprobado
+  foreach ($locales as $local) {
+    if ($local['id'] == $local_seleccionado_id && $local['estado'] == 'aprobado') {
+      $local_actual_id = $local_seleccionado_id;
+      $local_actual = $local;
+      break;
+    }
+  }
+}
+
+// Si no se encontró ningún local aprobado válido
+if (!$local_actual_id) {
+  die("No tienes locales aprobados disponibles para crear promociones.");
 }
 
 // Crear nueva promoción
@@ -47,17 +69,17 @@ if (isset($_POST['crear_promocion'])) {
   $categoria_minima = $_POST['categoria_minima'];
   $local_id = $_POST['local_id'];
 
-  // Validar que el local pertenece al dueño
+  // Validar que el local pertenece al dueño y está aprobado
   $local_valido = false;
   foreach ($locales as $local) {
-    if ($local['id'] == $local_id) {
+    if ($local['id'] == $local_id && $local['estado'] == 'aprobado') {
       $local_valido = true;
       break;
     }
   }
 
   if (!$local_valido) {
-    $mensaje = "Error: Local no válido";
+    $mensaje = "Error: Local no válido o no aprobado";
   } else {
     $sql = "INSERT INTO promociones (local_id, titulo, descripcion, fecha_inicio, fecha_fin, dias_validos, categoria_minima, estado) 
                 VALUES ($local_id, '$titulo', '$descripcion', '$fecha_inicio', '$fecha_fin', '$dias_validos', '$categoria_minima', 'pendiente')";
@@ -87,7 +109,7 @@ if (isset($_GET['eliminar'])) {
         SELECT p.id 
         FROM promociones p 
         WHERE p.id = $promocion_id AND p.local_id IN (
-            SELECT id FROM locales WHERE dueno_id = $dueno_id
+            SELECT id FROM locales WHERE dueno_id = $dueno_id AND estado = 'aprobado'
         )
     ");
 
@@ -147,13 +169,18 @@ $promociones = $conn->query("
                 <label class="form-label">Local *</label>
                 <select class="form-select" name="local_id" required onchange="this.form.submit()">
                   <?php foreach ($locales as $local): ?>
-                    <option value="<?php echo $local['id']; ?>"
-                      <?php echo $local['id'] == $local_actual_id ? 'selected' : ''; ?>>
-                      <?php echo htmlspecialchars($local['nombre']); ?>
-                    </option>
+                    <?php if ($local['estado'] == 'aprobado'): ?>
+                      <option value="<?php echo $local['id']; ?>"
+                        <?php echo $local['id'] == $local_actual_id ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($local['nombre']); ?>
+                        <?php if ($local['estado'] != 'aprobado'): ?>
+                          (<?php echo ucfirst($local['estado']); ?>)
+                        <?php endif; ?>
+                      </option>
+                    <?php endif; ?>
                   <?php endforeach; ?>
                 </select>
-                <small class="text-muted">Selecciona el local para el que crearás la promoción</small>
+                <small class="text-muted">Solo se muestran locales aprobados</small>
               </div>
               <div class="mb-3">
                 <label class="form-label">Título *</label>

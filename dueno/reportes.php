@@ -10,15 +10,11 @@ include("../config/db.php");
 $dueno_id = $_SESSION['user_id'];
 
 // Obtener todos los locales del dueño
-$locales_query = $conn->prepare("SELECT id, nombre FROM locales WHERE dueno_id = ? AND estado = 'activo'");
+$locales_query = $conn->prepare("SELECT id, nombre FROM locales WHERE dueno_id = ? AND estado = 'aprobado'");
 $locales_query->bind_param("i", $dueno_id);
 $locales_query->execute();
 $locales_result = $locales_query->get_result();
 $locales = $locales_result->fetch_all(MYSQLI_ASSOC);
-
-if (count($locales) == 0) {
-  die("No tienes locales asignados o activos.");
-}
 
 // Determinar el local actual (por defecto el primero, o el seleccionado)
 $local_actual_id = $locales[0]['id'];

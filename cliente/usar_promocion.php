@@ -18,7 +18,7 @@ include("../config/db.php");
 
 // Verificar que la promoción existe y está disponible
 $promo_query = $conn->prepare("
-    SELECT p.*, l.nombre as local_nombre 
+    SELECT p.*, l.nombre as local_nombre, l.id as local_id
     FROM promociones p 
     JOIN locales l ON p.local_id = l.id 
     WHERE p.id = ? AND p.estado = 'aprobada'
@@ -54,15 +54,39 @@ if ($usada) {
     exit;
 }
 
-// Registrar uso de promoción como PENDIENTE
+// Registrar uso de promoción como PENDIENTE (incluyendo local_id)
 $insert_query = $conn->prepare("
-    INSERT INTO uso_promociones (cliente_id, promocion_id, estado) 
-    VALUES (?, ?, 'pendiente')
+    INSERT INTO uso_promociones (cliente_id, promocion_id, estado, local_id) 
+    VALUES (?, ?, 'pendiente', ?)
 ");
-$insert_query->bind_param("ii", $user_id, $promo_id);
+$insert_query->bind_param("iii", $user_id, $promo_id, $promo['local_id']);
 
 if ($insert_query->execute()) {
-    $_SESSION['success'] = "✅ Solicitud enviada correctamente. Presenta este código en el local: <strong>PROMO-" . $promo_id . "</strong>. Espera la confirmación del dueño.";
+    $uso_id = $conn->insert_id; // Obtener el ID del uso recién creado
+
+    // Preparar datos para el comprobante
+    $fecha_fin = date('d/m/Y', strtotime($promo['fecha_fin']));
+    $categoria = ucfirst($promo['categoria_minima']);
+
+    // Mensaje de éxito con botón para imprimir comprobante
+    $_SESSION['success'] = "
+    ✅ Solicitud enviada correctamente. 
+    <br><br>
+    <strong>📋 Resumen:</strong>
+    <ul>
+        <li><strong>Promoción:</strong> {$promo['titulo']}</li>
+        <li><strong>Local:</strong> {$promo['local_nombre']}</li>
+        <li><strong>Código:</strong> PROMO-{$promo_id}-{$uso_id}</li>
+    </ul>
+    
+    <button class='btn btn-success btn-lg' onclick='imprimirComprobante({$uso_id}, {$promo_id}, \"{$promo['local_nombre']}\", \"{$promo['titulo']}\", \"{$promo['descripcion']}\", \"{$fecha_fin}\", \"{$promo['dias_validos']}\", \"{$promo['categoria_minima']}\")'>
+        🖨️ Imprimir Comprobante
+    </button>
+    
+    <a href='promociones.php' class='btn btn-outline-secondary btn-lg'>
+        ← Volver a Promociones
+    </a>
+    ";
 } else {
     $_SESSION['error'] = "❌ Error al utilizar la promoción: " . $conn->error;
 }

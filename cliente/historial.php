@@ -42,30 +42,22 @@ $total_usadas = $conn->query("
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Mi Historial</a>
-            <a href="../dashboard.php" class="btn btn-outline-light">← Volver al Dashboard</a>
+            <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Historial</a>
+            <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
         </div>
     </nav>
 
     <div class="container mt-4">
         <div class="row mb-4">
             <div class="col-md-8">
-                <h2><i class="fas fa-history"></i> Mi Historial de Promociones</h2>
+                <h2>Historial de Promociones</h2>
                 <p class="text-muted">Revisa todas las promociones que has utilizado</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <div class="card bg-warning text-dark">
-                    <div class="card-body text-center py-2">
-                        <h4 class="mb-0"><?php echo $total_usadas; ?></h4>
-                        <small>Promociones Usadas</small>
-                    </div>
-                </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0"><i class="fas fa-list"></i> Historial de Uso</h5>
+            <div class="card-header text-dark">
+                <h5 class="mb-0">Historial de Uso</h5>
             </div>
             <div class="card-body">
                 <?php if ($historial->num_rows > 0): ?>
