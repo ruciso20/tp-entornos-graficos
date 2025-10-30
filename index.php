@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Inicializar variables para evitar errores
 $locales_activos = [];
 $novedades_publicas = [];
 $promociones_destacadas = [];
@@ -9,10 +8,10 @@ $promociones_destacadas = [];
 try {
     include("config/db.php");
 
-    // Obtener locales activos
+    // obtener locales activos
     $locales_activos = $conn->query("SELECT * FROM locales WHERE estado='aprobado' ORDER BY nombre");
 
-    // Obtener novedades
+    // obtener novedades
     $novedades_publicas = $conn->query("
         SELECT * FROM novedades 
         WHERE fecha_fin >= CURDATE() 
@@ -21,7 +20,7 @@ try {
         LIMIT 3
     ");
 
-    // Obtener promociones destacadas según si el usuario está logueado o no
+    // obtener promociones destacadas según si el usuario está logueado o no
     $promociones_destacadas = $conn->query("
         SELECT p.*, l.nombre as local_nombre 
         FROM promociones p 
@@ -39,7 +38,7 @@ try {
         LIMIT 12
     ");
 } catch (Exception $e) {
-    // Si hay error, continuar sin datos
+    // si hay error, continuamos sin datos
     error_log("Error en index.php: " . $e->getMessage());
 }
 ?>
@@ -56,11 +55,8 @@ try {
     <style>
         .hero-section {
             padding-top: 40px 0 60px;
-            /* equivalente a py-5 */
             padding-bottom: 3rem;
-            /* equivalente a py-5 */
             background-color: #f8f9fa;
-            /* equivalente a bg-light */
         }
 
         .hero-content {
@@ -116,7 +112,30 @@ try {
             font-size: 0.8rem;
         }
 
-        /* Cards flotantes al lado */
+        .newsletter-content {
+            padding: 2rem 0;
+        }
+
+        .feature-item {
+            padding: 1.5rem 1rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .feature-item {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* esto para las cards flotantes */
         .hero-cards {
             height: 400px;
             position: relative;
@@ -163,7 +182,7 @@ try {
             }
         }
 
-        /* Responsive */
+        /* para hacerlo responsive */
         @media (max-width: 768px) {
             .hero-section {
                 padding: 60px 0;
@@ -195,60 +214,41 @@ try {
             }
         }
 
-        /* Carousel de Locales Simple */
-        .local-card {
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
+        /* para los locales*/
+        .local-card-item {
             transition: all 0.3s ease;
-            height: 100%;
+            border: none;
+            border-radius: 12px;
         }
 
-        .local-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        .local-card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 40px;
-            height: 40px;
-            background: #0d6efd;
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.8;
+        .categoria-badge {
+            font-size: 0.7em;
+            text-transform: capitalize;
         }
 
-        .carousel-control-prev {
-            left: -20px;
+        .local-icon {
+            transition: transform 0.3s ease;
         }
 
-        .carousel-control-next {
-            right: -20px;
+        .local-card-item:hover .local-icon {
+            transform: scale(1.1);
         }
 
-        .carousel-control-prev:hover,
-        .carousel-control-next:hover {
-            opacity: 1;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-
-            .carousel-control-prev,
-            .carousel-control-next {
-                display: none;
-            }
-
-            .local-card {
-                margin-bottom: 1rem;
-            }
+        #searchLocales:focus,
+        #filterCategoria:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
         }
     </style>
 </head>
 
 <body>
-    <!-- Navbar -->
+    <!-- navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">🛍️ Stella Shopping Rosario</a>
@@ -258,8 +258,8 @@ try {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="#promociones">Promociones</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#locales">Locales</a></li>
                     <li class="nav-item"><a class="nav-link" href="#novedades">Novedades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#locales">Locales</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
                 </ul>
                 <div class="navbar-nav">
@@ -275,558 +275,20 @@ try {
         </div>
     </nav>
 
-    <!-- Hero Section Simplificada -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <!-- Columna izquierda - Contenido principal -->
-                <div class="col-lg-6">
-                    <div class="hero-content">
-                        <div class="hero-badge mb-4">
-                            <span class="badge bg-light text-dark fs-6">
-                                <i class="fas fa-star me-2"></i>Más de 50 locales exclusivos
-                            </span>
-                        </div>
+    <?php include('secciones/hero-section.php'); ?>
 
-                        <h1 class="hero-title display-4 fw-bold mb-4">
-                            Vive la experiencia
-                            <span class="text-primary">Stella</span> Shopping
-                        </h1>
+    <?php include('secciones/promociones.php'); ?>
 
-                        <p class="hero-subtitle lead mb-5">
-                            El destino de compras premium en Rosario.
-                            Descubre las mejores marcas y promociones exclusivas.
-                        </p>
+    <?php include('secciones/novedades.php'); ?>
 
-                        <!-- Stats simplificados -->
-                        <div class="hero-stats d-flex gap-4 mb-4">
-                            <div class="stat-item text-center">
-                                <div class="stat-number text-primary fw-bold">50+</div>
-                                <div class="stat-label text-muted">Locales</div>
-                            </div>
-                            <div class="stat-item text-center">
-                                <div class="stat-number text-primary fw-bold">100+</div>
-                                <div class="stat-label text-muted">Marcas</div>
-                            </div>
-                            <div class="stat-item text-center">
-                                <div class="stat-number text-primary fw-bold">24/7</div>
-                                <div class="stat-label text-muted">Promociones</div>
-                            </div>
-                        </div>
+    <?php include('secciones/beneficios.php'); ?>
 
-                        <!-- Botones de acción -->
-                        <div class="hero-actions d-flex flex-wrap gap-3 mb-4">
-                            <?php if (!isset($_SESSION['user_id'])): ?>
-                                <a href="register.php" class="btn btn-primary btn-lg px-4">
-                                    <i class="fas fa-gift me-2"></i>Regístrate y Ahorra
-                                </a>
-                                <a href="#locales" class="btn btn-outline-primary btn-lg px-4">
-                                    <i class="fas fa-store me-2"></i>Ver Locales
-                                </a>
-                            <?php else: ?>
-                                <a href="dashboard.php" class="btn btn-primary btn-lg px-4">
-                                    <i class="fas fa-tachometer-alt me-2"></i>Mi Cuenta
-                                </a>
-                                <a href="#locales" class="btn btn-outline-primary btn-lg px-4">
-                                    <i class="fas fa-store me-2"></i>Explorar Locales
-                                </a>
-                            <?php endif; ?>
-                        </div>
+    <?php include('secciones/locales.php'); ?>
 
-                        <!-- Trust badges simplificados -->
-                        <div class="trust-badges">
-                            <div class="d-flex flex-wrap gap-3 text-muted">
-                                <small><i class="fas fa-shield-alt me-1"></i> Compra segura</small>
-                                <small><i class="fas fa-clock me-1"></i> 10:00 - 22:00</small>
-                                <small><i class="fas fa-parking me-1"></i> Estacionamiento gratis</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <?php include('secciones/newsletter.php'); ?>
 
-                <!-- Columna derecha - Cards flotantes -->
-                <div class="col-lg-6">
-                    <div class="hero-cards position-relative">
-                        <!-- Card 1 -->
-                        <div class="floating-card card-1">
-                            <div class="card border-0 shadow-lg card-hover">
-                                <div class="card-body text-center p-3">
-                                    <div class="text-primary mb-2">
-                                        <i class="fas fa-tags fa-2x"></i>
-                                    </div>
-                                    <h6 class="fw-bold mb-1">Hasta 50% OFF</h6>
-                                    <small class="text-muted">Marcas seleccionadas</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 2 -->
-                        <div class="floating-card card-2">
-                            <div class="card border-0 shadow-lg card-hover">
-                                <div class="card-body text-center p-3">
-                                    <div class="text-success mb-2">
-                                        <i class="fas fa-crown fa-2x"></i>
-                                    </div>
-                                    <h6 class="fw-bold mb-1">Club Premium</h6>
-                                    <small class="text-muted">Beneficios exclusivos</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="floating-card card-3">
-                            <div class="card border-0 shadow-lg card-hover">
-                                <div class="card-body text-center p-3">
-                                    <div class="text-warning mb-2">
-                                        <i class="fas fa-bolt fa-2x"></i>
-                                    </div>
-                                    <h6 class="fw-bold mb-1">Ofertas Flash</h6>
-                                    <small class="text-muted">Tiempo limitado</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN: Promociones Destacadas - CORREGIDA -->
-    <section class="py-5 bg-light" id="promociones">
-        <div class="container">
-            <div class="row text-center mb-4">
-                <div class="col">
-                    <h2 class="fw-bold">🔥 Todas las Promociones Disponibles</h2>
-                    <p class="text-muted fs-5">
-                        Descubre todas las ofertas del shopping. Regístrate para acceder a las promociones de tu categoría.
-                    </p>
-                </div>
-            </div>
-
-            <div class="row">
-                <?php if (isset($promociones_destacadas) && $promociones_destacadas->num_rows > 0): ?>
-                    <?php while ($promo = $promociones_destacadas->fetch_assoc()):
-                        // Determinar clase CSS según categoría
-                        $clase_categoria = '';
-                        $texto_categoria = '';
-
-                        switch ($promo['categoria_minima']) {
-                            case 'Premium':
-                                $clase_categoria = 'promo-premium';
-                                $texto_categoria = 'Premium';
-                                $icono_categoria = 'fas fa-crown';
-                                break;
-                            case 'Medium':
-                                $clase_categoria = 'promo-medium';
-                                $texto_categoria = 'Medium';
-                                $icono_categoria = 'fas fa-star';
-                                break;
-                            default:
-                                $clase_categoria = 'promo-inicial';
-                                $texto_categoria = 'Inicial';
-                                $icono_categoria = 'fas fa-user';
-                        }
-                    ?>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card promo-card h-100 <?php echo $clase_categoria; ?>">
-                                <!-- Badge de categoría -->
-                                <span class="categoria-badge badge bg-<?php
-                                                                        echo $promo['categoria_minima'] == 'Premium' ? 'danger' : ($promo['categoria_minima'] == 'Medium' ? 'warning' : 'info');
-                                                                        ?>">
-                                    <i class="<?php echo $icono_categoria; ?> me-1"></i>
-                                    <?php echo $texto_categoria; ?>
-                                </span>
-
-                                <div class="card-body">
-                                    <h5 class="card-title"><?php echo htmlspecialchars($promo['titulo']); ?></h5>
-                                    <p class="card-text">
-                                        <strong><i class="fas fa-store"></i> Local:</strong> <?php echo htmlspecialchars($promo['local_nombre']); ?><br>
-                                        <strong><i class="fas fa-calendar"></i> Válida hasta:</strong> <?php echo date('d/m/Y', strtotime($promo['fecha_fin'])); ?>
-                                    </p>
-
-                                    <?php if (!empty($promo['descripcion'])): ?>
-                                        <p class="card-text small text-muted">
-                                            <?php echo htmlspecialchars($promo['descripcion']); ?>
-                                        </p>
-                                    <?php endif; ?>
-
-                                    <div class="mb-3">
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-calendar-day"></i> <?php echo $promo['dias_validos']; ?>
-                                        </span>
-                                    </div>
-
-                                    <!-- Información de acceso -->
-                                    <div class="access-info mt-3">
-                                        <?php if (!isset($_SESSION['user_id'])): ?>
-                                            <div class="alert alert-warning mb-0">
-                                                <small>
-                                                    <i class="fas fa-lock me-1"></i>
-                                                    <?php if ($promo['categoria_minima'] == 'Inicial'): ?>
-                                                        Regístrate para acceder a esta promoción
-                                                    <?php else: ?>
-                                                        Regístrate y sube de categoría para acceder
-                                                    <?php endif; ?>
-                                                </small>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="alert alert-<?php
-                                                                    // Verificar si el usuario puede acceder
-                                                                    $puede_acceder = false;
-                                                                    switch ($_SESSION['categoria']) {
-                                                                        case 'Premium':
-                                                                            $puede_acceder = true;
-                                                                            break;
-                                                                        case 'Medium':
-                                                                            $puede_acceder = in_array($promo['categoria_minima'], ['Inicial', 'Medium']);
-                                                                            break;
-                                                                        case 'Inicial':
-                                                                            $puede_acceder = $promo['categoria_minima'] == 'Inicial';
-                                                                            break;
-                                                                    }
-
-                                                                    echo $puede_acceder ? 'success' : 'warning';
-                                                                    ?> mb-0">
-                                                <small>
-                                                    <i class="fas fa-<?php echo $puede_acceder ? 'check-circle' : 'info-circle'; ?> me-1"></i>
-                                                    <?php if ($puede_acceder): ?>
-                                                        Disponible para tu categoría (<?php echo $_SESSION['categoria']; ?>)
-                                                    <?php else: ?>
-                                                        Requiere categoría <?php echo $promo['categoria_minima']; ?> (tienes <?php echo $_SESSION['categoria']; ?>)
-                                                    <?php endif; ?>
-                                                </small>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <!-- Botón de acción -->
-                                    <div class="mt-3">
-                                        <?php if (!isset($_SESSION['user_id'])): ?>
-                                            <a href="register.php" class="btn btn-primary btn-sm w-100">
-                                                Regístrate para Usar
-                                            </a>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <div class="col-12 text-center">
-                        <div class="alert alert-info">
-                            <h5><i class="fas fa-info-circle"></i> No hay promociones disponibles en este momento</h5>
-                            <p class="mb-0">Vuelve más tarde para descubrir nuevas ofertas exclusivas.</p>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Llamada a la acción -->
-            <?php if (!isset($_SESSION['user_id'])): ?>
-                <div class="text-center mt-4">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body py-4">
-                            <h4><i class="fas fa-gift me-2"></i> ¿Listo para empezar a ahorrar?</h4>
-                            <p class="mb-3">Regístrate gratis y accede a todas las promociones disponibles para tu categoría</p>
-                            <a href="register.php" class="btn btn-light btn-lg">
-                                <i class="fas fa-rocket me-2"></i> Crear Mi Cuenta Gratis
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-
-
-    <!-- SECCIÓN: Novedades del Shopping - CORREGIDA -->
-    <section class="py-5 bg-light" id="novedades">
-        <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col">
-                    <h2 class="fw-bold">📢 Novedades del Shopping</h2>
-                    <p class="text-muted fs-5">
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            Información importante para ti
-                        <?php else: ?>
-                            Mantente informado de las últimas noticias
-                        <?php endif; ?>
-                    </p>
-                </div>
-            </div>
-
-            <div class="row">
-                <?php if (isset($novedades_publicas) && $novedades_publicas->num_rows > 0): ?>
-                    <?php while ($novedad = $novedades_publicas->fetch_assoc()):
-                        // CORREGIDO: usando categoria_objetivo (correcto)
-                        $es_exclusiva = $novedad['categoria_objetivo'] != 'Inicial';
-                    ?>
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="card card-hover h-100 novedad-card <?php echo $es_exclusiva ? 'border-warning' : ''; ?>">
-                                <div class="card-body">
-                                    <?php if ($es_exclusiva): ?>
-                                        <span class="badge bg-warning float-end">
-                                            <i class="fas fa-star"></i> <?php echo $novedad['categoria_objetivo']; ?>
-                                        </span>
-                                    <?php endif; ?>
-
-                                    <h5 class="card-title"><?php echo htmlspecialchars($novedad['titulo']); ?></h5>
-
-                                    <?php if (!empty($novedad['descripcion'])): ?>
-                                        <p class="card-text"><?php echo htmlspecialchars($novedad['descripcion']); ?></p>
-                                    <?php endif; ?>
-
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <small class="text-muted">
-                                            <i class="fas fa-calendar"></i>
-                                            <?php echo date('d/m/Y', strtotime($novedad['fecha_inicio'])); ?>
-                                            -
-                                            <?php echo date('d/m/Y', strtotime($novedad['fecha_fin'])); ?>
-                                        </small>
-                                        <span class="badge bg-<?php
-                                                                echo $novedad['categoria_objetivo'] == 'Premium' ? 'danger' : ($novedad['categoria_objetivo'] == 'Medium' ? 'warning' : 'info');
-                                                                ?>">
-                                            <?php echo $novedad['categoria_objetivo']; ?>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <div class="col-12 text-center">
-                        <div class="alert alert-info">
-                            <h5><i class="fas fa-info-circle"></i> No hay novedades en este momento</h5>
-                            <p class="mb-0">Vuelve pronto para conocer las últimas noticias del shopping.</p>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <?php if (!isset($_SESSION['user_id'])): ?>
-                <div class="text-center mt-4">
-                    <div class="alert alert-warning">
-                        <h5><i class="fas fa-user-plus"></i> Más Novedades y Promociones para Clientes Registrados</h5>
-                        <p>Regístrate para acceder a información exclusiva según tu categoría</p>
-                        <a href="register.php" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i> Registrarse Gratis
-                        </a>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-
-    <!-- Sección: Por qué registrarse -->
-    <section class="py-5 bg-light" id="beneficios">
-        <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col">
-                    <h2 class="fw-bold">🎯 Beneficios Exclusivos para Clientes Registrados</h2>
-                    <p class="text-muted fs-5">Regístrate y accede a ventajas especiales según tu categoría</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card card-hover h-100 text-center border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="feature-icon text-primary">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <h3 class="text-primary mb-3">Nivel Inicial</h3>
-                            <ul class="list-unstyled text-start">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Acceso a promociones básicas</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Notificaciones de ofertas</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Acumulación de puntos</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> App móvil gratuita</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card card-hover h-100 text-center border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="feature-icon text-warning">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h3 class="text-warning mb-3">Nivel Medium</h3>
-                            <ul class="list-unstyled text-start">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Todos los beneficios Inicial</li>
-                                <li class="mb-2"><i class="fas fa-star text-warning me-2"></i> Promociones exclusivas Medium</li>
-                                <li class="mb-2"><i class="fas fa-star text-warning me-2"></i> Descuentos especiales +10%</li>
-                                <li class="mb-2"><i class="fas fa-star text-warning me-2"></i> Atención preferencial</li>
-                                <li class="mb-2"><i class="fas fa-star text-warning me-2"></i> Estacionamiento gratuito</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card card-hover h-100 text-center border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="feature-icon text-danger">
-                                <i class="fas fa-crown"></i>
-                            </div>
-                            <h3 class="text-danger mb-3">Nivel Premium</h3>
-                            <ul class="list-unstyled text-start">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Todos los beneficios Medium</li>
-                                <li class="mb-2"><i class="fas fa-gift text-danger me-2"></i> Promociones Premium exclusivas</li>
-                                <li class="mb-2"><i class="fas fa-gift text-danger me-2"></i> Regalos sorpresa mensuales</li>
-                                <li class="mb-2"><i class="fas fa-gift text-danger me-2"></i> Acceso prioritario a eventos</li>
-                                <li class="mb-2"><i class="fas fa-gift text-danger me-2"></i> Descuentos VIP hasta 30%</li>
-                                <li class="mb-2"><i class="fas fa-gift text-danger me-2"></i> Asistente personal de compras</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php if (!isset($_SESSION['user_id'])): ?>
-                <div class="text-center mt-4">
-                    <a href="register.php" class="btn btn-primary btn-lg px-5 py-3">
-                        <i class="fas fa-rocket"></i> ¡Quiero Estos Beneficios!
-                    </a>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-
-    <!-- Sección: Locales -->
-    <section class="py-5 bg-light" id="locales">
-        <div class="container">
-            <div class="row text-center mb-4">
-                <div class="col">
-                    <h2 class="fw-bold">🏪 Nuestros Locales</h2>
-                    <p class="text-muted">Descubre la variedad de locales en nuestro shopping</p>
-                </div>
-            </div>
-
-            <?php if (isset($locales_activos) && $locales_activos->num_rows > 0): ?>
-                <div id="localesCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <?php
-                        $locales_count = 0;
-                        $locales_per_slide = 4;
-                        $total_locales = $locales_activos->num_rows;
-
-                        $locales_activos->data_seek(0);
-
-                        while ($local = $locales_activos->fetch_assoc()):
-                            // Categoría simple
-                            $icono = "🏪";
-
-                            if ($locales_count % $locales_per_slide == 0):
-                        ?>
-                                <div class="carousel-item <?php echo $locales_count == 0 ? 'active' : ''; ?>">
-                                    <div class="row g-3">
-                                    <?php endif; ?>
-
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="card local-card h-100">
-                                            <div class="card-body text-center">
-                                                <div class="mb-3">
-                                                    <span style="font-size: 2.5rem;"><?php echo $icono; ?></span>
-                                                </div>
-                                                <h6 class="card-title fw-bold"><?php echo $local['nombre']; ?></h6>
-                                                <p class="card-text small text-muted">
-                                                    <?php echo $local['descripcion'] ?: 'Ofertas especiales disponibles'; ?>
-                                                </p>
-                                                <?php if (!isset($_SESSION['user_id'])): ?>
-                                                    <small class="text-warning">
-                                                        <i class="fas fa-lock"></i> Regístrate para promociones
-                                                    </small>
-                                                <?php else: ?>
-                                                    <small class="text-success">
-                                                        <i class="fas fa-check"></i> Promociones disponibles
-                                                    </small>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <?php
-                                    $locales_count++;
-                                    if ($locales_count % $locales_per_slide == 0 || $locales_count == $total_locales):
-                                    ?>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                        <?php endwhile; ?>
-                    </div>
-
-                    <!-- Controles simples -->
-                    <?php if ($total_locales > $locales_per_slide): ?>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#localesCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#localesCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Indicadores simples -->
-                <?php if ($total_locales > $locales_per_slide): ?>
-                    <div class="text-center mt-3">
-                        <?php for ($i = 0; $i < ceil($total_locales / $locales_per_slide); $i++): ?>
-                            <button type="button" data-bs-target="#localesCarousel" data-bs-slide-to="<?php echo $i; ?>"
-                                class="btn btn-sm <?php echo $i == 0 ? 'btn-primary' : 'btn-outline-primary'; ?> mx-1">
-                                <?php echo $i + 1; ?>
-                            </button>
-                        <?php endfor; ?>
-                    </div>
-                <?php endif; ?>
-
-            <?php else: ?>
-                <div class="text-center">
-                    <div class="alert alert-info">
-                        <h5>Próximamente más locales...</h5>
-                        <p class="mb-0">Estamos trabajando para traerte la mejor experiencia.</p>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-
-    <!-- Sección: Contacto Mejorada -->
-    <section class="py-5 bg-light" id="contacto">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card contact-form shadow-sm">
-                    <div class="card-body p-4">
-                        <form id="contactForm">
-                            <div class="row text-center mb-5">
-                                <div class="col">
-                                    <h2 class="fw-bold">📞 Contáctanos</h2>
-                                    <p class="text-muted fs-5">¿Tienes preguntas? Estamos aquí para ayudarte</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="contactName" class="form-label">Nombre Completo</label>
-                                    <input type="text" class="form-control" id="contactName" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="contactEmail" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="contactEmail" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="contactSubject" class="form-label">Asunto</label>
-                                <input type="text" class="form-control" id="contactSubject" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="contactMessage" class="form-label">Mensaje</label>
-                                <textarea class="form-control" id="contactMessage" rows="5" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <i class="fas fa-paper-plane me-2"></i> Enviar Mensaje
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <?php include('secciones/contacto.php'); ?>
+    </div>
     <!-- footer -->
     <?php include('footer.php'); ?>
 
@@ -834,7 +296,7 @@ try {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Smooth scroll para los enlaces internos
+        // smooth scroll para los enlaces internos
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -844,13 +306,47 @@ try {
             });
         });
 
-        // Manejo del formulario de contacto
+        // manejo del formulario de contacto
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('¡Mensaje enviado! Te contactaremos pronto.');
             this.reset();
         });
     </script>
+
+
+    <script>
+        // Funcionalidad para la busqueda
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchLocales');
+            const localCards = document.querySelectorAll('.local-card');
+            const resultCount = document.getElementById('countNumber');
+
+            function filterLocales() {
+                const searchTerm = searchInput.value.toLowerCase();
+                let visibleCount = 0;
+
+                localCards.forEach(card => {
+                    const nombre = card.getAttribute('data-nombre');
+                    const descripcion = card.getAttribute('data-descripcion');
+
+                    const matchesSearch = nombre.includes(searchTerm) || descripcion.includes(searchTerm);
+
+                    if (matchesSearch) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                resultCount.textContent = visibleCount;
+            }
+
+            searchInput.addEventListener('input', filterLocales);
+        });
+    </script>
+
 </body>
 
 </html>

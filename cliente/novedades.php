@@ -10,7 +10,7 @@ $nombre = $_SESSION['nombre'];
 
 include("../config/db.php");
 
-// CONSULTA CORREGIDA - Mostrar novedades que empiecen hoy o en el futuro
+// Mostrar novedades que empiecen hoy o en el futuro
 $query = "
     SELECT * FROM novedades 
     WHERE estado = 'activa'
@@ -106,13 +106,6 @@ $novedades = $stmt->get_result();
                                 ?>
                                     <div class="col-md-6 mb-4">
                                         <div class="card h-100 <?php echo $es_exclusiva ? 'novedad-exclusiva' : ''; ?> <?php echo $es_futura ? 'novedad-futura' : ''; ?>">
-                                            <!-- Badge de categoría del usuario -->
-                                            <span class="badge user-category-badge bg-<?php
-                                                                                        echo $categoria == 'Premium' ? 'danger' : ($categoria == 'Medium' ? 'warning' : 'primary');
-                                                                                        ?>">
-                                                Tu categoría: <?php echo ucfirst($categoria); ?>
-                                            </span>
-
                                             <div class="card-header d-flex justify-content-between align-items-center pt-4">
                                                 <h5 class="mb-0">📢 <?php echo htmlspecialchars($novedad['titulo']); ?></h5>
                                                 <div>
@@ -136,7 +129,7 @@ $novedades = $stmt->get_result();
                                                     <span class="badge bg-<?php
                                                                             echo $novedad['categoria_objetivo'] == 'Premium' ? 'danger' : ($novedad['categoria_objetivo'] == 'Medium' ? 'warning' : 'primary');
                                                                             ?>">
-                                                        🎯 Dirigido a: <?php echo $novedad['categoria_objetivo']; ?>
+                                                        🎯 Dirigido para categoria <?php echo $novedad['categoria_objetivo']; ?>
                                                     </span>
                                                 </div>
                                             </div>

@@ -172,7 +172,7 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
             </div>
         </div>
 
-        <!-- Leyenda de acciones -->
+        <!-- Leyenda de acciones (por si no se llegan a enteder los botones de reactivar y de eliminar)-->
         <div class="card mt-4">
             <div class="card-header bg-light">
                 <h6 class="mb-0">📋 Leyenda de Acciones</h6>

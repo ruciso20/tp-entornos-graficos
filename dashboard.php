@@ -274,105 +274,15 @@ if ($rol == 'cliente') {
         <!-- estadisticas propias segun el tipo de usuario -->
         <?php if ($rol == 'cliente'): ?>
 
-            <!-- estadisticas para el cliente -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card card-stat text-white bg-primary">
-                        <div class="card-body text-center">
-                            <h3><?php echo $promociones_disponibles; ?></h3>
-                            <p>Promociones Disponibles</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-stat text-white bg-info">
-                        <div class="card-body text-center">
-                            <h3><?php echo $novedades_disponibles; ?></h3>
-                            <p>Novedades Activas</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-stat text-white bg-success">
-                        <div class="card-body text-center">
-                            <h3><?php echo $categoria; ?></h3>
-                            <p>Tu Categoría</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php include('dashboard/statscliente.php'); ?>
 
         <?php elseif ($rol == 'admin'): ?>
 
-
-            <!-- estadisticas para admin -->
-
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card card-stat text-white bg-primary">
-                        <div class="card-body text-center">
-                            <h3><?php echo $total_locales; ?></h3>
-                            <p>Locales Activos</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-stat text-white bg-success">
-                        <div class="card-body text-center">
-                            <h3><?php echo $total_clientes; ?></h3>
-                            <p>Total Clientes</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-stat text-white bg-warning">
-                        <div class="card-body text-center">
-                            <h3><?php echo $dueños_pendientes; ?></h3>
-                            <p>Dueños Pendientes</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-stat text-white bg-danger">
-                        <div class="card-body text-center">
-                            <h3><?php echo $promociones_pendientes; ?></h3>
-                            <p>Promociones Pendientes</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php include('dashboard/statsadmin.php'); ?>
 
         <?php elseif ($rol == 'dueno'): ?>
 
-
-            <!-- estadisticas para dueño -->
-
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card card-stat text-white bg-primary">
-                        <div class="card-body text-center">
-                            <h3><?php echo $locales_aprobados; ?></h3>
-                            <p>Locales Activos</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-stat text-white bg-success">
-                        <div class="card-body text-center">
-                            <h3><?php echo $promociones_activas; ?></h3>
-                            <p>Promociones Activas</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-stat text-white bg-warning">
-                        <div class="card-body text-center">
-                            <h3><?php echo $solicitudes_pendientes; ?></h3>
-                            <p>Solicitudes Pendientes</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php include('dashboard/statsdueno.php'); ?>
 
         <?php endif; ?>
 
@@ -383,206 +293,22 @@ if ($rol == 'cliente') {
                         <h2>Panel de Control</h2>
                         <?php if ($rol == 'admin'): ?>
 
-
-                            <!-- panel admin -->
-
-
-                            <div class="alert alert-info">
-                                <h5>Panel de Administrador</h5>
-                                <p class="mb-3">¡Bienvenido! Gestiona todo el sistema del shopping.</p>
-
-                                <div class="row mt-3">
-                                    <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_locales.php" class="btn btn-primary w-100">
-                                            Gestionar Locales
-                                        </a>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_usuarios.php" class="btn btn-success w-100">
-                                            Gestionar Usuarios
-                                        </a>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_promociones.php" class="btn btn-danger w-100">
-                                            Aprobar Promociones
-                                        </a>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <a href="admin/admin_novedades.php" class="btn btn-info w-100">
-                                            Gestionar Novedades
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php include('dashboard/admin.php'); ?>
 
                         <?php elseif ($rol == 'cliente'): ?>
 
-                            <!-- panel cliente -->
-                            <div class="alert alert-success">
-                                <h5>Panel de Cliente</h5>
-                                <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios</p>
+                            <?php include('dashboard/cliente.php'); ?>
 
-                                <!-- Fila 1 con las funcionalidades principales -->
-                                <div class="row mt-4 justify-content-center">
-                                    <div class="col-md-5 mb-3">
-                                        <div class="card card-hover h-100">
-                                            <div class="card-body text-center">
-                                                <h3>Promociones</h3>
-                                                <p>Descubre y utiliza promociones exclusivas según tu categoría</p>
-                                                <a href="cliente/promociones.php" class="btn btn-primary w-100">
-                                                    Ver Promociones
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 mb-3">
-                                        <div class="card card-hover h-100">
-                                            <div class="card-body text-center">
-                                                <h3>Novedades</h3>
-                                                <p>Mantente informado de las últimas novedades del shopping</p>
-                                                <a href="cliente/novedades.php" class="btn btn-info w-100">
-                                                    Ver Novedades
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <?php elseif ($rol == 'dueno'): ?>
 
-                                <!-- Fila 2 con funcionalidades secundarias -->
-                                <div class="row mt-4 justify-content-center">
-                                    <div class="col-md-5 mb-3">
-                                        <div class="card card-hover h-100">
-                                            <div class="card-body text-center">
-                                                <h3>Historial</h3>
-                                                <p>Revisa todas las promociones que has utilizado</p>
-                                                <a href="cliente/historial.php" class="btn btn-warning w-100">
-                                                    Ver Historial
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 mb-3">
-                                        <div class="card card-hover h-100">
-                                            <div class="card-body text-center">
-                                                <h3>Mi Perfil</h3>
-                                                <p>Gestiona tu información personal y preferencias</p>
-                                                <a href="cliente/perfil.php" class="btn btn-success w-100">
-                                                    Editar Perfil
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <?php include('dashboard/dueno.php'); ?>
 
-                                <!-- Progreso de categoría de un cliente -->
-
-
-                                <div class="row justify-content-center">
-                                    <div class="col-md-10"> <!-- Mismo ancho que las cards de arriba -->
-                                        <div class="card mt-4">
-                                            <div class="card-header text-center">
-                                                <h6 class="mb-0">Tu Progreso de Categoría</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row justify-content-center">
-                                                    <div class="col-md-4 mb-3">
-                                                        <div class="card <?php echo $categoria == 'Inicial' ? 'bg-primary text-white' : 'bg-light'; ?> h-100">
-                                                            <div class="card-body text-center">
-                                                                <h5>Inicial</h5>
-                                                                <p class="small">Promociones básicas</p>
-                                                                <?php echo $categoria == 'Inicial' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <div class="card <?php echo $categoria == 'Medium' ? 'bg-warning text-dark' : 'bg-light'; ?> h-100">
-                                                            <div class="card-body text-center">
-                                                                <h5>Medium</h5>
-                                                                <p class="small">+ Promociones exclusivas</p>
-                                                                <?php echo $categoria == 'Medium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <div class="card <?php echo $categoria == 'Premium' ? 'bg-danger text-white' : 'bg-light'; ?> h-100">
-                                                            <div class="card-body text-center">
-                                                                <h5>Premium</h5>
-                                                                <p class="small">Todas las promociones + beneficios VIP</p>
-                                                                <?php echo $categoria == 'Premium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="text-center mt-3">
-                                                    <p class="text-muted mb-0">
-                                                        <small>💡 <strong>Consejo:</strong> Usa más promociones para subir de categoría y desbloquear beneficios exclusivos.</small>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- panel dueño  -->
-
-                            <?php elseif ($rol == 'dueno'): ?>
-                                <div class="alert alert-warning">
-                                    <h5>Panel de Dueño de Locales</h5>
-                                    <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona tus locales y promociones.</p>
-
-                                    <div class="row mt-3">
-                                        <div class="col-md-3 mb-3">
-                                            <a href="dueno/locales.php" class="btn btn-primary w-100">
-                                                Gestionar Locales
-                                            </a>
-                                        </div>
-
-                                        <div class="col-md-3 mb-3">
-                                            <?php if ($locales_aprobados > 0): ?>
-                                                <a href="dueno/promociones.php" class="btn btn-success w-100">
-                                                    Gestionar Promociones
-                                                </a>
-                                            <?php else: ?>
-                                                <button class="btn btn-secondary w-100" disabled>
-                                                    Gestionar Promociones
-                                                </button>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="col-md-3 mb-3">
-                                            <?php if ($locales_aprobados > 0): ?>
-                                                <a href="dueno/solicitudes.php" class="btn btn-warning w-100">
-                                                    Gestionar Solicitudes
-                                                    <?php if ($solicitudes_pendientes > 0): ?>
-                                                        <span class="badge bg-danger"><?php echo $solicitudes_pendientes; ?></span>
-                                                    <?php endif; ?>
-                                                </a>
-                                            <?php else: ?>
-                                                <button class="btn btn-secondary w-100" disabled>
-                                                    Gestionar Solicitudes
-                                                </button>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="col-md-3 mb-3">
-                                            <?php if ($locales_aprobados > 0): ?>
-                                                <a href="dueno/reportes.php" class="btn btn-dark w-100">
-                                                    Reportes
-                                                </a>
-                                            <?php else: ?>
-                                                <button class="btn btn-secondary w-100" disabled>
-                                                    Reportes
-                                                </button>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- footer -->
     <?php include('footer.php'); ?>

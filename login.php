@@ -15,12 +15,12 @@ if (isset($_POST['login'])) {
         $row = $result->fetch_assoc();
 
         if (password_verify($password, $row['password'])) {
-            // Verificar si el email está verificado
+            // verificamos si el email esta verificado
             if (!$row['email_verificado']) {
                 $error = "Tu email no ha sido verificado. Revisa tu bandeja de entrada y haz click en el enlace de verificación.";
                 $email_no_verificado = true;
 
-                // Construir URL absoluta (corrige rutas locales)
+                // construir URL absoluta 
                 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
                 $host = $_SERVER['HTTP_HOST'];
                 $dir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/';
@@ -28,18 +28,18 @@ if (isset($_POST['login'])) {
 
                 $error .= "<br><br><a href='$reenviar_url' class='btn btn-warning btn-sm'>📧 Reenviar Email de Verificación</a>";
             }
-            // Verificar estado de la cuenta
+            // verificamos el estado de la cuenta
             elseif ($row['estado'] == 'aprobado' || $row['rol'] == 'cliente') {
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['nombre'] = $row['nombre'];
                 $_SESSION['rol'] = $row['rol'];
                 $_SESSION['email_verificado'] = true;
 
-                // MODIFICADO: Solo guardar categoría si es cliente
+                // solo guardamos la categoria si es cliente
                 if ($row['rol'] == 'cliente') {
                     $_SESSION['categoria'] = $row['categoria_cliente'] ?: 'Inicial';
                 } else {
-                    $_SESSION['categoria'] = null; // Dueños no tienen categoría
+                    $_SESSION['categoria'] = null;
                 }
 
                 header("Location: dashboard.php");
@@ -52,7 +52,7 @@ if (isset($_POST['login'])) {
                 $cuenta_rechazada = true;
             }
         } else {
-            // mensaje generico para seguridad
+
             $error = "El correo o contraseña es incorrecto";
         }
     } else {
@@ -74,12 +74,21 @@ if (isset($_POST['login'])) {
 </head>
 
 <body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Inicio de Sesion</span>
+            </div>
+        </div>
+    </nav>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión</h4>
+                        <h4 class="mb-0">Iniciar Sesión</h4>
                     </div>
                     <div class="card-body">
                         <?php if (isset($error)): ?>

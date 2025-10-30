@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'admin') {
 include("../config/db.php");
 $mensaje = "";
 
-// Procesar aprobación/rechazo de local - CORREGIDO
+// Procesar aprobación/rechazo de local 
 if (isset($_POST['aprobar']) || isset($_POST['rechazar'])) {
     $local_id = $_POST['local_id'];
 
@@ -31,7 +31,7 @@ if (isset($_POST['aprobar']) || isset($_POST['rechazar'])) {
     }
 }
 
-// Procesar activar/desactivar local - SIMPLIFICADO
+// Procesar activar/desactivar local
 if (isset($_GET['toggle_estado'])) {
     $local_id = $_GET['toggle_estado'];
 
@@ -100,7 +100,7 @@ $locales_query = $conn->query("
             <div class="alert alert-<?php echo $mensaje_tipo ?? 'info'; ?>"><?php echo $mensaje; ?></div>
         <?php endif; ?>
 
-        <!-- Resumen de estados -->
+        <!-- resumen de los estados del local -->
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="card text-white bg-warning">
@@ -136,7 +136,7 @@ $locales_query = $conn->query("
             </div>
         </div>
 
-        <!-- Lista de locales -->
+        <!-- Lista de los locales -->
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">Todos los Locales</h5>
@@ -195,7 +195,7 @@ $locales_query = $conn->query("
                                         </span>
                                     </td>
                                     <td>
-                                        <!-- Acciones según estado -->
+                                        <!-- Acciones según el estado -->
                                         <?php if ($local['estado'] == 'pendiente'): ?>
                                             <form method="POST" class="d-inline">
                                                 <input type="hidden" name="local_id" value="<?php echo $local['id']; ?>">

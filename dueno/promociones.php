@@ -14,7 +14,7 @@ $mensaje = "";
 $locales_query = $conn->query("SELECT id, nombre, estado FROM locales WHERE dueno_id = $dueno_id");
 $locales = $locales_query->fetch_all(MYSQLI_ASSOC);
 
-// Verificar si hay locales aprobados - CORREGIDO: mover esta validación después de obtener los locales
+// Verificar si hay locales aprobados 
 $tiene_locales_aprobados = false;
 foreach ($locales as $local) {
   if ($local['estado'] == 'aprobado') {

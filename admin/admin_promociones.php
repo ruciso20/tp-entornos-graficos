@@ -1,12 +1,12 @@
 <?php
 session_start();
-// Verificar sesión - USANDO LOS NOMBRES CORRECTOS DE SESIÓN
+
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'admin') {
-    header("Location: ../login.php"); // Sale de admin/ hacia login.php
+    header("Location: ../login.php");
     exit;
 }
 
-include("../config/db.php"); // Incluye la conexión a la base de datos
+include("../config/db.php");
 
 // Acciones sobre promociones
 if (isset($_GET['accion'])) {
@@ -53,8 +53,8 @@ $promociones = $conn->query("
     </nav>
 
     <div class="container mt-4">
-        <!-- Estadísticas rápidas -->
 
+        <!-- Estadisticas  -->
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card text-white bg-warning">

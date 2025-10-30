@@ -45,7 +45,7 @@ foreach ($locales as $local) {
   }
 }
 
-// Procesar aceptar/rechazar solicitud - CORREGIDO
+// Procesar aceptar/rechazar solicitud 
 if (isset($_POST['aceptar']) || isset($_POST['rechazar'])) {
   $solicitud_id = $_POST['solicitud_id'];
 

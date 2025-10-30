@@ -11,7 +11,7 @@ include("../config/db.php");
 $categoria_cliente = $_SESSION['categoria'];
 $usuario_id = $_SESSION['user_id'];
 
-// CORREGIDO: Usar los nombres correctos de las columnas según tu estructura
+// Usar los nombres correctos de las columnas según tu estructura
 $promociones_query = $conn->prepare("
     SELECT p.*, l.nombre as local_nombre
     FROM promociones p 
@@ -162,7 +162,7 @@ $promociones = $promociones_query->get_result();
             <?php else: ?>
                 <div class="col-12">
                     <div class="alert alert-info text-center py-5">
-                        <h4>😔 No hay promociones disponibles</h4>
+                        <h4>No hay promociones disponibles</h4>
                         <p class="mb-0">Vuelve más tarde para descubrir nuevas ofertas exclusivas.</p>
                     </div>
                 </div>
@@ -178,6 +178,7 @@ $promociones = $promociones_query->get_result();
             }
         }
 
+        // Creamos la funcion para la impresion de PDF 
         function imprimirComprobante(usoId, promoId, localNombre, promoTitulo, promoDescripcion, fechaFin, diasValidos, categoria) {
             // Crear ventana de impresión
             const printWindow = window.open('', '_blank', 'width=800,height=600');
@@ -264,7 +265,7 @@ $promociones = $promociones_query->get_result();
             comprobanteHTML += '    </div>';
             comprobanteHTML += '    <script>';
             comprobanteHTML += '        window.onload = function() { window.print(); setTimeout(function(){ window.close(); }, 1000); };';
-            comprobanteHTML += '    </' + 'script>'; // avoid closing tag confusion in concatenation
+            comprobanteHTML += '    </' + 'script>';
             comprobanteHTML += '</body>';
             comprobanteHTML += '</html>';
 

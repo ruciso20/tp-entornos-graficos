@@ -54,7 +54,7 @@ if ($usada) {
     exit;
 }
 
-// Registrar uso de promoción como PENDIENTE (incluyendo local_id)
+// Registrar uso de promoción como PENDIENTE 
 $insert_query = $conn->prepare("
     INSERT INTO uso_promociones (cliente_id, promocion_id, estado, local_id) 
     VALUES (?, ?, 'pendiente', ?)

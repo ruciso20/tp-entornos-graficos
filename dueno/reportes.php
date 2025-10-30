@@ -293,10 +293,12 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
         <?php endif; ?>
       </div>
     </div>
-    <!-- footer -->
-    <?php include('../footer.php'); ?>
-    <!-- bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </div>
+
+  <!-- footer -->
+  <?php include('../footer.php'); ?>
+  <!-- bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

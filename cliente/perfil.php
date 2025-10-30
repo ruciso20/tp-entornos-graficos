@@ -32,7 +32,7 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
     if ($update_query->execute()) {
         $_SESSION['nombre'] = $nombre;
         $mensaje = "✅ Perfil actualizado correctamente";
-        // Recargar datos
+        // Recargar los datos
         $cliente_query->execute();
         $cliente = $cliente_query->get_result()->fetch_assoc();
     } else {

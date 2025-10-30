@@ -9,7 +9,7 @@ include("../config/db.php");
 $dueno_id = $_SESSION['user_id'];
 $mensaje = "";
 
-// --- Eliminar local (acepta GET ?eliminar=ID o POST eliminar=ID) ---
+//Eliminar Local
 $valorEliminar = null;
 if (isset($_POST['eliminar'])) {
   $valorEliminar = filter_input(INPUT_POST, 'eliminar', FILTER_VALIDATE_INT);
@@ -21,7 +21,7 @@ if ($valorEliminar !== null) {
   if ($valorEliminar === false) {
     $mensaje = "ID de local inválido.";
   } else {
-    // Solo permitir eliminar locales en estados específicos
+    // Solo permitimos eliminar locales en estados específicos
     $stmt = $conn->prepare("DELETE FROM locales WHERE id = ? AND dueno_id = ? AND estado IN ('rechazado', 'inactivo')");
     $stmt->bind_param("ii", $valorEliminar, $dueno_id);
 
@@ -54,7 +54,6 @@ if (isset($_POST['crear_local'])) {
   if (empty($nombre)) {
     $error = "El nombre es obligatorio";
   } else {
-    // INSERT simplificado - sin codigo_local
     $sql = "INSERT INTO locales (nombre, descripcion, dueno_id, estado) 
             VALUES ('$nombre', '$descripcion', $dueno_id, 'pendiente')";
 
