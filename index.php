@@ -53,6 +53,7 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
+        /* estilos para la sección hero */
         .hero-section {
             padding-top: 40px 0 60px;
             padding-bottom: 3rem;
@@ -112,6 +113,7 @@ try {
             font-size: 0.8rem;
         }
 
+        /* parte de newsletter */
         .newsletter-content {
             padding: 2rem 0;
         }
@@ -243,6 +245,27 @@ try {
         #filterCategoria:focus {
             border-color: #0d6efd;
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .local-imagen-container {
+            overflow: hidden;
+        }
+
+        .local-imagen {
+            transition: transform 0.3s ease;
+        }
+
+        .local-card-item:hover .local-imagen {
+            transform: scale(1.05);
+        }
+
+        .local-imagen-default {
+            transition: all 0.3s ease;
+        }
+
+        .local-card-item:hover .local-imagen-default {
+            transform: scale(1.05);
+            opacity: 0.9;
         }
     </style>
 </head>

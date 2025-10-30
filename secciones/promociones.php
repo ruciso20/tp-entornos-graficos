@@ -5,7 +5,7 @@
       <div class="col">
         <h2 class="fw-bold">🔥 Todas las Promociones Disponibles</h2>
         <p class="text-muted fs-5">
-          Descubre todas las ofertas del shopping. Regístrate para acceder a las promociones de tu categoría.
+          Descubre todas las ofertas del shopping.
         </p>
       </div>
     </div>

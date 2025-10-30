@@ -8,19 +8,19 @@
       </div>
     </div>
 
-    <!-- Barra de búsqueda y filtros -->
+    <!-- Barra de búsqueda simplificada -->
     <div class="row mb-4">
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <div class="row g-3 align-items-center">
-              <div class="col-md-6">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-search text-muted"></i>
                   </span>
                   <input type="text" id="searchLocales" class="form-control border-start-0"
-                    placeholder="Buscar locales por nombre..."
+                    placeholder="Buscar locales por nombre o descripción..."
                     aria-label="Buscar locales">
                 </div>
               </div>
@@ -46,51 +46,61 @@
         $locales_count = 0;
       ?>
         <?php while ($local = $locales_activos->fetch_assoc()):
-          // Variables para categorías e iconos
-          $categoria_icono = "🏪";
-          $categoria_clase = "general";
-
           $locales_count++;
+          // Imagen del local o icono por defecto
+          $imagen_local = !empty($local['imagen_url']) ? $local['imagen_url'] : null;
         ?>
           <div class="col-lg-4 col-md-6 mb-4 local-card"
             data-nombre="<?php echo htmlspecialchars(strtolower($local['nombre'])); ?>"
-            data-categoria="<?php echo $categoria_clase; ?>"
             data-descripcion="<?php echo htmlspecialchars(strtolower($local['descripcion'] ?? '')); ?>">
             <div class="card h-100 local-card-item shadow-sm">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                  <div class="local-icon" style="font-size: 2.5rem;">
-                    <?php echo $categoria_icono; ?>
-                  </div>
-                  <span class="badge bg-secondary categoria-badge">
-                    <?php echo ucfirst($categoria_clase); ?>
-                  </span>
-                </div>
-
-                <h5 class="card-title fw-bold"><?php echo htmlspecialchars($local['nombre']); ?></h5>
-
-                <?php if (!empty($local['descripcion'])): ?>
-                  <p class="card-text text-muted small mb-3">
-                    <?php echo htmlspecialchars($local['descripcion']); ?>
-                  </p>
-                <?php endif; ?>
-
-                <div class="local-info">
-                  <?php if (!isset($_SESSION['user_id'])): ?>
-                    <div class="alert alert-warning py-2 mb-0">
-                      <small>
-                        <i class="fas fa-lock me-1"></i>
-                        Regístrate para ver promociones
-                      </small>
-                    </div>
+              <div class="card-body p-0">
+                <!-- Imagen del local -->
+                <div class="local-imagen-container position-relative">
+                  <?php if ($imagen_local): ?>
+                    <img src="<?php echo htmlspecialchars($imagen_local); ?>"
+                      class="card-img-top local-imagen"
+                      alt="<?php echo htmlspecialchars($local['nombre']); ?>"
+                      style="height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
                   <?php else: ?>
-                    <div class="alert alert-success py-2 mb-0">
-                      <small>
-                        <i class="fas fa-check me-1"></i>
-                        Promociones disponibles
-                      </small>
+                    <!-- Icono por defecto si no hay imagen -->
+                    <div class="local-imagen-default d-flex align-items-center justify-content-center"
+                      style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0;">
+                      <div class="text-white text-center">
+                        <div style="font-size: 3rem;">🏪</div>
+                        <small class="fw-bold"><?php echo htmlspecialchars($local['nombre']); ?></small>
+                      </div>
                     </div>
                   <?php endif; ?>
+                </div>
+
+                <!-- Contenido textual -->
+                <div class="p-3">
+                  <h5 class="card-title fw-bold mb-2"><?php echo htmlspecialchars($local['nombre']); ?></h5>
+
+                  <?php if (!empty($local['descripcion'])): ?>
+                    <p class="card-text text-muted small mb-3">
+                      <?php echo htmlspecialchars($local['descripcion']); ?>
+                    </p>
+                  <?php endif; ?>
+
+                  <div class="local-info">
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                      <div class="alert alert-warning py-2 mb-0">
+                        <small>
+                          <i class="fas fa-lock me-1"></i>
+                          Regístrate para ver promociones
+                        </small>
+                      </div>
+                    <?php else: ?>
+                      <div class="alert alert-success py-2 mb-0">
+                        <small>
+                          <i class="fas fa-check me-1"></i>
+                          Promociones disponibles
+                        </small>
+                      </div>
+                    <?php endif; ?>
+                  </div>
                 </div>
               </div>
             </div>

@@ -9,7 +9,7 @@ include("../config/db.php");
 $dueno_id = $_SESSION['user_id'];
 $mensaje = "";
 
-//Eliminar Local
+// Eliminar Local
 $valorEliminar = null;
 if (isset($_POST['eliminar'])) {
   $valorEliminar = filter_input(INPUT_POST, 'eliminar', FILTER_VALIDATE_INT);
@@ -49,13 +49,51 @@ if (isset($_POST['crear_local'])) {
   $nombre = trim($_POST['nombre']);
   $descripcion = trim($_POST['descripcion']);
   $dueno_id = (int)$_SESSION['user_id'];
+  $imagen_url = null;
 
-  // Validaciones simplificadas
+  // Procesar imagen si se subió
+  if (isset($_FILES['imagen_local']) && $_FILES['imagen_local']['error'] === UPLOAD_ERR_OK) {
+    $directorio_imagenes = "../uploads/locales/";
+
+    // Crear directorio si no existe
+    if (!is_dir($directorio_imagenes)) {
+      mkdir($directorio_imagenes, 0755, true);
+    }
+
+    $extension = strtolower(pathinfo($_FILES['imagen_local']['name'], PATHINFO_EXTENSION));
+    $tipos_permitidos = ['jpg', 'jpeg', 'png', 'gif'];
+
+    if (in_array($extension, $tipos_permitidos)) {
+      // Validar tamaño (2MB máximo)
+      if ($_FILES['imagen_local']['size'] <= 2 * 1024 * 1024) {
+        $nombre_archivo = uniqid() . '_' . time() . '.' . $extension;
+        $ruta_completa = $directorio_imagenes . $nombre_archivo;
+
+        if (move_uploaded_file($_FILES['imagen_local']['tmp_name'], $ruta_completa)) {
+          $imagen_url = "uploads/locales/" . $nombre_archivo;
+        } else {
+          $error = "Error al subir la imagen";
+        }
+      } else {
+        $error = "La imagen es demasiado grande (máximo 2MB)";
+      }
+    } else {
+      $error = "Formato de imagen no permitido. Use JPG, PNG o GIF";
+    }
+  }
+
+  // Validaciones del formulario
   if (empty($nombre)) {
     $error = "El nombre es obligatorio";
   } else {
-    $sql = "INSERT INTO locales (nombre, descripcion, dueno_id, estado) 
-            VALUES ('$nombre', '$descripcion', $dueno_id, 'pendiente')";
+    // Insertar en la base de datos CON la imagen
+    if ($imagen_url) {
+      $sql = "INSERT INTO locales (nombre, descripcion, dueno_id, imagen_url, estado) 
+              VALUES ('$nombre', '$descripcion', $dueno_id, '$imagen_url', 'pendiente')";
+    } else {
+      $sql = "INSERT INTO locales (nombre, descripcion, dueno_id, estado) 
+              VALUES ('$nombre', '$descripcion', $dueno_id, 'pendiente')";
+    }
 
     if ($conn->query($sql) === TRUE) {
       $success = "Local '$nombre' creado exitosamente. Espera la aprobación del administrador.";
@@ -67,7 +105,7 @@ if (isset($_POST['crear_local'])) {
 }
 
 // Obtener todos los locales del dueño (mostrar todos los estados)
-$locales = $conn->query("SELECT id, nombre, descripcion, estado FROM locales WHERE dueno_id = $dueno_id ORDER BY estado, nombre");
+$locales = $conn->query("SELECT id, nombre, descripcion, estado, imagen_url FROM locales WHERE dueno_id = $dueno_id ORDER BY estado, nombre");
 ?>
 
 <!DOCTYPE html>
@@ -78,6 +116,25 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado FROM locales WHE
   <title>Gestión de Locales - Dueño</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .local-imagen {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .imagen-placeholder {
+      width: 60px;
+      height: 60px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+    }
+  </style>
 </head>
 
 <body>
@@ -86,7 +143,7 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado FROM locales WHE
       <div class="navbar-brand">
         <a class="navbar-brand fw-bold" href="../index.php">🛍️
           <span class="ms-1">Stella Shopping Rosario</span></a>
-        <span class="navbar-text text-light">Gestion de Locales</span>
+        <span class="navbar-text text-light">Gestión de Locales</span>
       </div>
       <div class="d-flex">
         <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
@@ -108,26 +165,31 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado FROM locales WHE
       <div class="alert alert-info"><?php echo $mensaje; ?></div>
     <?php endif; ?>
 
-    <!-- Formulario crear local -->
     <div class="card mb-4">
       <div class="card-header">
         <h5>Crear Nuevo Local</h5>
       </div>
       <div class="card-body">
-        <form method="POST">
+        <!-- Formulario crear local -->
+        <form method="POST" enctype="multipart/form-data">
           <div class="row">
-            <div class="col-md-4">
-              <label>Nombre del Local *</label>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Nombre del Local *</label>
               <input type="text" name="nombre" class="form-control" placeholder="Ej: Ropa Fashion"
                 value="<?php echo isset($_POST['nombre']) ? htmlspecialchars($_POST['nombre']) : ''; ?>" required>
             </div>
-            <div class="col-md-5">
-              <label>Descripción</label>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Descripción</label>
               <input type="text" name="descripcion" class="form-control" placeholder="Descripción del local"
                 value="<?php echo isset($_POST['descripcion']) ? htmlspecialchars($_POST['descripcion']) : ''; ?>">
             </div>
-            <div class="col-md-3">
-              <label>&nbsp;</label>
+            <div class="col-md-3 mb-3">
+              <label for="imagen_local" class="form-label">Imagen del Local</label>
+              <input type="file" class="form-control" id="imagen_local" name="imagen_local" accept="image/*">
+              <div class="form-text">Formatos: JPG, PNG, GIF. Máx: 2MB</div>
+            </div>
+            <div class="col-md-2 mb-3">
+              <label class="form-label">&nbsp;</label>
               <button type="submit" name="crear_local" class="btn btn-primary w-100">Crear Local</button>
             </div>
           </div>
@@ -154,11 +216,13 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado FROM locales WHE
                   <th>Nombre</th>
                   <th>Descripción</th>
                   <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php while ($local = $locales->fetch_assoc()): ?>
                   <tr>
+                    <td><strong>#<?php echo $local['id']; ?></strong></td>
                     <td><strong><?php echo htmlspecialchars($local['nombre']); ?></strong></td>
                     <td><?php echo htmlspecialchars($local['descripcion']); ?></td>
                     <td>
