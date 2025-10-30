@@ -5,7 +5,7 @@
       <div class="col">
         <h2 class="fw-bold">🔥 Todas las Promociones Disponibles</h2>
         <p class="text-muted fs-5">
-          Descubre todas las ofertas del shopping.
+          Descubre todas las ofertas del shopping
         </p>
       </div>
     </div>
@@ -47,6 +47,7 @@
                 <h5 class="card-title"><?php echo htmlspecialchars($promo['titulo']); ?></h5>
                 <p class="card-text">
                   <strong><i class="fas fa-store"></i> Local:</strong> <?php echo htmlspecialchars($promo['local_nombre']); ?><br>
+                  <strong><i class="fas fa-calendar"></i> Comienza:</strong> <?php echo date('d/m/Y', strtotime($promo['fecha_inicio'])); ?><br>
                   <strong><i class="fas fa-calendar"></i> Válida hasta:</strong> <?php echo date('d/m/Y', strtotime($promo['fecha_fin'])); ?>
                 </p>
 

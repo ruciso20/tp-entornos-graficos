@@ -13,11 +13,11 @@
 
            <h1 class="hero-title display-4 fw-bold mb-4">
              Vive la experiencia
-             <span class="text-primary">Stella</span> Shopping
+             <span class="text-primary">Stella</span> Shopping Rosario
            </h1>
 
            <p class="hero-subtitle lead mb-5">
-             El destino de compras premium en Rosario.
+             El mejor lugar para comprar en Rosario.<br>
              Descubre las mejores marcas y promociones exclusivas.
            </p>
 
@@ -59,9 +59,9 @@
            <!-- trust badges ejemplificados -->
            <div class="trust-badges">
              <div class="d-flex flex-wrap gap-3 text-muted">
-               <small><i class="fas fa-shield-alt me-1"></i> Compra segura</small>
+               <small><i class="fas fa-shield-alt me-1"></i>Seguridad Garantizada</small>
                <small><i class="fas fa-clock me-1"></i> 10:00 - 22:00</small>
-               <small><i class="fas fa-parking me-1"></i> Estacionamiento gratis</small>
+               <small><i class="fas fa-parking me-1"></i> Estacionamiento Gratis</small>
              </div>
            </div>
          </div>
