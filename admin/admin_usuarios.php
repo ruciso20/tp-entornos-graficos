@@ -54,20 +54,25 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
     <meta charset="UTF-8">
     <title>Gestión de Usuarios - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 
 <body>
     <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand">Admin - Usuarios</a>
-            <div>
-                <a href="../dashboard.php" class="btn btn-outline-light">Dashboard</a>
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Gestión de Usuarios</span>
+            </div>
+            <div class="d-flex">
+                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <h2>Gestión de Usuarios</h2>
 
         <?php if (isset($success)): ?>
             <div class="alert alert-success"><?php echo $success; ?></div>
@@ -192,6 +197,8 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
             </div>
         </div>
     </div>
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
 </body>
 
 </html>

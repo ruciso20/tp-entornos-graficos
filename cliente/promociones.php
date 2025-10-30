@@ -13,7 +13,7 @@ $usuario_id = $_SESSION['user_id'];
 
 // CORREGIDO: Usar los nombres correctos de las columnas según tu estructura
 $promociones_query = $conn->prepare("
-    SELECT p.*, l.nombre as local_nombre, l.codigo_local
+    SELECT p.*, l.nombre as local_nombre
     FROM promociones p 
     JOIN locales l ON p.local_id = l.id 
     WHERE p.estado = 'aprobada' 
@@ -40,6 +40,7 @@ $promociones = $promociones_query->get_result();
     <meta charset="UTF-8">
     <title>Promociones - Cliente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .promo-card {
             transition: transform 0.2s;
@@ -74,10 +75,14 @@ $promociones = $promociones_query->get_result();
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark no-print">
-        <div class="container">
-            <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Promociones</a>
-            <div>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Usar Promociones</span>
+            </div>
+            <div class="d-flex">
                 <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
             </div>
         </div>
@@ -268,7 +273,9 @@ $promociones = $promociones_query->get_result();
             printWindow.document.close();
         }
     </script>
-
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
+    <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

@@ -10,7 +10,7 @@ $nombre = $_SESSION['nombre'];
 $categoria = $_SESSION['categoria'];
 
 // determinar el titulo según el tipo de usuario
-$titulo_dashboard = "Shopping Rosario - ";
+$titulo_dashboard = "Stella Shopping Rosario - ";
 switch ($rol) {
     case 'admin':
         $titulo_dashboard .= "Administrador";
@@ -257,22 +257,14 @@ if ($rol == 'cliente') {
                 </strong>
             </a>
             <div class="navbar-nav ms-auto">
-                <span class="navbar-text text-white me-3">
-                    <i class="fas fa-user"></i> Hola, <?php echo $nombre; ?>
-                    <?php if ($rol == 'cliente'): ?>
-                        <span class="badge bg-info"><?php echo $categoria; ?></span>
-                    <?php endif; ?>
-                </span>
+                <!-- mostrar nombre del usuario que ingresó -->
+                <span class="navbar-text text-white me-3">Hola, <?php echo $nombre; ?></span>
 
                 <!-- boton home -->
-                <a href="index.php" class="btn btn-outline-light me-2">
-                    <i class="fas fa-home"></i> Inicio
-                </a>
+                <a href="index.php" class="btn btn-outline-light me-2">Inicio</a>
 
                 <!-- boton logout -->
-                <a href="logout.php" class="btn btn-outline-light">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </a>
+                <a href="logout.php" class="btn btn-outline-light">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
@@ -592,8 +584,9 @@ if ($rol == 'cliente') {
             </div>
         </div>
     </div>
-
-
+    <!-- footer -->
+    <?php include('footer.php'); ?>
+    <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

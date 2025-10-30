@@ -139,18 +139,24 @@ $promociones = $conn->query("
   <meta charset="UTF-8">
   <title>Gestión de Promociones - Dueño</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
   <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="../dashboard.php">🛍 Dueño - Promociones</a>
-      <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+    <div class="container-fluid">
+      <div class="navbar-brand">
+        <a class="navbar-brand fw-bold" href="../index.php">🛍️
+          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <span class="navbar-text text-light">Gestion de Promociones</span>
+      </div>
+      <div class="d-flex">
+        <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+      </div>
     </div>
   </nav>
 
   <div class="container mt-4">
-    <h2>Gestión de Promociones</h2>
 
     <?php if ($mensaje): ?>
       <div class="alert alert-info"><?php echo $mensaje; ?></div>
@@ -341,6 +347,9 @@ $promociones = $conn->query("
       });
     });
   </script>
+
+  <!-- footer -->
+  <?php include('../footer.php'); ?>
 </body>
 
 </html>

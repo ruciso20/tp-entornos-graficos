@@ -77,18 +77,24 @@ $locales_query = $conn->query("
     <meta charset="UTF-8">
     <title>Gestión de Locales - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
     <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="../dashboard.php">🛍️ Admin - Gestión de Locales</a>
-            <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Gestión de Locales</span>
+            </div>
+            <div class="d-flex">
+                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+            </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <h2>Gestión de Locales</h2>
 
         <?php if ($mensaje): ?>
             <div class="alert alert-<?php echo $mensaje_tipo ?? 'info'; ?>"><?php echo $mensaje; ?></div>
@@ -213,7 +219,9 @@ $locales_query = $conn->query("
         </div>
     </div>
     </div>
-
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
+    <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

@@ -45,12 +45,12 @@ foreach ($locales as $local) {
   }
 }
 
-// Procesar aceptar/rechazar solicitud
-if (isset($_POST['accion_solicitud'])) {
+// Procesar aceptar/rechazar solicitud - CORREGIDO
+if (isset($_POST['aceptar']) || isset($_POST['rechazar'])) {
   $solicitud_id = $_POST['solicitud_id'];
-  $accion = $_POST['accion'];
 
-  if ($accion == 'aceptar') {
+  // Determinar la acción basada en qué botón se presionó
+  if (isset($_POST['aceptar'])) {
     $nuevo_estado = 'usada';
     $mensaje = "✅ Solicitud aceptada correctamente";
   } else {
@@ -83,7 +83,7 @@ if (isset($_POST['accion_solicitud'])) {
   }
 }
 
-// Obtener solicitudes pendientes del local actual - CORREGIDO: estado = 'pendiente'
+// Obtener solicitudes pendientes del local actual
 $solicitudes_query = $conn->prepare("
     SELECT up.id, up.fecha_uso, up.estado, 
            p.titulo as promocion_titulo,
@@ -101,7 +101,7 @@ $solicitudes_query->bind_param("i", $local_actual_id);
 $solicitudes_query->execute();
 $solicitudes = $solicitudes_query->get_result();
 
-// Contar solicitudes por local para el badge - CORREGIDO: estado = 'pendiente'
+// Contar solicitudes por local para el badge
 $contador_query = $conn->prepare("
     SELECT l.id, l.nombre, COUNT(up.id) as pendientes
     FROM locales l
@@ -123,6 +123,7 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solicitudes de Descuento - Dueño</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     .solicitud-card {
       border-left: 4px solid #ffc107;
@@ -138,14 +139,20 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <body>
   <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="../dashboard.php">🛍️ Dueño - Solicitudes</a>
-      <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+    <div class="container-fluid">
+      <div class="navbar-brand">
+        <a class="navbar-brand fw-bold" href="../index.php">🛍️
+          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <span class="navbar-text text-light">Gestionar Solicitudes de Descuento</span>
+      </div>
+      <div class="d-flex">
+        <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+      </div>
     </div>
   </nav>
 
   <div class="container mt-4">
-    <!-- Selector de Local -->
+    <!-- selector de Local -->
     <div class="card mb-4">
       <div class="card-header">
         <h5>Seleccionar Local</h5>
@@ -180,9 +187,6 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5>Solicitudes Pendientes</h5>
-        <span class="badge bg-warning">
-          <?php echo $solicitudes->num_rows; ?> solicitud(es)
-        </span>
       </div>
       <div class="card-body">
         <?php if ($solicitudes->num_rows > 0): ?>
@@ -195,13 +199,13 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
                     <p class="card-text text-muted"><?php echo htmlspecialchars($solicitud['promocion_descripcion']); ?></p>
 
                     <div class="mb-2">
-                      <strong>👤 Cliente:</strong> <?php echo htmlspecialchars($solicitud['cliente_nombre']); ?>
+                      <strong>Cliente:</strong> <?php echo htmlspecialchars($solicitud['cliente_nombre']); ?>
                     </div>
                     <div class="mb-2">
-                      <strong>📧 Email:</strong> <?php echo htmlspecialchars($solicitud['cliente_email']); ?>
+                      <strong>Email:</strong> <?php echo htmlspecialchars($solicitud['cliente_email']); ?>
                     </div>
                     <div class="mb-2">
-                      <strong>🎯 Categoría:</strong>
+                      <strong>Categoría:</strong>
                       <span class="badge bg-<?php
                                             echo $solicitud['cliente_categoria'] == 'premium' ? 'danger' : ($solicitud['cliente_categoria'] == 'medium' ? 'warning' : 'info');
                                             ?>">
@@ -209,18 +213,19 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
                       </span>
                     </div>
                     <div class="mb-3">
-                      <strong>📅 Solicitado:</strong>
+                      <strong>Solicitado:</strong>
                       <?php echo date('d/m/Y H:i', strtotime($solicitud['fecha_uso'])); ?>
                     </div>
 
+                    <!-- formulario -->
                     <form method="POST" class="text-end">
                       <input type="hidden" name="solicitud_id" value="<?php echo $solicitud['id']; ?>">
-                      <button type="submit" name="accion_solicitud" value="aceptar"
+                      <button type="submit" name="aceptar" value="1"
                         class="btn btn-success btn-sm"
                         onclick="return confirm('¿Aceptar esta solicitud?')">
                         ✅ Aceptar
                       </button>
-                      <button type="submit" name="accion_solicitud" value="rechazar"
+                      <button type="submit" name="rechazar" value="1"
                         class="btn btn-danger btn-sm"
                         onclick="return confirm('¿Rechazar esta solicitud?')">
                         ❌ Rechazar
@@ -233,14 +238,16 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
           </div>
         <?php else: ?>
           <div class="alert alert-info text-center py-4">
-            <h5>🎉 No hay solicitudes pendientes</h5>
+            <h5>No hay solicitudes pendientes</h5>
             <p class="text-muted mb-0">Cuando los clientes usen promociones de <strong><?php echo htmlspecialchars($local_actual['nombre']); ?></strong>, aparecerán aquí.</p>
           </div>
         <?php endif; ?>
       </div>
     </div>
   </div>
-
+  <!-- footer -->
+  <?php include('../footer.php'); ?>
+  <!-- bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

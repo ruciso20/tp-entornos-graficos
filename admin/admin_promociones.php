@@ -40,17 +40,62 @@ $promociones = $conn->query("
 
 <body>
     <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand">Admin - Gestión de Promociones</a>
-            <div>
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Gestión de Promociones</span>
+            </div>
+            <div class="d-flex">
                 <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <h2></i> Gestión de Promociones</h2>
+        <!-- Estadísticas rápidas -->
 
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-warning">
+                    <div class="card-body text-center">
+                        <h4>
+                            <?php
+                            $pendientes = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'pendiente'")->fetch_assoc()['total'];
+                            echo $pendientes;
+                            ?>
+                        </h4>
+                        <p>Promociones Pendientes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h4>
+                            <?php
+                            $aprobadas = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'aprobada'")->fetch_assoc()['total'];
+                            echo $aprobadas;
+                            ?>
+                        </h4>
+                        <p>Promociones Aprobadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-danger">
+                    <div class="card-body text-center">
+                        <h4>
+                            <?php
+                            $denegadas = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'denegada'")->fetch_assoc()['total'];
+                            echo $denegadas;
+                            ?>
+                        </h4>
+                        <p>Promociones Denegadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php if (isset($success)): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle"></i> <?php echo $success; ?>
@@ -58,8 +103,8 @@ $promociones = $conn->query("
             </div>
         <?php endif; ?>
 
-        <div class="card">
-            <div class="card-header bg-primary text-white">
+        <div class="card mt-4">
+            <div class="card-header text-dark">
                 <h5 class="mb-0">
                     Lista de Promociones
                 </h5>
@@ -166,52 +211,10 @@ $promociones = $conn->query("
                 <?php endif; ?>
             </div>
         </div>
-
-        <!-- Estadísticas rápidas -->
-
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card text-white bg-warning">
-                    <div class="card-body text-center">
-                        <h4>
-                            <?php
-                            $pendientes = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'pendiente'")->fetch_assoc()['total'];
-                            echo $pendientes;
-                            ?>
-                        </h4>
-                        <p>Promociones Pendientes</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-success">
-                    <div class="card-body text-center">
-                        <h4>
-                            <?php
-                            $aprobadas = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'aprobada'")->fetch_assoc()['total'];
-                            echo $aprobadas;
-                            ?>
-                        </h4>
-                        <p>Promociones Aprobadas</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-danger">
-                    <div class="card-body text-center">
-                        <h4>
-                            <?php
-                            $denegadas = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'denegada'")->fetch_assoc()['total'];
-                            echo $denegadas;
-                            ?>
-                        </h4>
-                        <p>Promociones Denegadas</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
+    <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

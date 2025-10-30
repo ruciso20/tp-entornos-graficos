@@ -107,6 +107,7 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reportes de Promociones - Dueño</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     .stats-card {
       border: none;
@@ -144,16 +145,15 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="../dashboard.php">🛍️ Dueño - Reportes</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-        </ul>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <div class="navbar-brand">
+        <a class="navbar-brand fw-bold" href="../index.php">🛍️
+          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <span class="navbar-text text-light">Ver Reportes</span>
+      </div>
+      <div class="d-flex">
+        <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
       </div>
     </div>
   </nav>
@@ -293,6 +293,9 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
         <?php endif; ?>
       </div>
     </div>
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
+    <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

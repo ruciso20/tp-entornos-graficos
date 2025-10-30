@@ -52,6 +52,7 @@ try {
     <title>Stella Shopping - Ofertas y Promociones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         .hero-section {
             padding-top: 40px 0 60px;
@@ -250,9 +251,7 @@ try {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <strong><i class="fas fa-shopping-bag"></i> Stella Shopping</strong>
-            </a>
+            <a class="navbar-brand" href="index.php">🛍️ Stella Shopping Rosario</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -828,55 +827,13 @@ try {
         </div>
     </section>
 
-    <!-- Footer Mejorado -->
-    <footer class="bg-dark text-white py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <h5><i class="fas fa-shopping-bag me-2"></i> Stella Shopping </h5>
-                    <p class="mt-3">El mejor shopping de la ciudad con las promociones más exclusivas y la mejor experiencia de compras.</p>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6>Enlaces Rápidos</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#promociones" class="text-white-50 text-decoration-none">Promociones</a></li>
-                        <li><a href="#locales" class="text-white-50 text-decoration-none">Locales</a></li>
-                        <li><a href="#novedades" class="text-white-50 text-decoration-none">Novedades</a></li>
-                        <li><a href="#contacto" class="text-white-50 text-decoration-none">Contacto</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h6>Contacto</h6>
-                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Av. San Martín 1234, Rosario</p>
-                    <p class="mb-2"><i class="fas fa-phone me-2"></i> (341) 123-4567</p>
-                    <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@stellashopping.com</p>
-                </div>
-            </div>
-            <hr class="my-4">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <p class="mb-0">&copy; 2025 Stella Shopping. Todos los derechos reservados.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-white-50 text-decoration-none me-3">Política de Privacidad</a>
-                    <a href="#" class="text-white-50 text-decoration-none">Términos de Servicio</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- footer -->
+    <?php include('footer.php'); ?>
 
-    <!-- Bootstrap JS -->
+    <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // CORREGIDO: usando promocionId en lugar de codPromo
-        function usarPromocion(promocionId) {
-            if (confirm('¿Deseas usar esta promoción?')) {
-                // Aquí iría la lógica para usar la promoción
-                alert('¡Promoción aplicada! Muestra este código en el local: PROMO-' + promocionId);
-            }
-        }
-
         // Smooth scroll para los enlaces internos
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -885,13 +842,6 @@ try {
                     behavior: 'smooth'
                 });
             });
-        });
-
-        // Manejo del formulario de newsletter
-        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('¡Gracias por suscribirte a nuestro newsletter!');
-            this.reset();
         });
 
         // Manejo del formulario de contacto

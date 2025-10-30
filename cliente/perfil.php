@@ -53,9 +53,15 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
 
 <body>
     <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="../dashboard.php">🛍️ Cliente - Mi Perfil</a>
-            <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Mi Perfil</span>
+            </div>
+            <div class="d-flex">
+                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+            </div>
         </div>
     </nav>
 
@@ -119,6 +125,8 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
             </div>
         </div>
     </div>
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
 </body>
 
 </html>

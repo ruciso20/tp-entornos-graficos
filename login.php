@@ -6,7 +6,7 @@ if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-  $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ? LIMIT 1");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -27,7 +27,7 @@ if (isset($_POST['login'])) {
                 $reenviar_url = $scheme . '://' . $host . $dir . 'reenviar_verificacion.php?email=' . urlencode($email);
 
                 $error .= "<br><br><a href='$reenviar_url' class='btn btn-warning btn-sm'>📧 Reenviar Email de Verificación</a>";
-}
+            }
             // Verificar estado de la cuenta
             elseif ($row['estado'] == 'aprobado' || $row['rol'] == 'cliente') {
                 $_SESSION['user_id'] = $row['id'];
@@ -52,10 +52,12 @@ if (isset($_POST['login'])) {
                 $cuenta_rechazada = true;
             }
         } else {
-            $error = "Contraseña incorrecta";
+            // mensaje generico para seguridad
+            $error = "El correo o contraseña es incorrecto";
         }
     } else {
-        $error = "Usuario no encontrado";
+
+        $error = "El correo o contraseña es incorrecto";
     }
 }
 
@@ -66,9 +68,9 @@ if (isset($_POST['login'])) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Login - Shopping Rosario</title>
+    <title>Login - Stella Shopping Rosario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body class="bg-light">
@@ -77,7 +79,7 @@ if (isset($_POST['login'])) {
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Iniciar Sesión</h4>
+                        <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión</h4>
                     </div>
                     <div class="card-body">
                         <?php if (isset($error)): ?>
@@ -86,9 +88,8 @@ if (isset($_POST['login'])) {
                                                     ?>">
                                 <?php echo $error; ?>
                                 <div class="mt-3">
-                                    <a href="index.php" class="btn btn-outline-primary">🏠 Volver al Inicio</a>
                                     <?php if (isset($email_no_verificado)): ?>
-                                        <!-- <a href="register.php" class="btn btn-outline-warning">📧 Reenviar Verificación</a> -->
+                                        <!-- El botón de reenviar ya está incluido en el mensaje de error -->
                                     <?php elseif (isset($cuenta_rechazada)): ?>
                                         <a href="register.php" class="btn btn-outline-warning">📝 Nueva Solicitud</a>
                                     <?php elseif (isset($cuenta_pendiente)): ?>
@@ -102,24 +103,27 @@ if (isset($_POST['login'])) {
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required
-                                    value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                                    value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+                                    placeholder="Ingresa tu email">
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password" required
+                                    placeholder="Ingresa tu contraseña">
                             </div>
                             <button type="submit" name="login" class="btn btn-primary w-100">Iniciar Sesión</button>
                         </form>
                         <div class="text-center mt-3">
-                            <a href="register.php">¿No tienes cuenta? Regístrate</a>
-                            <br>
-                            <a href="index.php" class="btn btn-outline-secondary btn-sm mt-2">🏠 Volver al Inicio</a>
+                            <a href="register.php" class="d-block mb-2">🔐 ¿No tienes cuenta? Regístrate</a>
+                            <a href="index.php" class="btn btn-outline-secondary btn-sm">🏠 Volver al Inicio</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- footer -->
+    <?php include('footer.php'); ?>
 </body>
 
 </html>
