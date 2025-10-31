@@ -1,4 +1,6 @@
 <!-- panel cliente -->
+
+
 <div class="alert alert-success">
   <h5>Panel de Cliente</h5>
   <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios</p>
@@ -34,10 +36,10 @@
     <div class="col-md-5 mb-3">
       <div class="card card-hover h-100">
         <div class="card-body text-center">
-          <h3>Historial</h3>
+          <h3>Mi Progreso</h3>
           <p>Revisa todas las promociones que has utilizado</p>
-          <a href="cliente/historial.php" class="btn btn-warning w-100">
-            Ver Historial
+          <a href="cliente/mi_progreso.php" class="btn btn-warning w-100">
+            Ver Progreso
           </a>
         </div>
       </div>

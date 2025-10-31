@@ -12,7 +12,7 @@
     <div class="card card-stat text-white bg-info">
       <div class="card-body text-center">
         <h3><?php echo $novedades_disponibles; ?></h3>
-        <p>Novedades Activas</p>
+        <p>Novedades segun tu Categoria</p>
       </div>
     </div>
   </div>
