@@ -7,6 +7,20 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'cliente') {
 
 include("../config/db.php");
 
+//sincronizar la categoria actual del cliente
+
+if (isset($_SESSION['user_id']) && $_SESSION['rol'] == 'cliente') {
+    $cat_query = $conn->prepare("SELECT categoria_cliente FROM usuarios WHERE id = ?");
+    $cat_query->bind_param("i", $_SESSION['user_id']);
+    $cat_query->execute();
+    $cat_result = $cat_query->get_result();
+    $usuario_data = $cat_result->fetch_assoc();
+
+    if ($usuario_data) {
+        $_SESSION['categoria_cliente'] = $usuario_data['categoria_cliente'];
+    }
+}
+
 // Obtener promociones disponibles para el cliente según su categoría
 $categoria_cliente = $_SESSION['categoria'];
 $usuario_id = $_SESSION['user_id'];

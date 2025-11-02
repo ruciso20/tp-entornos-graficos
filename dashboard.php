@@ -28,10 +28,25 @@ switch ($rol) {
 // conexión a la base de datos
 include("config/db.php");
 
+// SINCRONIZAR CATEGORÍA PRIMERO
+$cat_query = $conn->prepare("SELECT categoria_cliente FROM usuarios WHERE id = ?");
+$cat_query->bind_param("i", $_SESSION['user_id']);
+$cat_query->execute();
+$cat_result = $cat_query->get_result();
+$usuario_data = $cat_result->fetch_assoc();
+
+if ($usuario_data) {
+    $_SESSION['categoria_cliente'] = $usuario_data['categoria_cliente'];
+    $_SESSION['categoria'] = $usuario_data['categoria_cliente']; // ACTUALIZAR AMBAS
+}
+
+
+// estadisticas específicas por tipo de usuario
+
 // estadisticas específicas por tipo de usuario
 
 if ($rol == 'cliente') {
-    // contar promociones disponibles para el cliente segun su categoria
+    // contar promociones disponibles para el cliente segun su categoria (CORREGIDO)
     $promociones_disponibles = $conn->query("
         SELECT COUNT(*) as total 
         FROM promociones 
@@ -39,14 +54,13 @@ if ($rol == 'cliente') {
         AND fecha_fin >= CURDATE()
         AND fecha_inicio <= CURDATE()
         AND (
-            categoria_minima = '$categoria' 
-            OR categoria_minima = 'Inicial'
-            OR ('$categoria' = 'Premium' AND categoria_minima IN ('Inicial', 'Medium', 'Premium'))
-            OR ('$categoria' = 'Medium' AND categoria_minima IN ('Inicial', 'Medium'))
+            categoria_minima = 'Inicial'
+            OR (categoria_minima = 'Medium' AND '$categoria' IN ('Medium', 'Premium'))
+            OR (categoria_minima = 'Premium' AND '$categoria' = 'Premium')
         )
     ")->fetch_assoc()['total'];
 
-    // contar las novedades disponibles para cliente
+    // contar las novedades disponibles para cliente (CORREGIDO)
     $novedades_disponibles = $conn->query("
         SELECT COUNT(*) as total 
         FROM novedades 
@@ -54,14 +68,13 @@ if ($rol == 'cliente') {
         AND fecha_inicio <= CURDATE()
         AND estado = 'activa'
         AND (
-            categoria_objetivo = '$categoria'
-            OR categoria_objetivo = 'Inicial'
-            OR ('$categoria' = 'Premium' AND categoria_objetivo IN ('Inicial', 'Medium', 'Premium'))
-            OR ('$categoria' = 'Medium' AND categoria_objetivo IN ('Inicial', 'Medium'))
+            categoria_objetivo = 'Inicial'
+            OR (categoria_objetivo = 'Medium' AND '$categoria' IN ('Medium', 'Premium'))
+            OR (categoria_objetivo = 'Premium' AND '$categoria' = 'Premium')
         )
     ")->fetch_assoc()['total'];
 
-    // obtener las promociones recientes para cliente
+    // obtener las promociones recientes para cliente (¡CORREGIR ESTA!)
     $promociones_recientes = $conn->query("
         SELECT p.*, l.nombre as local_nombre 
         FROM promociones p 
@@ -70,30 +83,28 @@ if ($rol == 'cliente') {
         AND p.fecha_fin >= CURDATE()
         AND p.fecha_inicio <= CURDATE()
         AND (
-            p.categoria_minima = '$categoria' 
-            OR p.categoria_minima = 'Inicial'
-            OR ('$categoria' = 'Premium' AND p.categoria_minima IN ('Inicial', 'Medium', 'Premium'))
-            OR ('$categoria' = 'Medium' AND p.categoria_minima IN ('Inicial', 'Medium'))
+            p.categoria_minima = 'Inicial'
+            OR (p.categoria_minima = 'Medium' AND '$categoria' IN ('Medium', 'Premium'))
+            OR (p.categoria_minima = 'Premium' AND '$categoria' = 'Premium')
         )
         ORDER BY p.id DESC LIMIT 5
     ");
 
-    // obtener las novedades recientes para cliente
+    // obtener las novedades recientes para cliente (¡CORREGIR ESTA!)
     $novedades_recientes = $conn->query("
         SELECT * FROM novedades 
         WHERE fecha_fin >= CURDATE() 
         AND fecha_inicio <= CURDATE()
         AND estado = 'activa'
         AND (
-            categoria_objetivo = '$categoria'
-            OR categoria_objetivo = 'Inicial'
-            OR ('$categoria' = 'Premium' AND categoria_objetivo IN ('Inicial', 'Medium', 'Premium'))
-            OR ('$categoria' = 'Medium' AND categoria_objetivo IN ('Inicial', 'Medium'))
+            categoria_objetivo = 'Inicial'
+            OR (categoria_objetivo = 'Medium' AND '$categoria' IN ('Medium', 'Premium'))
+            OR (categoria_objetivo = 'Premium' AND '$categoria' = 'Premium')
         )
         ORDER BY id DESC LIMIT 5
     ");
 
-    //contar promociones usadas por el cliente
+    //contar promociones usadas por el cliente (ESTA ESTÁ BIEN)
     $promociones_usadas = $conn->query("
         SELECT COUNT(*) as total 
         FROM uso_promociones 
