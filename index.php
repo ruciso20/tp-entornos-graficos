@@ -331,7 +331,6 @@ try {
 
         // manejo del formulario de contacto
         document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
             alert('¡Mensaje enviado! Te contactaremos pronto.');
             this.reset();
         });
