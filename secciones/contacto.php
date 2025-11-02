@@ -14,11 +14,11 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-6 mb-3">
+                <div class="col-12 col-md-6 mb-3">
                   <label for="contactName" class="form-label">Nombre Completo</label>
                   <input type="text" class="form-control" id="contactName" required>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-12 col-md-6 mb-3">
                   <label for="contactEmail" class="form-label">Email</label>
                   <input type="email" class="form-control" id="contactEmail" required>
                 </div>

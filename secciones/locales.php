@@ -1,4 +1,4 @@
-<!-- Sección: Locales -->
+<!-- seccion de Locales -->
 <section class="py-5 bg-light" id="locales">
   <div class="container">
     <div class="row text-center mb-4">
@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <!-- Barra de búsqueda simplificada -->
+    <!-- barra de búsqueda  -->
     <div class="row mb-4">
       <div class="col-12">
         <div class="card">
@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <!-- Contador de resultados -->
+    <!-- contador de los resultados de la barra -->
     <div class="row mb-3">
       <div class="col-12">
         <div id="resultCount" class="text-muted">
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <!-- Grid de locales -->
+    <!-- grid de los Locales -->
     <div class="row" id="localesGrid">
       <?php if (isset($locales_activos) && $locales_activos->num_rows > 0):
         $locales_activos->data_seek(0);
@@ -47,7 +47,7 @@
       ?>
         <?php while ($local = $locales_activos->fetch_assoc()):
           $locales_count++;
-          // Imagen del local o icono por defecto
+          // Imagen del local o icono
           $imagen_local = !empty($local['imagen_url']) ? $local['imagen_url'] : null;
         ?>
           <div class="col-lg-4 col-md-6 mb-4 local-card"

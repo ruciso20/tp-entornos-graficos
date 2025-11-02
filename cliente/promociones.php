@@ -85,6 +85,31 @@ $promociones = $promociones_query->get_result();
                 display: block !important;
             }
         }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container.mt-4 {
+            flex: 1;
+            padding-bottom: 20px;
+
+        }
+
+        /* Asegurar que el footer no tenga margenes extra por el espacio en blanco */
+        footer {
+            margin-top: 0 !important;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -288,10 +313,13 @@ $promociones = $promociones_query->get_result();
             printWindow.document.close();
         }
     </script>
-    <!-- footer -->
-    <?php include('../footer.php'); ?>
     <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- footer -->
+    <?php include('../footer.php'); ?>
 </body>
+
+</html>
 
 </html>

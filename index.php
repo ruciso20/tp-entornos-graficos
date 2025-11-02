@@ -50,6 +50,7 @@ try {
     <meta charset="UTF-8">
     <title>Stella Shopping - Ofertas y Promociones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Para iconos y demas -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -137,7 +138,7 @@ try {
             }
         }
 
-        /* esto para las cards flotantes */
+        /* esto para las cards flotantes del hero */
         .hero-cards {
             height: 400px;
             position: relative;
@@ -216,6 +217,21 @@ try {
             }
         }
 
+        @media (max-width: 576px) {
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .card-text {
+                font-size: 0.9rem;
+            }
+
+            .btn-lg {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
         /* para los locales*/
         .local-card-item {
             transition: all 0.3s ease;
@@ -263,9 +279,25 @@ try {
             transition: all 0.3s ease;
         }
 
+        /* para cuando pasamos el mouse x arriba */
         .local-card-item:hover .local-imagen-default {
             transform: scale(1.05);
             opacity: 0.9;
+        }
+
+        .local-imagen,
+        .local-imagen-default {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        /* Para que sea responsive las imagenes de locales, y no pasarnos con la altura */
+        @media (max-width: 768px) {
+
+            .local-imagen,
+            .local-imagen-default {
+                height: 150px;
+            }
         }
     </style>
 </head>
@@ -298,20 +330,22 @@ try {
         </div>
     </nav>
 
-    <?php include('secciones/hero-section.php'); ?>
 
-    <?php include('secciones/promociones.php'); ?>
+    <main class="flex-grow-1">
+        <?php include('secciones/hero-section.php'); ?>
 
-    <?php include('secciones/novedades.php'); ?>
+        <?php include('secciones/promociones.php'); ?>
 
-    <?php include('secciones/beneficios.php'); ?>
+        <?php include('secciones/novedades.php'); ?>
 
-    <?php include('secciones/locales.php'); ?>
+        <?php include('secciones/beneficios.php'); ?>
 
-    <?php include('secciones/newsletter.php'); ?>
+        <?php include('secciones/locales.php'); ?>
 
-    <?php include('secciones/contacto.php'); ?>
-    </div>
+        <?php include('secciones/newsletter.php'); ?>
+
+        <?php include('secciones/contacto.php'); ?>
+    </main>
     <!-- footer -->
     <?php include('footer.php'); ?>
 

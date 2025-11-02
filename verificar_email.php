@@ -50,6 +50,15 @@ if (isset($_GET['token']) && !empty($_GET['token'])) {
 </head>
 
 <body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                    <span class="ms-1">Stella Shopping Rosario</span></a>
+                <span class="navbar-text text-light">Verificacion Correo</span>
+            </div>
+        </div>
+    </nav>
     <div class="container py-5 text-center">
         <?php if ($estado === 'success'): ?>
             <div class="alert alert-success" role="alert">
@@ -67,6 +76,7 @@ if (isset($_GET['token']) && !empty($_GET['token'])) {
 
         <a href="login.php" class="btn btn-primary mt-3">Ir al inicio de sesión</a>
     </div>
+    <?php include('footer.php'); ?>
 </body>
 
 </html>
