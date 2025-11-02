@@ -1,3 +1,5 @@
+<!-- seccion de Contacto-->
+
 <?php
 $baseA = __DIR__ . '/PHPMailer/src/';
 $baseB = dirname(__DIR__) . '/PHPMailer/src/';
@@ -84,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
   }
 }
 ?>
-<!-- seccion de Contacto-->
+
 <section class="py-5 bg-light" id="contacto">
   <div class="container">
     <div class="row justify-content-center">
