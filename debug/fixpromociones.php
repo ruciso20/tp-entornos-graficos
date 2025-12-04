@@ -15,7 +15,7 @@ $sql = "CREATE TABLE IF NOT EXISTS promociones (
 
 if ($conn->query($sql)) {
     echo "✅ Tabla 'promociones' creada correctamente<br>";
-    
+
     // Verificar estructura
     $result = $conn->query("DESCRIBE promociones");
     echo "<h4>Estructura de la tabla:</h4>";
@@ -28,5 +28,4 @@ if ($conn->query($sql)) {
     echo "❌ Error: " . $conn->error . "<br>";
 }
 
-echo "<a href='dashboard.php'>Volver al Dashboard</a>";
-?>
+echo "<a href='dashboard.php'>Volver al Panel de Control</a>";

@@ -30,7 +30,7 @@ $current_year = date('Y');
         <h6>Mi Cuenta</h6>
         <ul class="list-unstyled">
           <?php if (isset($_SESSION['user_id'])): ?>
-            <li class="mb-2"><a href="dashboard.php" class="text-white-50 text-decoration-none">Dashboard</a></li>
+            <li class="mb-2"><a href="dashboard.php" class="text-white-50 text-decoration-none">Panel de Control</a></li>
             <li class="mb-2"><a href="logout.php" class="text-white-50 text-decoration-none">Cerrar Sesión</a></li>
           <?php else: ?>
             <li class="mb-2"><a href="login.php" class="text-white-50 text-decoration-none">Iniciar Sesión</a></li>

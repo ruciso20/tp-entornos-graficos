@@ -34,5 +34,4 @@ if ($conn->query($sql)) {
     echo "❌ Error: " . $conn->error . "<br>";
 }
 
-echo "<a href='dashboard.php'>Volver al Dashboard</a>";
-?>
+echo "<a href='dashboard.php'>Volver al Panel de Control</a>";
