@@ -47,11 +47,11 @@ if (isset($_POST['recuperar'])) {
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port = 587;
 
-                    $mail->setFrom('no-reply@shoppingrosario.com', 'Shopping Rosario');
+                    $mail->setFrom('no-reply@shoppingrosario.com', 'Stella Shopping Rosario');
                     $mail->addAddress($email_recuperar, $user['nombre']);
 
                     $mail->isHTML(true);
-                    $mail->Subject = 'Recuperacion de usuario - Shopping Rosario';
+                    $mail->Subject = 'Recuperacion de usuario - Stella Shopping Rosario';
 
                     $mail->Body = "
                         <p>¡Hola {$user['nombre']}!</p>

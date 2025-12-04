@@ -164,11 +164,20 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
 </head>
 
 <body class="bg-light">
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <div class="navbar-brand">
+        <a class="navbar-brand fw-bold" href="../index.php">🛍️
+          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <span class="navbar-text text-light">Restablecer Contraseña</span>
+      </div>
+    </div>
+  </nav>
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card shadow">
-          <div class="card-header bg-warning text-dark">
+          <div class="card-header bg-primary text-white">
             <h4 class="mb-0">Restablecer Contraseña</h4>
           </div>
           <div class="card-body">
@@ -222,8 +231,8 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
                   <div class="form-text" id="passwordMatchText">Las contraseñas deben coincidir</div>
                 </div>
 
-                <button type="submit" name="cambiar_password" class="btn btn-warning w-100 mb-3">
-                  <i class="fas fa-save me-2"></i>Cambiar Contraseña
+                <button type="submit" name="cambiar_password" class="btn btn-primary w-100 mb-3">
+                  Cambiar Contraseña
                 </button>
               </form>
 
@@ -236,7 +245,7 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
       </div>
     </div>
   </div>
-
+  <?php include('footer.php'); ?>
   <script>
     function togglePassword(fieldId) {
       const field = document.getElementById(fieldId);
