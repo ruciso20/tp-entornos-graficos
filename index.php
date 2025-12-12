@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/config/constants.php';
+require_once __DIR__ . '/utils/url.php';
+
 $locales_activos = [];
 $novedades_publicas = [];
 $promociones_destacadas = [];

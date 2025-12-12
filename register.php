@@ -277,7 +277,7 @@ if (isset($_POST['register'])) {
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                <a class="navbar-brand fw-bold" href="index.php">🛍️
                     <span class="ms-1">Stella Shopping Rosario</span></a>
                 <span class="navbar-text text-light">Registrarse</span>
             </div>
