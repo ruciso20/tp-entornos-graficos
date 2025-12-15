@@ -6,7 +6,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 'cliente') {
 }
 
 $user_id = $_SESSION['user_id'];
-$promo_id = isset($_GET['promo_id']) ? $_GET['promo_id'] : null;
+$promo_id = $_POST['promo_id'] ?? $_GET['promo_id'] ?? null;
+
 
 if (!$promo_id) {
     $_SESSION['error'] = "❌ Promoción no especificada";

@@ -39,32 +39,34 @@ $promociones = $conn->query("
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Gestión de Promociones</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Gestión de Promociones</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
 
         <!-- Estadisticas  -->
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card text-white bg-warning">
                     <div class="card-body text-center">
-                        <h4>
+                        <h2>
                             <?php
                             $pendientes = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'pendiente'")->fetch_assoc()['total'];
                             echo $pendientes;
                             ?>
-                        </h4>
+                        </h2>
                         <p>Promociones Pendientes</p>
                     </div>
                 </div>
@@ -72,12 +74,12 @@ $promociones = $conn->query("
             <div class="col-md-4">
                 <div class="card text-white bg-success">
                     <div class="card-body text-center">
-                        <h4>
+                        <h2>
                             <?php
                             $aprobadas = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'aprobada'")->fetch_assoc()['total'];
                             echo $aprobadas;
                             ?>
-                        </h4>
+                        </h2>
                         <p>Promociones Aprobadas</p>
                     </div>
                 </div>
@@ -85,12 +87,12 @@ $promociones = $conn->query("
             <div class="col-md-4">
                 <div class="card text-white bg-danger">
                     <div class="card-body text-center">
-                        <h4>
+                        <h2>
                             <?php
                             $denegadas = $conn->query("SELECT COUNT(*) as total FROM promociones WHERE estado = 'denegada'")->fetch_assoc()['total'];
                             echo $denegadas;
                             ?>
-                        </h4>
+                        </h2>
                         <p>Promociones Denegadas</p>
                     </div>
                 </div>
@@ -98,16 +100,16 @@ $promociones = $conn->query("
         </div>
         <?php if (isset($success)): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle"></i> <?php echo $success; ?>
+                <i class="fas fa-check-circle" aria-hidden="true"></i> <?php echo $success; ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
         <div class="card mt-4">
             <div class="card-header text-dark">
-                <h5 class="mb-0">
+                <h2 class="mb-0">
                     Lista de Promociones
-                </h5>
+                </h2>
             </div>
             <div class="card-body">
                 <?php if ($promociones->num_rows == 0): ?>
@@ -117,17 +119,20 @@ $promociones = $conn->query("
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Local</th>
-                                    <th>Promoción</th>
-                                    <th>Vigencia</th>
-                                    <th>Categoría Mínima</th>
-                                    <th>Días Válidos</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
+                        <table class="table table-striped table-hover" role="table">
+                            <caption class="visually-hidden">
+                                Listado de promociones con estado, vigencia y local asociado
+                            </caption>
+                            <thead class="table-dark" role="rowgroup">
+                                <tr role="row">
+                                    <th role="columnheader">ID</th>
+                                    <th role="columnheader">Local</th>
+                                    <th role="columnheader">Promoción</th>
+                                    <th role="columnheader">Vigencia</th>
+                                    <th role="columnheader">Categoría Mínima</th>
+                                    <th role="columnheader">Días Válidos</th>
+                                    <th role="columnheader">Estado</th>
+                                    <th role="columnheader">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -188,16 +193,26 @@ $promociones = $conn->query("
                                         <td>
                                             <?php if ($promo['estado'] == 'pendiente'): ?>
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="?accion=aprobada&id=<?php echo $promo['id']; ?>"
-                                                        class="btn btn-success"
-                                                        title="Aprobar promoción">
-                                                        <i class="fas fa-check"></i>
-                                                    </a>
-                                                    <a href="?accion=denegada&id=<?php echo $promo['id']; ?>"
-                                                        class="btn btn-danger"
-                                                        title="Denegar promoción">
-                                                        <i class="fas fa-times"></i>
-                                                    </a>
+                                                    <form method="GET" class="d-inline">
+                                                        <input type="hidden" name="accion" value="aprobada">
+                                                        <input type="hidden" name="id" value="<?php echo $promo['id']; ?>">
+                                                        <button
+                                                            type="submit"
+                                                            class="btn btn-success btn-sm"
+                                                            aria-label="Aprobar promoción">
+                                                            <i class="fas fa-check" aria-hidden="true"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="GET" class="d-inline">
+                                                        <input type="hidden" name="accion" value="denegada">
+                                                        <input type="hidden" name="id" value="<?php echo $promo['id']; ?>">
+                                                        <button
+                                                            type="submit"
+                                                            class="btn btn-danger btn-sm"
+                                                            aria-label="Denegar promoción">
+                                                            <i class="fas fa-times" aria-hidden="true"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             <?php else: ?>
                                                 <span class="text-muted small">Acción completada</span>
@@ -211,9 +226,11 @@ $promociones = $conn->query("
                 <?php endif; ?>
             </div>
         </div>
-    </div>
+    </main>
     <!-- footer -->
-    <?php include('../footer.php'); ?>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
     <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

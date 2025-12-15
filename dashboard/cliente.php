@@ -1,61 +1,81 @@
 <!-- panel cliente -->
 
-
 <div class="alert alert-success">
-  <h5>Panel de Cliente</h5>
-  <p>¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios</p>
+  <h1 class="h5">Panel de Cliente</h1>
 
-  <!-- Fila 1 con las funcionalidades principales -->
-  <div class="row mt-4 justify-content-center">
-    <div class="col-md-5 mb-3">
-      <div class="card card-hover h-100">
-        <div class="card-body text-center">
-          <h3>Promociones</h3>
-          <p>Descubre y utiliza promociones exclusivas según tu categoría</p>
-          <a href="cliente/promociones.php" class="btn btn-primary w-100">
-            Ver Promociones
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-5 mb-3">
-      <div class="card card-hover h-100">
-        <div class="card-body text-center">
-          <h3>Novedades</h3>
-          <p>Mantente informado de las últimas novedades del shopping</p>
-          <a href="cliente/novedades.php" class="btn btn-info w-100">
-            Ver Novedades
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+  <p>
+    ¡Bienvenido <strong><?php echo $nombre; ?></strong>! Disfruta de tus beneficios
+  </p>
 
-  <!-- Fila 2 con funcionalidades secundarias -->
-  <div class="row mt-4 justify-content-center">
-    <div class="col-md-5 mb-3">
-      <div class="card card-hover h-100">
-        <div class="card-body text-center">
-          <h3>Mi Progreso</h3>
-          <p>Revisa todas las promociones que has utilizado</p>
-          <a href="cliente/mi_progreso.php" class="btn btn-warning w-100">
-            Ver Progreso
-          </a>
+  <nav aria-label="Panel del cliente">
+
+    <!-- Fila 1 -->
+    <div class="row mt-4 justify-content-center">
+      <div class="col-md-5 mb-3">
+        <div class="card card-hover h-100">
+          <div class="card-body text-center">
+            <h2 class="h5">Promociones</h2>
+            <p>Descubre y utiliza promociones exclusivas según tu categoría</p>
+            <a href="cliente/promociones.php"
+              class="btn btn-primary w-100"
+              role="button"
+              aria-label="Ver promociones disponibles">
+              Ver Promociones
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5 mb-3">
+        <div class="card card-hover h-100">
+          <div class="card-body text-center">
+            <h2 class="h5">Novedades</h2>
+            <p>Mantente informado de las últimas novedades del shopping</p>
+            <a href="cliente/novedades.php"
+              class="btn btn-info w-100"
+              role="button"
+              aria-label="Ver novedades del shopping">
+              Ver Novedades
+            </a>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-5 mb-3">
-      <div class="card card-hover h-100">
-        <div class="card-body text-center">
-          <h3>Mi Perfil</h3>
-          <p>Gestiona tu información personal y preferencias</p>
-          <a href="cliente/perfil.php" class="btn btn-success w-100">
-            Editar Perfil
-          </a>
+
+    <!-- Fila 2 -->
+    <div class="row mt-4 justify-content-center">
+      <div class="col-md-5 mb-3">
+        <div class="card card-hover h-100">
+          <div class="card-body text-center">
+            <h2 class="h5">Mi Progreso</h2>
+            <p>Revisa todas las promociones que has utilizado</p>
+            <a href="cliente/mi_progreso.php"
+              class="btn btn-warning w-100"
+              role="button"
+              aria-label="Ver progreso de promociones">
+              Ver Progreso
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5 mb-3">
+        <div class="card card-hover h-100">
+          <div class="card-body text-center">
+            <h2 class="h5">Mi Perfil</h2>
+            <p>Gestiona tu información personal y preferencias</p>
+            <a href="cliente/perfil.php"
+              class="btn btn-success w-100"
+              role="button"
+              aria-label="Editar perfil del cliente">
+              Editar Perfil
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+
+  </nav>
 
   <!-- Progreso de categoría de un cliente -->
 
@@ -90,7 +110,7 @@
               <div class="card <?php echo $categoria == 'Premium' ? 'bg-danger text-white' : 'bg-light'; ?> h-100">
                 <div class="card-body text-center">
                   <h5>Premium</h5>
-                  <p class="small">Todas las promociones + beneficios VIP</p>
+                  <p class="small">Todas las promociones + <br>beneficios VIP</p>
                   <?php echo $categoria == 'Premium' ? '<span class="badge bg-warning">ACTUAL</span>' : ''; ?>
                 </div>
               </div>

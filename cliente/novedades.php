@@ -76,25 +76,27 @@ $novedades = $stmt->get_result();
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Novedades</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php"><span aria-hidden="true">🛍️</span>
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Novedades</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header text-dark">
-                        <h4>Novedades del Shopping</h4>
+                        <h2>Novedades del Shopping</h2>
                         <p class="mb-0">Mantente informado de las últimas novedades</p>
                     </div>
                     <div class="card-body">
@@ -105,9 +107,12 @@ $novedades = $stmt->get_result();
                                     $es_futura = strtotime($novedad['fecha_inicio']) > time();
                                 ?>
                                     <div class="col-md-6 mb-4">
-                                        <div class="card h-100 <?php echo $es_exclusiva ? 'novedad-exclusiva' : ''; ?> <?php echo $es_futura ? 'novedad-futura' : ''; ?>">
+                                        <article class="card h-100 <?php echo $es_exclusiva ? 'novedad-exclusiva' : ''; ?> <?php echo $es_futura ? 'novedad-futura' : ''; ?>">
                                             <div class="card-header d-flex justify-content-between align-items-center pt-4">
-                                                <h5 class="mb-0">📢 <?php echo htmlspecialchars($novedad['titulo']); ?></h5>
+                                                <h3 class="mb-0">
+                                                    <span aria-hidden="true">📢</span>
+                                                    <?php echo htmlspecialchars($novedad['titulo']); ?>
+                                                </h3>
                                                 <div>
                                                     <?php if ($es_futura): ?>
                                                         <span class="badge badge-proximamente me-1">
@@ -144,13 +149,13 @@ $novedades = $stmt->get_result();
                                                     📅 <strong>Válida hasta:</strong> <?php echo date('d/m/Y', strtotime($novedad['fecha_fin'])); ?>
                                                 </small>
                                             </div>
-                                        </div>
+                                        </article>
                                     </div>
                                 <?php endwhile; ?>
                             </div>
                         <?php else: ?>
-                            <div class="alert alert-info text-center">
-                                <h5>No hay novedades disponibles</h5>
+                            <div class="alert alert-info text-center" role="alert">
+                                <h3>No hay novedades disponibles</h3>
                                 <p>No hay novedades activas o próximas en este momento.</p>
                             </div>
                         <?php endif; ?>
@@ -158,9 +163,11 @@ $novedades = $stmt->get_result();
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     <!-- footer -->
-    <?php include('../footer.php'); ?>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

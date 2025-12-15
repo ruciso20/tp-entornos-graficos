@@ -19,6 +19,9 @@ $locales = $locales_result->fetch_all(MYSQLI_ASSOC);
 
 // Determinar el local actual (por defecto el primero, o el seleccionado)
 $local_actual_id = $locales[0]['id'];
+if (empty($locales)) {
+  die("No tienes locales aprobados para gestionar solicitudes.");
+}
 if (isset($_GET['local_id']) && is_numeric($_GET['local_id'])) {
   $local_actual_id = $_GET['local_id'];
 
@@ -141,8 +144,10 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
       <div class="navbar-brand">
-        <a class="navbar-brand fw-bold" href="../index.php">🛍️
-          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <a class="navbar-brand fw-bold" href="../index.php">
+          <span aria-hidden="true">🛍️</span>
+          <span class="ms-1">Stella Shopping Rosario</span>
+        </a>
         <span class="navbar-text text-light">Gestionar Solicitudes de Descuento</span>
       </div>
       <div class="d-flex">
@@ -161,13 +166,13 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
         <div class="row">
           <div class="col-md-8">
             <form method="GET" class="d-flex">
-              <select name="local_id" class="form-select me-2" onchange="this.form.submit()">
+              <label for="local_id" class="visually-hidden">Seleccionar local</label>
+              <select id="local_id" name="local_id" class="form-select me-2" onchange="this.form.submit()">
                 <?php foreach ($contadores as $local_contador): ?>
-                  <option value="<?php echo $local_contador['id']; ?>"
-                    <?php echo $local_contador['id'] == $local_actual_id ? 'selected' : ''; ?>>
+                  <option value="<?php echo $local_contador['id']; ?>">
                     <?php echo htmlspecialchars($local_contador['nombre']); ?>
                     <?php if ($local_contador['pendientes'] > 0): ?>
-                      <span class="badge bg-warning ms-1"><?php echo $local_contador['pendientes']; ?> pendiente<?php echo $local_contador['pendientes'] > 1 ? 's' : ''; ?></span>
+                      (<?php echo $local_contador['pendientes']; ?> pendientes)
                     <?php endif; ?>
                   </option>
                 <?php endforeach; ?>
@@ -178,7 +183,8 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
       </div>
     </div>
 
-    <h2>Solicitudes de Descuento - <?php echo htmlspecialchars($local_actual['nombre']); ?></h2>
+    <h1 class="h2">Solicitudes de Descuento - <?php echo htmlspecialchars($local_actual['nombre']); ?></h1>
+
 
     <?php if ($mensaje): ?>
       <div class="alert alert-info"><?php echo $mensaje; ?></div>
@@ -219,17 +225,23 @@ $contadores = $contador_query->get_result()->fetch_all(MYSQLI_ASSOC);
 
                     <!-- formulario -->
                     <form method="POST" class="text-end">
-                      <input type="hidden" name="solicitud_id" value="<?php echo $solicitud['id']; ?>">
-                      <button type="submit" name="aceptar" value="1"
-                        class="btn btn-success btn-sm"
-                        onclick="return confirm('¿Aceptar esta solicitud?')">
-                        ✅ Aceptar
-                      </button>
-                      <button type="submit" name="rechazar" value="1"
-                        class="btn btn-danger btn-sm"
-                        onclick="return confirm('¿Rechazar esta solicitud?')">
-                        ❌ Rechazar
-                      </button>
+                      <fieldset>
+                        <legend class="visually-hidden">Acciones sobre la solicitud</legend>
+                        <input type="hidden" name="solicitud_id" value="<?php echo $solicitud['id']; ?>">
+                        <button type="submit" name="aceptar" value="1"
+                          class="btn btn-success btn-sm"
+                          aria-label="Aceptar solicitud de descuento"
+                          onclick="return confirm('¿Aceptar esta solicitud?')">
+                          <span aria-hidden="true">✅</span> Aceptar
+                        </button>
+
+                        <button type="submit" name="rechazar" value="1"
+                          class="btn btn-danger btn-sm"
+                          aria-label="Rechazar solicitud de descuento"
+                          onclick="return confirm('¿Rechazar esta solicitud?')">
+                          <span aria-hidden="true">❌</span> Rechazar
+                        </button>
+                      </fieldset>
                     </form>
                   </div>
                 </div>

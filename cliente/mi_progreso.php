@@ -183,44 +183,46 @@ $historial = $historial_query->get_result();
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Mi Progreso</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Mi Progreso</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
         <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success"><?php echo $_SESSION['success'];
-                                                unset($_SESSION['success']); ?></div>
+            <div class="alert alert-success" role="alert"><?php echo $_SESSION['success'];
+                                                            unset($_SESSION['success']); ?></div>
         <?php endif; ?>
 
         <!-- Card del Estado Actual -->
         <div class="card mb-4">
             <div class="card-header">
-                <h4 class="mb-0">Progreso de Categoría</h4>
+                <h2 class="mb-0">Progreso de Categoría</h2>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5>Categoría Actual:
+                        <h3>Categoría Actual:
                             <span class="badge bg-<?php
                                                     echo ($categoriaActual == 'Premium') ? 'danger' : (($categoriaActual == 'Medium') ? 'warning' : 'info');
                                                     ?>">
                                 <?php echo ucfirst($categoriaActual); ?>
                             </span>
-                        </h5>
+                        </h3>
                         <p class="text-muted">Promociones utilizadas (últimos 6 meses): <strong><?php echo $total_usadas; ?></strong></p>
                     </div>
                     <div class="col-md-6">
-                        <div class="alert alert-info">
+                        <div class="alert alert-info" role="alert">
                             <small>
                                 <!--explicacion de funcionamiento del sistema-->
                                 <strong>💡 Sistema Automático:</strong><br>
@@ -237,16 +239,23 @@ $historial = $historial_query->get_result();
             <div class="col-md-6 mb-4">
                 <div class="card categoria-card categoria-medium <?php echo $total_usadas >= $requeridas_medium ? 'logro-alcanzado' : ''; ?>">
                     <div class="card-body">
-                        <h5 class="card-title">
+                        <h3 class="card-title">
                             Categoría Medium
                             <?php if ($categoriaActual == 'Medium' || $categoriaActual == 'Premium'): ?>
-                                <span class="badge bg-success">✅ Alcanzada</span>
+                                <span class="badge bg-success">
+                                    <span aria-hidden="true">✅</span> Alcanzada
+                                </span>
                             <?php endif; ?>
-                        </h5>
+                        </h3>
 
                         <div class="progress mb-2">
-                            <div class="progress-bar bg-warning" style="width: <?php echo $progreso_medium; ?>%">
-                                <?php echo $total_usadas . '/' . $requeridas_medium; ?>
+                            <div
+                                class="progress-bar bg-warning text-dark"
+                                role="progressbar"
+                                style="width: <?php echo $progreso_medium; ?>%"
+                                aria-valuenow="<?php echo $total_usadas; ?>"
+                                aria-valuemin="0"
+                                aria-valuemax="<?php echo $requeridas_medium; ?>">
                             </div>
                         </div>
 
@@ -263,16 +272,21 @@ $historial = $historial_query->get_result();
             <div class="col-md-6 mb-4">
                 <div class="card categoria-card categoria-premium <?php echo $total_usadas >= $requeridas_premium ? 'logro-alcanzado' : ''; ?>">
                     <div class="card-body">
-                        <h5 class="card-title">
+                        <h3 class="card-title">
                             Categoría Premium
                             <?php if ($categoriaActual == 'Premium'): ?>
                                 <span class="badge bg-success">✅ Alcanzada</span>
                             <?php endif; ?>
-                        </h5>
+                        </h3>
 
                         <div class="progress mb-2">
-                            <div class="progress-bar bg-danger" style="width: <?php echo $progreso_premium; ?>%">
-                                <?php echo $total_usadas . '/' . $requeridas_premium; ?>
+                            <div
+                                class="progress-bar bg-warning text-dark"
+                                role="progressbar"
+                                style="width: <?php echo $progreso_premium; ?>%"
+                                aria-valuenow="<?php echo $total_usadas; ?>"
+                                aria-valuemin="0"
+                                aria-valuemax="<?php echo $requeridas_premium; ?>">
                             </div>
                         </div>
 
@@ -290,25 +304,31 @@ $historial = $historial_query->get_result();
         <!-- historial de las Promociones Usadas -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Historial de Promociones Utilizadas</h5>
+                <h2 class="mb-0">Historial de Promociones Utilizadas</h2>
             </div>
             <div class="card-body">
                 <?php if ($historial->num_rows > 0): ?>
                     <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Fecha y Hora</th>
-                                    <th>Promoción</th>
-                                    <th>Local</th>
-                                    <th>Estado</th>
+                        <table class="table table-striped" role="table">
+                            <caption class="visually-hidden">
+                                Historial de promociones utilizadas
+                            </caption>
+                            <thead role="rowgroup">
+                                <tr role="row">
+                                    <th scope="col">Fecha y Hora</th>
+                                    <th scope="col">Promoción</th>
+                                    <th scope="col">Local</th>
+                                    <th scope="col">Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while ($uso = $historial->fetch_assoc()): ?>
                                     <tr>
                                         <td>
-                                            <strong><?php echo date('d/m/Y', strtotime($uso['fecha'])); ?></strong><br>
+                                            <time datetime="<?php echo $uso['fecha']; ?>">
+                                                <strong><?php echo date('d/m/Y', strtotime($uso['fecha'])); ?></strong>
+                                            </time>
+                                            <br>
                                             <small class="text-muted"><?php echo $uso['hora']; ?></small>
                                         </td>
                                         <td>
@@ -332,16 +352,17 @@ $historial = $historial_query->get_result();
                     <!-- si no tiene promociones usadas ...-->
                     <div class="text-center py-5">
                         <i class="fas fa-history fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Aún no has utilizado promociones</h5>
+                        <h3 class="text-muted">Aún no has utilizado promociones</h3>
                         <p class="text-muted">¡Descubre las promociones disponibles y comienza a disfrutar de los beneficios!</p>
                         <a href="promociones.php" class="btn btn-primary">Ver Promociones Disponibles</a>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-    </div>
-
-    <?php include('../footer.php'); ?>
+    </main>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
 </body>
 
 </html>

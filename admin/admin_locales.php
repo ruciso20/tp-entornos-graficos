@@ -81,23 +81,25 @@ $locales_query = $conn->query("
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Gestión de Locales</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Gestión de Locales</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
 
         <?php if ($mensaje): ?>
-            <div class="alert alert-<?php echo $mensaje_tipo ?? 'info'; ?>"><?php echo $mensaje; ?></div>
+            <div class="alert alert-<?php echo $mensaje_tipo ?? 'info'; ?>" role="alert"><?php echo $mensaje; ?></div>
         <?php endif; ?>
 
         <!-- resumen de los estados del local -->
@@ -105,32 +107,32 @@ $locales_query = $conn->query("
             <div class="col-md-3">
                 <div class="card text-white bg-warning">
                     <div class="card-body text-center">
-                        <h5>Pendientes</h5>
-                        <h2><?php echo $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'pendiente'")->fetch_assoc()['total']; ?></h2>
+                        <h2>Pendientes</h2>
+                        <h3><?php echo $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'pendiente'")->fetch_assoc()['total']; ?></h3>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card text-white bg-success">
                     <div class="card-body text-center">
-                        <h5>Aprobados</h5>
-                        <h2><?php echo $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'aprobado'")->fetch_assoc()['total']; ?></h2>
+                        <h2>Aprobados</h2>
+                        <h3><?php echo $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'aprobado'")->fetch_assoc()['total']; ?></h3>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card text-white bg-danger">
                     <div class="card-body text-center">
-                        <h5>Rechazados</h5>
-                        <h2><?php echo $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'rechazado'")->fetch_assoc()['total']; ?></h2>
+                        <h2>Rechazados</h2>
+                        <h3><?php echo $conn->query("SELECT COUNT(*) as total FROM locales WHERE estado = 'rechazado'")->fetch_assoc()['total']; ?></h3>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card text-white bg-info">
                     <div class="card-body text-center">
-                        <h5>Total</h5>
-                        <h2><?php echo $conn->query("SELECT COUNT(*) as total FROM locales")->fetch_assoc()['total']; ?></h2>
+                        <h2>Total</h2>
+                        <h3><?php echo $conn->query("SELECT COUNT(*) as total FROM locales")->fetch_assoc()['total']; ?></h3>
                     </div>
                 </div>
             </div>
@@ -139,23 +141,26 @@ $locales_query = $conn->query("
         <!-- Lista de los locales -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Todos los Locales</h5>
+                <h1 class="mb-0">Listado de los Locales</h1>
             </div>
             <div class="card-body">
                 <?php if ($locales_query->num_rows == 0): ?>
-                    <div class="alert alert-info">
+                    <div class="alert alert-info" role="alert">
                         No hay locales registrados en el sistema.
                     </div>
                 <?php else: ?>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Dueño</th>
-                                <th>Descripción</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                    <table class="table table-striped" role="table">
+                        <caption class="visually-hidden">
+                            Lista de locales registrados en el sistema
+                        </caption>
+                        <thead role="rowgroup">
+                            <tr role="row">
+                                <th role="columnheader">ID</th>
+                                <th role="columnheader">Nombre</th>
+                                <th role="columnheader">Dueño</th>
+                                <th role="columnheader">Descripción</th>
+                                <th role="columnheader">Estado</th>
+                                <th role="columnheader">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,8 +204,20 @@ $locales_query = $conn->query("
                                         <?php if ($local['estado'] == 'pendiente'): ?>
                                             <form method="POST" class="d-inline">
                                                 <input type="hidden" name="local_id" value="<?php echo $local['id']; ?>">
-                                                <button type="submit" name="aprobar" class="btn btn-sm btn-success">✅ Aprobar</button>
-                                                <button type="submit" name="rechazar" class="btn btn-sm btn-danger">❌ Rechazar</button>
+                                                <button
+                                                    type="submit"
+                                                    name="aprobar"
+                                                    class="btn btn-sm btn-success"
+                                                    aria-label="Aprobar local">
+                                                    ✅ Aprobar
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    name="aprobar"
+                                                    class="btn btn-sm btn-success"
+                                                    aria-label="Aprobar local">
+                                                    ❌ Rechazar
+                                                </button>
                                             </form>
                                         <?php elseif ($local['estado'] == 'aprobado'): ?>
                                             <a href="?toggle_estado=<?php echo $local['id']; ?>" class="btn btn-sm btn-warning">⏸️ Desactivar</a>
@@ -217,10 +234,12 @@ $locales_query = $conn->query("
             </div>
         <?php endif; ?>
         </div>
-    </div>
+    </main>
     </div>
     <!-- footer -->
-    <?php include('../footer.php'); ?>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
     <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

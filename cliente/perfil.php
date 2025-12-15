@@ -31,12 +31,12 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
 
     if ($update_query->execute()) {
         $_SESSION['nombre'] = $nombre;
-        $mensaje = "✅ Perfil actualizado correctamente";
+        $mensaje = "<span aria-hidden='true'>✅</span> Perfil actualizado correctamente";
         // Recargar los datos
         $cliente_query->execute();
         $cliente = $cliente_query->get_result()->fetch_assoc();
     } else {
-        $mensaje = "❌ Error al actualizar el perfil";
+        $mensaje = "<span aria-hidden='true'>❌</span> Error al actualizar el perfil";
     }
 }
 ?>
@@ -52,25 +52,27 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Mi Perfil</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php"><span aria-hidden="true">🛍️</span>
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Mi Perfil</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow">
                     <div class="card-header text-dark">
-                        <h4 class="mb-0">Mi Perfil</h4>
+                        <h2 class="mb-0">Mi Perfil</h2>
                     </div>
                     <div class="card-body">
                         <?php if ($mensaje): ?>
@@ -81,37 +83,37 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Nombre Completo *</label>
-                                        <input type="text" class="form-control" name="nombre"
+                                        <label for="nombre" class="form-label">Nombre Completo *</label>
+                                        <input id="nombre" type="text" class="form-control" name="nombre"
                                             value="<?php echo htmlspecialchars($cliente['nombre']); ?>" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control"
+                                        <label for="email" class="form-label">Email</label>
+                                        <input id="email" type="email" class="form-control"
                                             value="<?php echo htmlspecialchars($cliente['email']); ?>" readonly>
-                                        <small class="text-muted">El email no se puede modificar</small>
+                                        <small id="email-help" class="text-muted">El email no se puede modificar</small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Teléfono</label>
-                                        <input type="tel" class="form-control" name="telefono"
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input id="telefono" type="tel" class="form-control" name="telefono"
                                             value="<?php echo htmlspecialchars($cliente['telefono'] ?? ''); ?>"
                                             placeholder="+54 341 123-4567">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Dirección</label>
-                                        <textarea class="form-control" name="direccion" rows="3"
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <textarea id="direccion" class="form-control" name="direccion" rows="3"
                                             placeholder="Calle, número, ciudad"><?php echo htmlspecialchars($cliente['direccion'] ?? ''); ?></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Preferencias de Compras</label>
-                                        <textarea class="form-control" name="preferencias" rows="3"
+                                        <textarea id="preferencias" class="form-control" name="preferencias" rows="3"
                                             placeholder="Ej: Ropa, tecnología, comida, etc."><?php echo htmlspecialchars($cliente['preferencias'] ?? ''); ?></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Categoría Actual</label>
-                                        <input type="text" class="form-control"
+                                        <input id="categoria_cliente" type="text" class="form-control"
                                             value="<?php echo ucfirst($cliente['categoria_cliente']); ?>" readonly>
                                     </div>
                                 </div>
@@ -124,9 +126,11 @@ if ($_POST && isset($_POST['actualizar_perfil'])) {
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     <!-- footer -->
-    <?php include('../footer.php'); ?>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
 </body>
 
 </html>

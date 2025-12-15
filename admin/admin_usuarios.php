@@ -59,23 +59,25 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Gestión de Usuarios</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Gestión de Usuarios</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
 
         <?php if (isset($success)): ?>
-            <div class="alert alert-success"><?php echo $success; ?></div>
+            <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
         <?php endif; ?>
 
         <!-- Resumen -->
@@ -83,7 +85,7 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
             <div class="col-md-3">
                 <div class="card bg-warning text-white">
                     <div class="card-body text-center">
-                        <h4><?php echo $pendientes; ?></h4>
+                        <h2><?php echo $pendientes; ?></h2>
                         <p>Pendientes</p>
                     </div>
                 </div>
@@ -91,7 +93,7 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
             <div class="col-md-3">
                 <div class="card bg-danger text-white">
                     <div class="card-body text-center">
-                        <h4><?php echo $rechazados; ?></h4>
+                        <h2><?php echo $rechazados; ?></h2>
                         <p>Rechazados</p>
                     </div>
                 </div>
@@ -101,19 +103,22 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
         <!-- Lista de usuarios -->
         <div class="card">
             <div class="card-header">
-                <h5>Lista de Usuarios</h5>
+                <h2>Lista de Usuarios</h2>
             </div>
             <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Estado</th>
-                            <th>Fecha Registro</th>
-                            <th>Acciones</th>
+                <table class="table table-striped" role="table">
+                    <caption class="visually-hidden">
+                        Listado de usuarios con rol y estado
+                    </caption>
+                    <thead role="rowgroup">
+                        <tr role="row">
+                            <th role="columnheader">ID</th>
+                            <th role="columnheader">Nombre</th>
+                            <th role="columnheader">Email</th>
+                            <th role="columnheader">Rol</th>
+                            <th role="columnheader">Estado</th>
+                            <th role="columnheader">Fecha Registro</th>
+                            <th role="columnheader">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -132,30 +137,61 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
                                         <?php echo ucfirst($usuario['estado']); ?>
                                     </span>
                                 </td>
-                                <td><?php echo $usuario['fecha_registro']; ?></td>
+                                <td>
+                                    <time datetime="<?php echo $usuario['fecha_registro']; ?>">
+                                        <?php echo $usuario['fecha_registro']; ?>
+                                    </time>
+                                </td>
                                 <td>
                                     <?php if ($usuario['rol'] == 'dueno'): ?>
                                         <?php if ($usuario['estado'] == 'pendiente'): ?>
                                             <!-- Usuario pendiente -->
                                             <div class="btn-group btn-group-sm">
-                                                <a href="?aprobar=<?php echo $usuario['id']; ?>" class="btn btn-success" title="Aprobar dueño">
-                                                    ✅
-                                                </a>
-                                                <a href="?rechazar=<?php echo $usuario['id']; ?>" class="btn btn-danger" title="Rechazar solicitud">
-                                                    ❌
-                                                </a>
+                                                <form method="GET" class="d-inline">
+                                                    <input type="hidden" name="aprobar" value="<?php echo $usuario['id']; ?>">
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-success btn-sm"
+                                                        aria-label="Aprobar dueño">
+                                                        <span aria-hidden="true">✅</span>
+                                                    </button>
+                                                </form>
+
+                                                <form method="GET" class="d-inline">
+                                                    <input type="hidden" name="rechazar" value="<?php echo $usuario['id']; ?>">
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-danger btn-sm"
+                                                        aria-label="Rechazar solicitud del dueño">
+                                                        <span aria-hidden="true">❌</span>
+                                                    </button>
+                                                </form>
+
                                             </div>
                                         <?php elseif ($usuario['estado'] == 'rechazado'): ?>
                                             <!-- Usuario rechazado - opciones -->
                                             <div class="btn-group btn-group-sm">
-                                                <a href="?reactivar=<?php echo $usuario['id']; ?>" class="btn btn-warning" title="Reactivar para nueva revisión">
-                                                    🔄
-                                                </a>
-                                                <a href="?eliminar=<?php echo $usuario['id']; ?>" class="btn btn-outline-danger"
-                                                    title="Eliminar permanentemente"
-                                                    onclick="return confirm('¿Eliminar permanentemente a <?php echo $usuario['nombre']; ?>? Esta acción no se puede deshacer.')">
-                                                    🗑️
-                                                </a>
+                                                <form method="GET" class="d-inline">
+                                                    <input type="hidden" name="reactivar" value="<?php echo $usuario['id']; ?>">
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-warning btn-sm"
+                                                        aria-label="Reactivar solicitud del dueño">
+                                                        <span aria-hidden="true">🔄</span>
+                                                    </button>
+                                                </form>
+
+                                                <form method="GET" class="d-inline">
+                                                    <input type="hidden" name="eliminar" value="<?php echo $usuario['id']; ?>">
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-outline-danger btn-sm"
+                                                        aria-label="Eliminar usuario permanentemente"
+                                                        onclick="return confirm('¿Eliminar permanentemente a <?php echo htmlspecialchars($usuario['nombre']); ?>? Esta acción no se puede deshacer.')">
+                                                        <span aria-hidden="true">🗑️</span>
+                                                    </button>
+                                                </form>
+
                                             </div>
                                         <?php else: ?>
                                             <!-- Usuario aprobado -->
@@ -175,7 +211,7 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
         <!-- Leyenda de acciones (por si no se llegan a enteder los botones de reactivar y de eliminar)-->
         <div class="card mt-4">
             <div class="card-header bg-light">
-                <h6 class="mb-0">📋 Leyenda de Acciones</h6>
+                <h2 class="mb-0">📋 Leyenda de Acciones</h2>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -196,9 +232,11 @@ $rechazados = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado=
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     <!-- footer -->
-    <?php include('../footer.php'); ?>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
 </body>
 
 </html>

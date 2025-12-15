@@ -18,6 +18,9 @@ $locales = $locales_result->fetch_all(MYSQLI_ASSOC);
 
 // Determinar el local actual (por defecto el primero, o el seleccionado)
 $local_actual_id = $locales[0]['id'];
+if (empty($locales)) {
+  die("No tienes locales aprobados para ver reportes.");
+}
 if (isset($_GET['local_id']) && is_numeric($_GET['local_id'])) {
   $local_actual_id = $_GET['local_id'];
 
@@ -148,8 +151,10 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
       <div class="navbar-brand">
-        <a class="navbar-brand fw-bold" href="../index.php">🛍️
-          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <a class="navbar-brand fw-bold" href="../index.php">
+          <span aria-hidden="true">🛍️</span>
+          <span class="ms-1">Stella Shopping Rosario</span>
+        </a>
         <span class="navbar-text text-light">Ver Reportes</span>
       </div>
       <div class="d-flex">
@@ -168,7 +173,8 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
         <div class="row">
           <div class="col-md-6">
             <form method="GET" class="d-flex">
-              <select name="local_id" class="form-select me-2" onchange="this.form.submit()">
+              <label for="local_id" class="visually-hidden">Seleccionar local</label>
+              <select id="local_id" name="local_id" class="form-select me-2" onchange="this.form.submit()">
                 <?php foreach ($resumen_locales as $local_resumen): ?>
                   <option value="<?php echo $local_resumen['id']; ?>"
                     <?php echo $local_resumen['id'] == $local_actual_id ? 'selected' : ''; ?>>
@@ -183,7 +189,10 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>📊 Reportes de Uso - <?php echo htmlspecialchars($local_actual['nombre']); ?></h2>
+      <h2>
+        <span aria-hidden="true">📊</span>
+        Reportes de Uso - <?php echo htmlspecialchars($local_actual['nombre']); ?>
+      </h2>
     </div>
 
     <!-- Resumen General -->
@@ -233,6 +242,9 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
         <?php if ($estadisticas->num_rows > 0): ?>
           <div class="table-responsive">
             <table class="table table-hover mb-0">
+              <caption class="visually-hidden">
+                Reporte de uso de promociones del local <?php echo htmlspecialchars($local_actual['nombre']); ?>
+              </caption>
               <thead class="table-light">
                 <tr>
                   <th class="border-end">Promoción</th>
@@ -271,9 +283,11 @@ $resumen_locales = $resumen_locales_query->get_result()->fetch_all(MYSQLI_ASSOC)
                     <td class="text-center">
                       <div class="progress mx-2" style="height: 20px;">
                         <div class="progress-bar" role="progressbar"
+                          aria-label="Tasa de aceptación de la promoción"
                           style="width: <?php echo $tasa_aceptacion; ?>%"
                           aria-valuenow="<?php echo $tasa_aceptacion; ?>"
-                          aria-valuemin="0" aria-valuemax="100">
+                          aria-valuemin="0"
+                          aria-valuemax="100">
                           <span class="fw-bold"><?php echo $tasa_aceptacion; ?>%</span>
                         </div>
                       </div>

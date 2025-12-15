@@ -101,8 +101,9 @@ if (isset($_POST['crear_promocion'])) {
 }
 
 // Eliminar promoción
-if (isset($_GET['eliminar'])) {
-  $promocion_id = $_GET['eliminar'];
+if (isset($_POST['eliminar'])) {
+  $promocion_id = filter_input(INPUT_POST, 'eliminar', FILTER_VALIDATE_INT);
+
 
   // Verificar que la promoción pertenece a un local del dueño
   $verificar = $conn->query("
@@ -146,8 +147,10 @@ $promociones = $conn->query("
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
       <div class="navbar-brand">
-        <a class="navbar-brand fw-bold" href="../index.php">🛍️
-          <span class="ms-1">Stella Shopping Rosario</span></a>
+        <a class="navbar-brand fw-bold" href="../index.php">
+          <span aria-hidden="true">🛍️</span>
+          <span class="ms-1">Stella Shopping Rosario</span>
+        </a>
         <span class="navbar-text text-light">Gestion de Promociones</span>
       </div>
       <div class="d-flex">
@@ -172,8 +175,8 @@ $promociones = $conn->query("
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label class="form-label">Local *</label>
-                <select class="form-select" name="local_id" required onchange="this.form.submit()">
+                <label for="local_id" class="form-label">Local *</label>
+                <select id="local_id" class="form-select" name="local_id" required onchange="this.form.submit()">
                   <?php foreach ($locales as $local): ?>
                     <?php if ($local['estado'] == 'aprobado'): ?>
                       <option value="<?php echo $local['id']; ?>"
@@ -189,28 +192,28 @@ $promociones = $conn->query("
                 <small class="text-muted">Solo se muestran locales aprobados</small>
               </div>
               <div class="mb-3">
-                <label class="form-label">Título *</label>
-                <input type="text" class="form-control" name="titulo" required
+                <label for="titulo" class="form-label">Título *</label>
+                <input type="text" id="titulo" class="form-control" name="titulo" required
                   placeholder="Ej: 20% de descuento en toda la tienda">
               </div>
               <div class="mb-3">
-                <label class="form-label">Descripción *</label>
-                <textarea class="form-control" name="descripcion" rows="3" required
+                <label for="descripcion" class="form-label">Descripción *</label>
+                <textarea id="descripcion" class="form-control" name="descripcion" rows="3" required
                   placeholder="Describe los detalles de la promoción..."></textarea>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label class="form-label">Categoría Mínima *</label>
-                <select class="form-select" name="categoria_minima" required>
+                <label for="categoria_minima" class="form-label">Categoría Mínima *</label>
+                <select id="categoria_minima" class="form-select" name="categoria_minima" required>
                   <option value="inicial">Inicial</option>
                   <option value="medium">Medium</option>
                   <option value="premium">Premium</option>
                 </select>
               </div>
               <div class="mb-3">
-                <label class="form-label">Fecha Inicio *</label>
-                <input type="date" class="form-control" name="fecha_inicio" required
+                <label for="fecha_fin" class="form-label">Fecha Inicio *</label>
+                <input type="date" id="fecha_fin" class="form-control" name="fecha_inicio" required
                   min="<?php echo date('Y-m-d'); ?>">
               </div>
               <div class="mb-3">
@@ -265,16 +268,19 @@ $promociones = $conn->query("
           </div>
         <?php else: ?>
           <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Descripción</th>
-                  <th>Fechas</th>
-                  <th>Categoría</th>
-                  <th>Días</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
+            <table class="table table-striped" role="table">
+              <caption class="visually-hidden">
+                Listado de promociones del local <?php echo htmlspecialchars($local_actual['nombre']); ?>
+              </caption>
+              <thead role="rowgroup">
+                <tr role="row">
+                  <th scope="col">Título</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Fechas</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Días</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -317,11 +323,14 @@ $promociones = $conn->query("
                     </td>
                     <td>
                       <?php if ($promo['estado'] == 'pendiente'): ?>
-                        <a href="promociones.php?eliminar=<?php echo $promo['id']; ?>"
-                          class="btn btn-sm btn-danger"
-                          onclick="return confirm('¿Estás seguro de eliminar esta promoción?')">
-                          Eliminar
-                        </a>
+                        <form method="POST" action="promociones.php" class="d-inline">
+                          <input type="hidden" name="eliminar" value="<?php echo $promo['id']; ?>">
+                          <button type="submit"
+                            class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Estás seguro de eliminar esta promoción?')">
+                            Eliminar
+                          </button>
+                        </form>
                       <?php else: ?>
                         <span class="text-muted small">No editable</span>
                       <?php endif; ?>

@@ -1,53 +1,83 @@
-<!-- panel dueño  -->
+<!-- panel dueño -->
 
 <div class="alert alert-warning">
-  <h5>Panel de Dueño de Locales</h5>
-  <p class="mb-3">¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona tus locales y promociones.</p>
+  <h1 class="h5">Panel de Dueño de Locales</h1>
 
-  <div class="row mt-3">
-    <div class="col-md-3 mb-3">
-      <a href="dueno/locales.php" class="btn btn-primary w-100">
-        Gestionar Locales
-      </a>
-    </div>
+  <p class="mb-3">
+    ¡Bienvenido <strong><?php echo $nombre; ?></strong>! Gestiona tus locales y promociones.
+  </p>
 
-    <div class="col-md-3 mb-3">
-      <?php if ($locales_aprobados > 0): ?>
-        <a href="dueno/promociones.php" class="btn btn-success w-100">
-          Gestionar Promociones
+  <nav aria-label="Panel del dueño de locales">
+    <div class="row mt-3">
+
+      <div class="col-md-3 mb-3">
+        <a href="dueno/locales.php"
+          class="btn btn-primary w-100"
+          role="button"
+          aria-label="Gestionar locales">
+          Gestionar Locales
         </a>
-      <?php else: ?>
-        <button class="btn btn-secondary w-100" disabled>
-          Gestionar Promociones
-        </button>
-      <?php endif; ?>
-    </div>
+      </div>
 
-    <div class="col-md-3 mb-3">
-      <?php if ($locales_aprobados > 0): ?>
-        <a href="dueno/solicitudes.php" class="btn btn-warning w-100">
-          Gestionar Solicitudes
-          <?php if ($solicitudes_pendientes > 0): ?>
-            <span class="badge bg-danger"><?php echo $solicitudes_pendientes; ?></span>
-          <?php endif; ?>
-        </a>
-      <?php else: ?>
-        <button class="btn btn-secondary w-100" disabled>
-          Gestionar Solicitudes
-        </button>
-      <?php endif; ?>
-    </div>
+      <div class="col-md-3 mb-3">
+        <?php if ($locales_aprobados > 0): ?>
+          <a href="dueno/promociones.php"
+            class="btn btn-success w-100"
+            role="button"
+            aria-label="Gestionar promociones">
+            Gestionar Promociones
+          </a>
+        <?php else: ?>
+          <button class="btn btn-secondary w-100"
+            disabled
+            aria-disabled="true"
+            title="Necesitás al menos un local aprobado">
+            Gestionar Promociones
+          </button>
+        <?php endif; ?>
+      </div>
 
-    <div class="col-md-3 mb-3">
-      <?php if ($locales_aprobados > 0): ?>
-        <a href="dueno/reportes.php" class="btn btn-dark w-100">
-          Reportes
-        </a>
-      <?php else: ?>
-        <button class="btn btn-secondary w-100" disabled>
-          Reportes
-        </button>
-      <?php endif; ?>
+      <div class="col-md-3 mb-3">
+        <?php if ($locales_aprobados > 0): ?>
+          <a href="dueno/solicitudes.php"
+            class="btn btn-warning w-100"
+            role="button"
+            aria-label="Gestionar solicitudes de descuento">
+            Gestionar Solicitudes
+            <?php if ($solicitudes_pendientes > 0): ?>
+              <span class="badge bg-danger">
+                <?php echo $solicitudes_pendientes; ?>
+              </span>
+            <?php endif; ?>
+          </a>
+        <?php else: ?>
+          <button class="btn btn-secondary w-100"
+            disabled
+            aria-disabled="true"
+            title="Necesitás al menos un local aprobado">
+            Gestionar Solicitudes
+          </button>
+        <?php endif; ?>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <?php if ($locales_aprobados > 0): ?>
+          <a href="dueno/reportes.php"
+            class="btn btn-dark w-100"
+            role="button"
+            aria-label="Ver reportes del local">
+            Reportes
+          </a>
+        <?php else: ?>
+          <button class="btn btn-secondary w-100"
+            disabled
+            aria-disabled="true"
+            title="Necesitás al menos un local aprobado">
+            Reportes
+          </button>
+        <?php endif; ?>
+      </div>
+
     </div>
-  </div>
+  </nav>
 </div>

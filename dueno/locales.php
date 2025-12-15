@@ -13,8 +13,6 @@ $mensaje = "";
 $valorEliminar = null;
 if (isset($_POST['eliminar'])) {
   $valorEliminar = filter_input(INPUT_POST, 'eliminar', FILTER_VALIDATE_INT);
-} elseif (isset($_GET['eliminar'])) {
-  $valorEliminar = filter_input(INPUT_GET, 'eliminar', FILTER_VALIDATE_INT);
 }
 
 if ($valorEliminar !== null) {
@@ -174,13 +172,13 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado, imagen_url FROM
         <form method="POST" enctype="multipart/form-data">
           <div class="row">
             <div class="col-md-3 mb-3">
-              <label class="form-label">Nombre del Local *</label>
-              <input type="text" name="nombre" class="form-control" placeholder="Ej: Ropa Fashion"
+              <label for="nombre" class="form-label">Nombre del Local *</label>
+              <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Ropa Fashion"
                 value="<?php echo isset($_POST['nombre']) ? htmlspecialchars($_POST['nombre']) : ''; ?>" required>
             </div>
             <div class="col-md-4 mb-3">
-              <label class="form-label">Descripción</label>
-              <input type="text" name="descripcion" class="form-control" placeholder="Descripción del local"
+              <label for="descripcion" class="form-label">Descripción</label>
+              <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Descripción del local"
                 value="<?php echo isset($_POST['descripcion']) ? htmlspecialchars($_POST['descripcion']) : ''; ?>">
             </div>
             <div class="col-md-3 mb-3">
@@ -209,14 +207,17 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado, imagen_url FROM
           </div>
         <?php else: ?>
           <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
+            <table class="table table-striped" role="table">
+              <caption class="visually-hidden">
+                Listado de locales del dueño
+              </caption>
+              <thead role="rowgroup">
+                <tr role="row">
+                  <th scope="col">ID</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -249,11 +250,14 @@ $locales = $conn->query("SELECT id, nombre, descripcion, estado, imagen_url FROM
                     </td>
                     <td>
                       <?php if ($local['estado'] == 'rechazado' || $local['estado'] == 'inactivo'): ?>
-                        <a href="locales.php?eliminar=<?php echo $local['id']; ?>"
-                          class="btn btn-sm btn-danger"
-                          onclick="return confirm('¿Estás seguro de eliminar este local?')">
-                          Eliminar
-                        </a>
+                        <form method="POST" action="locales.php" class="d-inline">
+                          <input type="hidden" name="eliminar" value="<?php echo $local['id']; ?>">
+                          <button type="submit"
+                            class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Estás seguro de eliminar este local?')">
+                            Eliminar
+                          </button>
+                        </form>
                       <?php else: ?>
                         <span class="text-muted small">Esperando aprobación / Activo</span>
                       <?php endif; ?>

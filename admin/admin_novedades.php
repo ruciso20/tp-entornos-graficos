@@ -91,34 +91,36 @@ $novedades = $conn->query("
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Gestión de Novedades</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Gestión de Novedades</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
 
         <?php if (isset($success)): ?>
-            <div class="alert alert-success"><?php echo $success; ?></div>
+            <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
         <?php endif; ?>
 
         <?php if (isset($error)): ?>
-            <div class="alert alert-danger"><?php echo $error; ?></div>
+            <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
         <?php endif; ?>
 
         <!-- formulario para crear la Novedad -->
 
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Crear Nueva Novedad</h5>
+                <h1>Crear Nueva Novedad</h1>
             </div>
             <div class="card-body">
                 <form method="POST">
@@ -170,26 +172,29 @@ $novedades = $conn->query("
 
         <div class="card">
             <div class="card-header">
-                <h5>Novedades Existentes</h5>
+                <h2>Novedades Existentes</h2>
             </div>
             <div class="card-body">
                 <?php if ($novedades->num_rows == 0): ?>
                     <div class="alert alert-info text-center py-4">
-                        <h5>No hay novedades creadas</h5>
+                        <h3>No hay novedades creadas</h3>
                         <p class="mb-0">Crea tu primera novedad usando el formulario de arriba.</p>
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th class="titulo-col">Título</th>
-                                    <th>Descripción</th>
-                                    <th>Vigencia</th>
-                                    <th class="categoria-col">Categoría</th>
-                                    <th class="estado-col">Estado</th>
-                                    <th class="acciones-col">Acciones</th>
+                        <table class="table table-striped table-hover" role="table">
+                            <caption class="visually-hidden">
+                                Lista de novedades existentes
+                            </caption>
+                            <thead class="table-dark" role="rowgroup">
+                                <tr role="row">
+                                    <th role="columnheader">ID</th>
+                                    <th class="titulo-col" role="columnheader">Título</th>
+                                    <th role="columnheader">Descripción</th>
+                                    <th role="columnheader">Vigencia</th>
+                                    <th class="categoria-col" role="columnheader">Categoría</th>
+                                    <th class="estado-col" role="columnheader">Estado</th>
+                                    <th class="acciones-col" role="columnheader">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -221,11 +226,15 @@ $novedades = $conn->query("
                                             </span>
                                         </td>
                                         <td class="acciones-col">
-                                            <a href="?eliminar=<?php echo $novedad['id']; ?>"
-                                                class="btn btn-danger btn-sm w-100"
-                                                onclick="return confirm('¿Estás seguro de eliminar esta novedad?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                            <form method="GET" class="d-inline">
+                                                <input type="hidden" name="eliminar" value="<?php echo $novedad['id']; ?>">
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-danger btn-sm w-100"
+                                                    aria-label="Eliminar novedad">
+                                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -235,9 +244,11 @@ $novedades = $conn->query("
                 <?php endif; ?>
             </div>
         </div>
-    </div>
-    <!-- footer -->
-    <?php include('../footer.php'); ?>
+    </main>
+    <footer>
+        <!-- footer -->
+        <?php include('../footer.php'); ?>
+    </footer>
 </body>
 
 </html>

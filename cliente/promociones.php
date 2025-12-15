@@ -114,20 +114,22 @@ $promociones = $promociones_query->get_result();
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <a class="navbar-brand fw-bold" href="../index.php">🛍️
-                    <span class="ms-1">Stella Shopping Rosario</span></a>
-                <span class="navbar-text text-light">Usar Promociones</span>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <a class="navbar-brand fw-bold" href="../index.php">🛍️
+                        <span class="ms-1">Stella Shopping Rosario</span></a>
+                    <span class="navbar-text text-light">Usar Promociones</span>
+                </div>
+                <div class="d-flex">
+                    <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
+                </div>
             </div>
-            <div class="d-flex">
-                <a href="../dashboard.php" class="btn btn-outline-light">Volver</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container mt-4 no-print">
+    <main class="container mt-4 no-print">
         <h2>Promociones Disponibles</h2>
         <p class="text-muted">Estas son las promociones a las que tienes acceso según tu categoría <strong><?php echo ucfirst($categoria_cliente); ?></strong></p>
 
@@ -190,9 +192,14 @@ $promociones = $promociones_query->get_result();
                                         <?php endif; ?>
                                     </div>
 
-                                    <button class="btn btn-primary w-100" onclick="usarPromocion(<?php echo $promo['id']; ?>, '<?php echo htmlspecialchars($promo['local_nombre']); ?>')">
-                                        🎯 Usar Promoción
-                                    </button>
+                                    <form method="POST" action="usar_promocion.php">
+                                        <input type="hidden" name="promo_id" value="<?php echo $promo['id']; ?>">
+                                        <button type="submit" class="btn btn-primary w-100"
+                                            onclick="return confirm('¿Quieres usar esta promoción?');">
+                                            🎯 Usar Promoción
+                                        </button>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
@@ -207,7 +214,7 @@ $promociones = $promociones_query->get_result();
                 </div>
             <?php endif; ?>
         </div>
-    </div>
+    </main>
 
     <script>
         function usarPromocion(promoId, localNombre) {
@@ -317,7 +324,9 @@ $promociones = $promociones_query->get_result();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- footer -->
-    <?php include('../footer.php'); ?>
+    <footer>
+        <?php include('../footer.php'); ?>
+    </footer>
 </body>
 
 </html>
