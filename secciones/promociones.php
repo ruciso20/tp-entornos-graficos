@@ -1,9 +1,16 @@
 <!-- seccion de Promociones Destacadas -->
-<section class="py-5 bg-light" id="promociones">
+<section
+  class="py-5 bg-light"
+  id="promociones"
+  aria-label="Listado de promociones disponibles">
+
   <div class="container">
     <div class="row text-center mb-4">
       <div class="col">
-        <h2 class="fw-bold">🔥 Todas las Promociones Disponibles</h2>
+        <h2 class="fw-bold">
+          <span aria-hidden="true">🔥</span> Todas las Promociones Disponibles
+        </h2>
+
         <p class="text-muted fs-5">
           Descubre todas las ofertas del shopping
         </p>
@@ -38,7 +45,7 @@
             <div class="card promo-card h-100 <?php echo $clase_categoria; ?>">
               <span class="categoria-badge badge bg-<?php
                                                     echo $promo['categoria_minima'] == 'Premium' ? 'danger' : ($promo['categoria_minima'] == 'Medium' ? 'warning' : 'info');
-                                                    ?>">
+                                                    ?>" aria-label="Promoción para categoría <?php echo $texto_categoria; ?>">
                 <i class="<?php echo $icono_categoria; ?> me-1"></i>
                 <?php echo $texto_categoria; ?>
               </span>
@@ -46,9 +53,21 @@
               <div class="card-body">
                 <h5 class="card-title"><?php echo htmlspecialchars($promo['titulo']); ?></h5>
                 <p class="card-text">
-                  <strong><i class="fas fa-store"></i> Local:</strong> <?php echo htmlspecialchars($promo['local_nombre']); ?><br>
-                  <strong><i class="fas fa-calendar"></i> Comienza:</strong> <?php echo date('d/m/Y', strtotime($promo['fecha_inicio'])); ?><br>
-                  <strong><i class="fas fa-calendar"></i> Válida hasta:</strong> <?php echo date('d/m/Y', strtotime($promo['fecha_fin'])); ?>
+                  <strong><i class="fas fa-store" aria-hidden="true"></i> Local:</strong> <?php echo htmlspecialchars($promo['local_nombre']); ?><br>
+                  <strong>
+                    <i class="fas fa-calendar" aria-hidden="true"></i> Comienza:
+                  </strong>
+                  <time datetime="<?php echo $promo['fecha_inicio']; ?>">
+                    <?php echo date('d/m/Y', strtotime($promo['fecha_inicio'])); ?>
+                  </time>
+                  <br>
+                  <strong>
+                    <i class="fas fa-calendar" aria-hidden="true"></i> Finaliza:
+                  </strong>
+                  <time datetime="<?php echo $promo['fecha_fin']; ?>">
+                    <?php echo date('d/m/Y', strtotime($promo['fecha_fin'])); ?>
+                  </time>
+
                 </p>
 
                 <?php if (!empty($promo['descripcion'])): ?>
@@ -66,7 +85,7 @@
                 <!--  pedir registro si es necesario -->
                 <div class="access-info mt-3">
                   <?php if (!isset($_SESSION['user_id'])): ?>
-                    <div class="alert alert-warning mb-0">
+                    <div class="alert alert-warning mb-0" role="alert">
                       <small>
                         <i class="fas fa-lock me-1"></i>
                         <?php if ($promo['categoria_minima'] == 'Inicial'): ?>
@@ -93,7 +112,7 @@
                                             }
 
                                             echo $puede_acceder ? 'success' : 'warning';
-                                            ?> mb-0">
+                                            ?> mb-0" role="alert">
                       <small>
                         <i class="fas fa-<?php echo $puede_acceder ? 'check-circle' : 'info-circle'; ?> me-1"></i>
                         <?php if ($puede_acceder): ?>
@@ -111,8 +130,11 @@
         <?php endwhile; ?>
       <?php else: ?>
         <div class="col-12 text-center">
-          <div class="alert alert-info">
-            <h5><i class="fas fa-info-circle"></i> No hay promociones disponibles en este momento</h5>
+          <div class="alert alert-info" role="alert">
+            <h5>
+              <i class="fas fa-info-circle" aria-hidden="true"></i>
+              No hay promociones disponibles en este momento
+            </h5>
             <p class="mb-0">Vuelve más tarde para descubrir nuevas ofertas exclusivas.</p>
           </div>
         </div>

@@ -1,9 +1,16 @@
 <!-- seccion de las Novedades  -->
-<section class="py-5 bg-light" id="novedades">
+<section
+  class="py-5 bg-light"
+  id="novedades"
+  aria-label="Novedades y noticias del shopping">
+
   <div class="container">
     <div class="row text-center mb-5">
       <div class="col">
-        <h2 class="fw-bold">📢 Novedades del Shopping</h2>
+        <h2 class="fw-bold">
+          <span aria-hidden="true">📢</span> Novedades del Shopping
+        </h2>
+
         <p class="text-muted fs-5">
           <?php if (isset($_SESSION['user_id'])): ?>
             Información importante para ti
@@ -31,10 +38,14 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
                   <small class="text-muted">
-                    <i class="fas fa-calendar"></i>
-                    <?php echo date('d/m/Y', strtotime($novedad['fecha_inicio'])); ?>
+                    <i class="fas fa-calendar" aria-hidden="true"></i>
+                    <time datetime="<?php echo $novedad['fecha_inicio']; ?>">
+                      <?php echo date('d/m/Y', strtotime($novedad['fecha_inicio'])); ?>
+                    </time>
                     -
-                    <?php echo date('d/m/Y', strtotime($novedad['fecha_fin'])); ?>
+                    <time datetime="<?php echo $novedad['fecha_fin']; ?>">
+                      <?php echo date('d/m/Y', strtotime($novedad['fecha_fin'])); ?>
+                    </time>
                   </small>
                   <span class="badge bg-<?php
                                         echo $novedad['categoria_objetivo'] == 'Premium' ? 'danger' : ($novedad['categoria_objetivo'] == 'Medium' ? 'warning' : 'info');
@@ -48,24 +59,32 @@
         <?php endwhile; ?>
       <?php else: ?>
         <div class="col-12 text-center">
-          <div class="alert alert-info">
-            <h5><i class="fas fa-info-circle"></i> No hay novedades en este momento</h5>
+          <div class="alert alert-info" role="alert">
+            <h5>
+              <i class="fas fa-info-circle" aria-hidden="true"></i>
+              No hay novedades en este momento
+            </h5>
             <p class="mb-0">Vuelve pronto para conocer las últimas noticias del shopping.</p>
           </div>
-        </div>
-      <?php endif; ?>
-    </div>
 
-    <?php if (!isset($_SESSION['user_id'])): ?>
-      <div class="text-center mt-4">
-        <div class="alert alert-warning">
-          <h5><i class="fas fa-user-plus"></i> Más Novedades y Promociones para Clientes Registrados</h5>
-          <p>Regístrate para acceder a información exclusiva según tu categoría</p>
-          <a href="register.php" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Registrarse Gratis
-          </a>
+        <?php endif; ?>
         </div>
-      </div>
-    <?php endif; ?>
-  </div>
+
+        <?php if (!isset($_SESSION['user_id'])): ?>
+          <div class="text-center mt-4">
+            <div class="alert alert-warning" role="alert">
+              <h5>
+                <i class="fas fa-user-plus" aria-hidden="true"></i>
+                Más Novedades y Promociones para Clientes Registrados
+              </h5>
+              <p>Regístrate para acceder a información exclusiva según tu categoría</p>
+              <a href="register.php" class="btn btn-primary">
+                <i class="fas fa-user-plus" aria-hidden="true"></i>
+                Registrarse Gratis
+              </a>
+            </div>
+
+          </div>
+        <?php endif; ?>
+    </div>
 </section>

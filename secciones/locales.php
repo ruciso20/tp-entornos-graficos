@@ -37,11 +37,13 @@ try {
 ?>
 
 <!-- seccion de Locales -->
-<section class="py-5 bg-light" id="locales">
+<section class="py-5 bg-light" id="locales" aria-label="Listado de locales del shopping">
   <div class="container">
     <div class="row text-center mb-4">
       <div class="col">
-        <h2 class="fw-bold">🏪 Nuestros Locales</h2>
+        <h2 class="fw-bold">
+          <span aria-hidden="true">🏪</span> Nuestros Locales
+        </h2>
         <p class="text-muted">Descubre la variedad de locales en nuestro shopping</p>
       </div>
     </div>
@@ -53,174 +55,191 @@ try {
           <div class="card-body">
             <div class="row justify-content-center">
               <div class="col-md-8">
+                <label for="searchLocales" class="visually-hidden">
+                  Buscar locales por nombre o descripción
+                </label>
+
                 <div class="input-group">
                   <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search text-muted"></i>
+                    <i class="fas fa-search text-muted" aria-hidden="true"></i>
                   </span>
-                  <input type="text" id="searchLocales" class="form-control border-start-0"
+                  <input
+                    type="text"
+                    id="searchLocales"
+                    class="form-control border-start-0"
                     placeholder="Buscar locales por nombre o descripción..."
-                    aria-label="Buscar locales">
+                    aria-describedby="searchLocalesHelp">
                 </div>
+
+                <small id="searchLocalesHelp" class="visually-hidden">
+                  Escriba para filtrar locales en tiempo real
+                </small>
+
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- grid de los Locales -->
-    <div class="row" id="localesGrid">
-      <?php if (isset($locales_activos) && $locales_activos->num_rows > 0):
-        $locales_en_pagina = 0;
+  <!-- grid de los Locales -->
+  <div class="row" id="localesGrid">
+    <?php if (isset($locales_activos) && $locales_activos->num_rows > 0):
+      $locales_en_pagina = 0;
+    ?>
+      <?php while ($local = $locales_activos->fetch_assoc()):
+        $locales_en_pagina++;
+        $imagen_local = !empty($local['imagen_url']) ? $local['imagen_url'] : null;
       ?>
-        <?php while ($local = $locales_activos->fetch_assoc()):
-          $locales_en_pagina++;
-          $imagen_local = !empty($local['imagen_url']) ? $local['imagen_url'] : null;
-        ?>
-          <div class="col-lg-4 col-md-6 mb-4 local-card"
-            data-nombre="<?php echo htmlspecialchars(strtolower($local['nombre'])); ?>"
-            data-descripcion="<?php echo htmlspecialchars(strtolower($local['descripcion'] ?? '')); ?>"
-            style="display: block;">
-            <div class="card h-100 local-card-item shadow-sm border-0">
-              <div class="card-body p-0">
-                <!-- Imagen del local -->
-                <div class="local-imagen-container position-relative">
-                  <?php if ($imagen_local): ?>
-                    <img src="<?php echo htmlspecialchars($imagen_local); ?>"
-                      class="card-img-top local-imagen"
-                      alt="<?php echo htmlspecialchars($local['nombre']); ?>"
-                      style="height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
+        <div class="col-lg-4 col-md-6 mb-4 local-card"
+          data-nombre="<?php echo htmlspecialchars(strtolower($local['nombre'])); ?>"
+          data-descripcion="<?php echo htmlspecialchars(strtolower($local['descripcion'] ?? '')); ?>"
+          style="display: block;">
+          <div class="card h-100 local-card-item shadow-sm border-0">
+            <div class="card-body p-0">
+              <!-- Imagen del local -->
+              <div class="local-imagen-container position-relative">
+                <?php if ($imagen_local): ?>
+                  <img src="<?php echo htmlspecialchars($imagen_local); ?>"
+                    class="card-img-top local-imagen"
+                    alt="Imagen del local <?php echo htmlspecialchars($local['nombre']); ?>"
+                    style="height: 200px; object-fit: cover;">
+                <?php else: ?>
+                  <div class="local-imagen-default d-flex align-items-center justify-content-center"
+                    style="height: 200px; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 12px 12px 0 0;">
+                    <div class="text-white text-center">
+                      <div style="font-size: 3rem;">🏪</div>
+                      <small class="fw-bold"><?php echo htmlspecialchars($local['nombre']); ?></small>
+                    </div>
+                  </div>
+                <?php endif; ?>
+              </div>
+
+              <!-- Contenido textual -->
+              <div class="p-3">
+                <h5 class="card-title fw-bold mb-2"><?php echo htmlspecialchars($local['nombre']); ?></h5>
+
+                <?php if (!empty($local['descripcion'])): ?>
+                  <p class="card-text text-muted small mb-3">
+                    <?php echo htmlspecialchars($local['descripcion']); ?>
+                  </p>
+                <?php endif; ?>
+
+                <div class="local-info">
+                  <?php if (!isset($_SESSION['user_id'])): ?>
+                    <div class="alert alert-warning py-2 mb-0">
+                      <small>
+                        <i class="fas fa-lock me-1" aria-hidden="true"></i>
+                        Regístrate para ver promociones
+                      </small>
+                    </div>
                   <?php else: ?>
-                    <div class="local-imagen-default d-flex align-items-center justify-content-center"
-                      style="height: 200px; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 12px 12px 0 0;">
-                      <div class="text-white text-center">
-                        <div style="font-size: 3rem;">🏪</div>
-                        <small class="fw-bold"><?php echo htmlspecialchars($local['nombre']); ?></small>
-                      </div>
+                    <div class="alert alert-success py-2 mb-0">
+                      <small>
+                        <i class="fas fa-check me-1" aria-hidden="true"></i>
+                        Promociones disponibles
+                      </small>
                     </div>
                   <?php endif; ?>
                 </div>
-
-                <!-- Contenido textual -->
-                <div class="p-3">
-                  <h5 class="card-title fw-bold mb-2"><?php echo htmlspecialchars($local['nombre']); ?></h5>
-
-                  <?php if (!empty($local['descripcion'])): ?>
-                    <p class="card-text text-muted small mb-3">
-                      <?php echo htmlspecialchars($local['descripcion']); ?>
-                    </p>
-                  <?php endif; ?>
-
-                  <div class="local-info">
-                    <?php if (!isset($_SESSION['user_id'])): ?>
-                      <div class="alert alert-warning py-2 mb-0">
-                        <small>
-                          <i class="fas fa-lock me-1"></i>
-                          Regístrate para ver promociones
-                        </small>
-                      </div>
-                    <?php else: ?>
-                      <div class="alert alert-success py-2 mb-0">
-                        <small>
-                          <i class="fas fa-check me-1"></i>
-                          Promociones disponibles
-                        </small>
-                      </div>
-                    <?php endif; ?>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
-        <?php endwhile; ?>
+        </div>
+      <?php endwhile; ?>
 
-        <!-- PAGINACION -->
-        <?php if ($total_paginas > 1): ?>
-          <div class="col-12 mt-4">
-            <nav aria-label="Paginación de locales">
-              <ul class="pagination justify-content-center">
+      <!-- PAGINACION -->
+      <?php if ($total_paginas > 1): ?>
+        <div class="col-12 mt-4">
+          <nav aria-label="Paginación de locales">
+            <ul class="pagination justify-content-center">
 
-                <!-- Boton anterior -->
-                <li class="page-item <?php echo ($pagina_actual == 1) ? 'disabled' : ''; ?>">
-                  <a class="page-link"
-                    href="?pagina=<?php echo $pagina_actual - 1; ?>#locales"
-                    aria-label="Anterior">
-                    <i class="fas fa-chevron-left"></i>
+              <!-- Boton anterior -->
+              <li class="page-item <?php echo ($pagina_actual == 1) ? 'disabled' : ''; ?>">
+                <a class="page-link"
+                  href="?pagina=<?php echo $pagina_actual - 1; ?>#locales"
+                  aria-label="Página anterior">
+                  <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </a>
+              </li>
+
+              <!-- Primera pagina -->
+              <?php if ($pagina_actual > 3): ?>
+                <li class="page-item">
+                  <a class="page-link" href="?pagina=1#locales">1</a>
+                </li>
+                <li class="page-item disabled">
+                  <span class="page-link">...</span>
+                </li>
+              <?php endif; ?>
+
+              <!-- paginas alrededor de la actual -->
+              <?php for ($i = max(1, $pagina_actual - 2); $i <= min($total_paginas, $pagina_actual + 2); $i++): ?>
+                <li class="page-item <?php echo ($i == $pagina_actual) ? 'active' : ''; ?>">
+                  <a class="page-link" href="?pagina=<?php echo $i; ?>#locales">
+                    <?php echo $i; ?>
+                    <?php if ($i == $pagina_actual): ?>
+                      <span class="visually-hidden">(actual)</span>
+                    <?php endif; ?>
                   </a>
                 </li>
+              <?php endfor; ?>
 
-                <!-- Primera pagina -->
-                <?php if ($pagina_actual > 3): ?>
-                  <li class="page-item">
-                    <a class="page-link" href="?pagina=1#locales">1</a>
-                  </li>
-                  <li class="page-item disabled">
-                    <span class="page-link">...</span>
-                  </li>
-                <?php endif; ?>
-
-                <!-- paginas alrededor de la actual -->
-                <?php for ($i = max(1, $pagina_actual - 2); $i <= min($total_paginas, $pagina_actual + 2); $i++): ?>
-                  <li class="page-item <?php echo ($i == $pagina_actual) ? 'active' : ''; ?>">
-                    <a class="page-link" href="?pagina=<?php echo $i; ?>#locales">
-                      <?php echo $i; ?>
-                      <?php if ($i == $pagina_actual): ?>
-                        <span class="visually-hidden">(actual)</span>
-                      <?php endif; ?>
-                    </a>
-                  </li>
-                <?php endfor; ?>
-
-                <!-- ultima pagina -->
-                <?php if ($pagina_actual < $total_paginas - 2): ?>
-                  <li class="page-item disabled">
-                    <span class="page-link">...</span>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="?pagina=<?php echo $total_paginas; ?>#locales">
-                      <?php echo $total_paginas; ?>
-                    </a>
-                  </li>
-                <?php endif; ?>
-
-                <!-- boton siguiente -->
-                <li class="page-item <?php echo ($pagina_actual == $total_paginas) ? 'disabled' : ''; ?>">
-                  <a class="page-link"
-                    href="?pagina=<?php echo $pagina_actual + 1; ?>#locales"
-                    aria-label="Siguiente">
-                    <i class="fas fa-chevron-right"></i>
+              <!-- ultima pagina -->
+              <?php if ($pagina_actual < $total_paginas - 2): ?>
+                <li class="page-item disabled">
+                  <span class="page-link">...</span>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?pagina=<?php echo $total_paginas; ?>#locales">
+                    <?php echo $total_paginas; ?>
                   </a>
                 </li>
-              </ul>
-            </nav>
-          </div>
-        <?php endif; ?>
+              <?php endif; ?>
 
-      <?php else: ?>
-        <div class="col-12 text-center">
-          <div class="alert alert-info">
-            <h5><i class="fas fa-info-circle"></i> Próximamente más locales...</h5>
-            <p class="mb-0">Estamos trabajando para traerte la mejor experiencia.</p>
-          </div>
+              <!-- boton siguiente -->
+              <li class="page-item <?php echo ($pagina_actual == $total_paginas) ? 'disabled' : ''; ?>">
+                <a class="page-link"
+                  href="?pagina=<?php echo $pagina_actual + 1; ?>#locales"
+                  aria-label="Página siguiente">
+                  <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </a>
+
+              </li>
+            </ul>
+          </nav>
         </div>
       <?php endif; ?>
-    </div>
 
-    <!-- total de locales -->
-    <?php if ($total_paginas > 1): ?>
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="card bg-light border-0">
-            <div class="card-body text-center py-2">
-              <small class="text-muted">
-                Mostrando <?php echo $offset + 1; ?> - <?php echo min($offset + $locales_por_pagina, $total_locales); ?>
-                de <?php echo $total_locales; ?> Locales
-              </small>
-            </div>
-          </div>
+    <?php else: ?>
+      <div class="col-12 text-center">
+        <div class="alert alert-info">
+          <h5>
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            Próximamente más locales...
+          </h5>
+          <p class="mb-0">Estamos trabajando para traerte la mejor experiencia.</p>
         </div>
       </div>
     <?php endif; ?>
+  </div>
+
+  <!-- total de locales -->
+  <?php if ($total_paginas > 1): ?>
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card bg-light border-0">
+          <div class="card-body text-center py-2">
+            <small class="text-muted">
+              Mostrando <?php echo $offset + 1; ?> - <?php echo min($offset + $locales_por_pagina, $total_locales); ?>
+              de <?php echo $total_locales; ?> Locales
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
   </div>
 </section>
 
@@ -259,11 +278,15 @@ try {
         const noResults = document.createElement('div');
         noResults.className = 'col-12 text-center';
         noResults.innerHTML = `
-                <div class="alert alert-warning">
-                    <h5><i class="fas fa-search me-2"></i>No se encontraron resultados</h5>
-                    <p class="mb-0">Intenta con otros términos de búsqueda.</p>
-                </div>
-            `;
+  <div class="alert alert-warning" role="alert" aria-live="assertive">
+    <h5>
+      <i class="fas fa-search me-2" aria-hidden="true"></i>
+      No se encontraron resultados
+    </h5>
+    <p class="mb-0">Intenta con otros términos de búsqueda.</p>
+  </div>
+`;
+
 
         // Insertar mensaje despues del grid
         const grid = document.getElementById('localesGrid');

@@ -87,26 +87,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
 }
 ?>
 
-<section class="py-5 bg-light" id="contacto">
+<section
+  class="py-5 bg-light"
+  id="contacto"
+  aria-label="Formulario de contacto">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6">
 
         <?php if ($success_msg): ?>
-          <div class="alert alert-success" role="alert"><?php echo htmlspecialchars($success_msg); ?></div>
+          <div id="form-feedback" class="alert alert-success" role="alert">
+            <?php echo htmlspecialchars($success_msg); ?>
+          </div>
         <?php elseif ($error_msg): ?>
-          <div class="alert alert-danger" role="alert"><?php echo htmlspecialchars($error_msg); ?></div>
+          <div id="form-feedback" class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($error_msg); ?>
+          </div>
         <?php endif; ?>
+
 
         <div class="card contact-form shadow-sm">
           <div class="card-body p-4">
-            <form method="post" action="#contacto" novalidate>
+            <form
+              method="post"
+              action="#contacto"
+              novalidate
+              aria-describedby="form-feedback">
               <div class="row text-center mb-5">
                 <div class="col">
-                  <h2 class="fw-bold">📞 Contáctanos</h2>
+                  <h2 class="fw-bold">
+                    <span aria-hidden="true">📞</span> Contáctanos
+                  </h2>
+
                   <p class="text-muted fs-5">¿Tienes preguntas? Estamos aquí para ayudarte</p>
                 </div>
               </div>
+              <p class="visually-hidden">
+                Los campos marcados con asterisco son obligatorios
+              </p>
+
 
               <input type="text" name="website" autocomplete="off"
                 style="position:absolute; left:-5000px; top:-5000px;"
@@ -114,7 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
 
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="nombre" class="form-label">Nombre</label>
+                  <label for="nombre" class="form-label">
+                    Nombre <span class="text-danger" aria-hidden="true">*</span>
+                  </label>
                   <input
                     type="text"
                     class="form-control"
@@ -124,7 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
                     value="<?php echo htmlspecialchars($_POST['nombre'] ?? ''); ?>">
                 </div>
                 <div class="col-md-6">
-                  <label for="email" class="form-label">Email</label>
+                  <label for="email" class="form-label">
+                    Email <span class="text-danger" aria-hidden="true">*</span>
+                  </label>
+
                   <input
                     type="email"
                     class="form-control"
@@ -137,7 +161,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
 
               <div class="row g-3 mt-1">
                 <div class="col-12">
-                  <label for="asunto" class="form-label">Asunto</label>
+                  <label for="asunto" class="form-label">
+                    Asunto<span class="text-danger" aria-hidden="true">*</span>
+                  </label>
+
                   <input
                     type="text"
                     class="form-control"
@@ -148,7 +175,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
               </div>
 
               <div class="mb-3 mt-3">
-                <label for="mensaje" class="form-label">Mensaje</label>
+                <label for="mensaje" class="form-label">
+                  Mensaje<span class="text-danger" aria-hidden="true">*</span>
+                </label>
                 <textarea
                   class="form-control"
                   id="mensaje"
@@ -158,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto'])) {
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg w-100" name="contacto">
-                <i class="fas fa-paper-plane me-2"></i> Enviar Mensaje
+                <i class="fas fa-paper-plane me-2" aria-hidden="true"></i> Enviar Mensaje
               </button>
             </form>
           </div>
