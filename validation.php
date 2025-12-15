@@ -46,11 +46,12 @@ if (isset($_GET['token'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aprobación de Cuenta - Shopping Rosario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light text-center p-5">
-    <div class="container">
+    <main class="container">
         <div class="card mx-auto shadow-sm" style="max-width: 500px;">
             <div class="card-body">
                 <h3 class="card-title mb-3">Aprobación de Cuenta</h3>
@@ -60,6 +61,6 @@ if (isset($_GET['token'])) {
                 </div>
             </div>
         </div>
-    </div>
+</main>
 </body>
 </html>

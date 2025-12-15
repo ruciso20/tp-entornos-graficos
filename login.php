@@ -145,7 +145,8 @@ if (isset($_POST['login'])) {
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Stella Shopping Rosario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -221,7 +222,7 @@ if (isset($_POST['login'])) {
             </div>
         </div>
     </nav>
-    <div class="container mt-5">
+    <main class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card shadow">
@@ -264,10 +265,10 @@ if (isset($_POST['login'])) {
                                     <div class="alert alert-danger"><?php echo $error_recuperar; ?></div>
                                 <?php endif; ?>
 
-                                <form method="POST">
+                                <form method="POST" aria-label="Formulario de recuperación de contraseña">
                                     <div class="mb-3">
-                                        <label class="form-label">Ingresa tu email</label>
-                                        <input type="email" class="form-control" name="email_recuperar" required
+                                        <label for="email_recuperar" class="form-label">Ingresa tu email</label>
+                                        <input type="email" class="form-control" id="email_recuperar" name="email_recuperar" required autocomplete="email"
                                             value="<?php echo isset($_POST['email_recuperar']) ? htmlspecialchars($_POST['email_recuperar']) : ''; ?>"
                                             placeholder="ejemplo@correo.com">
                                         <div class="form-text">Te enviaremos un email con instrucciones para recuperar tu contraseña.</div>
@@ -278,14 +279,14 @@ if (isset($_POST['login'])) {
                                             Enviar Email de Recuperación
                                         </button>
                                         <a href="login.php" class="btn btn-outline-secondary">
-                                            </i>Volver al Login
+                                            Volver al Login
                                         </a>
                                     </div>
                                 </form>
                             </div>
                         <?php else: ?>
                             <!-- Formulario de login normal -->
-                            <form method="POST">
+                            <form method="POST" aria-label="Formulario de inicio de sesión">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" id="email" name="email" required
@@ -298,14 +299,14 @@ if (isset($_POST['login'])) {
                                     <div class="password-container">
                                         <input type="password" class="form-control" id="password" name="password" required
                                             placeholder="Ingresa tu contraseña">
-                                        <button type="button" class="toggle-password" onclick="togglePassword('password')">
-                                            <i class="fas fa-eye"></i>
+                                        <button type="button" class="toggle-password" aria-label="Mostrar u ocultar la contraseña" onclick="togglePassword('password')">
+                                            <i class="fas fa-eye" aria-hidden="true"></i>
                                         </button>
                                     </div>
                                 </div>
 
                                 <button type="submit" name="login" class="btn btn-primary w-100">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                                    <i class="fas fa-sign-in-alt me-2" aria-hidden="true"></i>Iniciar Sesión
                                 </button>
 
                                 <div class="mb-3 text-center mt-3">
@@ -324,7 +325,7 @@ if (isset($_POST['login'])) {
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- footer -->
     <?php include('footer.php'); ?>

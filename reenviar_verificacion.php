@@ -139,7 +139,7 @@ if (!isset($_GET['email']) || !filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)
 </head>
 
 <body>
-    <div class="container py-5">
+    <main class="container py-5">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="card shadow-sm">
@@ -153,7 +153,7 @@ if (!isset($_GET['email']) || !filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     <!-- bootstrap  -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

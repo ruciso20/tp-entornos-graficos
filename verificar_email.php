@@ -45,6 +45,7 @@ if (isset($_GET['token']) && !empty($_GET['token'])) {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificación de Email</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -59,7 +60,7 @@ if (isset($_GET['token']) && !empty($_GET['token'])) {
             </div>
         </div>
     </nav>
-    <div class="container py-5 text-center">
+    <main class="container py-5 text-center">
         <?php if ($estado === 'success'): ?>
             <div class="alert alert-success" role="alert">
                 ✅ <?php echo htmlspecialchars($mensaje); ?>
@@ -75,7 +76,7 @@ if (isset($_GET['token']) && !empty($_GET['token'])) {
         <?php endif; ?>
 
         <a href="login.php" class="btn btn-primary mt-3">Ir al inicio de sesión</a>
-    </div>
+    </main>
     <?php include('footer.php'); ?>
 </body>
 

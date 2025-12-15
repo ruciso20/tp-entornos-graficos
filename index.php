@@ -50,7 +50,8 @@ try {
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella Shopping - Ofertas y Promociones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Para iconos y demas -->
@@ -310,7 +311,7 @@ try {
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">🛍️ Stella Shopping Rosario</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"aria-controls="navbarNav" aria-expanded="false" aria-label="Mostrar u ocultar la navegación principal">>
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -322,11 +323,11 @@ try {
                 </ul>
                 <div class="navbar-nav">
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <a class="nav-link" href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Mi Cuenta</a>
-                        <a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                        <a class="nav-link" href="dashboard.php"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> Mi Cuenta</a>
+                        <a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Cerrar Sesión</a>
                     <?php else: ?>
-                        <a class="nav-link" href="login.php"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
-                        <a class="nav-link" href="register.php"><i class="fas fa-user-plus"></i> Registrarse</a>
+                        <a class="nav-link" href="login.php"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> Iniciar Sesión</a>
+                        <a class="nav-link" href="register.php"><i class="fas fa-user-plus" aria-hidden="true"></i> Registrarse</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -334,7 +335,7 @@ try {
     </nav>
 
 
-    <main class="flex-grow-1">
+    <main class="flex-grow-1" role="main" aria-label="Contenido principal de Stella Shopping">
         <?php include('secciones/hero-section.php'); ?>
 
         <?php include('secciones/promociones.php'); ?>

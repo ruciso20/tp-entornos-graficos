@@ -71,6 +71,7 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Restablecer Contraseña - Stella Shopping Rosario</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -173,7 +174,7 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
       </div>
     </div>
   </nav>
-  <div class="container mt-5">
+  <main class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card shadow">
@@ -198,34 +199,34 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
               </div>
             <?php elseif (isset($token_valido)): ?>
               <p class="mb-4">Ingresa tu nueva contraseña:</p>
-              <form method="POST" id="resetForm">
+              <form method="POST" id="resetForm" aria-label="Formulario para cambiar contraseña">
                 <div class="mb-3">
-                  <label class="form-label">Nueva Contraseña *</label>
+                  <label for="password"class="form-label">Nueva Contraseña *</label>
                   <div class="password-container">
                     <input type="password" class="form-control" name="password" id="password" required
                       placeholder="Mínimo 8 caracteres con mayúscula, número y símbolo">
-                    <button type="button" class="toggle-password" onclick="togglePassword('password')">
-                      <i class="fas fa-eye"></i>
+                    <button type="button" class="toggle-password" onclick="togglePassword('password')"aria-label="Mostrar u ocultar la contraseña">
+                      <i class="fas fa-eye" aria-hidden="true"></i>
                     </button>
                   </div>
                   <div class="password-strength mt-2" id="passwordStrengthBar"></div>
                   <small class="text-muted" id="passwordStrengthText">Fortaleza: </small>
 
                   <ul class="requirement-list mt-2" id="passwordRequirements">
-                    <li id="reqLength"><i class="fas fa-circle"></i> Al menos 8 caracteres</li>
-                    <li id="reqUppercase"><i class="fas fa-circle"></i> Al menos una mayúscula</li>
-                    <li id="reqNumber"><i class="fas fa-circle"></i> Al menos un número</li>
-                    <li id="reqSpecial"><i class="fas fa-circle"></i> Al menos un símbolo (!@#$%^&*)</li>
+                    <li id="reqLength"><i class="fas fa-circle" aria-hidden="true"></i> Al menos 8 caracteres</li>
+                    <li id="reqUppercase"><i class="fas fa-circle" aria-hidden="true"></i> Al menos una mayúscula</li>
+                    <li id="reqNumber"><i class="fas fa-circle" aria-hidden="true"></i> Al menos un número</li>
+                    <li id="reqSpecial"><i class="fas fa-circle" aria-hidden="true"></i> Al menos un símbolo (!@#$%^&*)</li>
                   </ul>
                 </div>
 
                 <div class="mb-4">
-                  <label class="form-label">Repetir Contraseña *</label>
+                  <label for="password_repeat"class="form-label">Repetir Contraseña *</label>
                   <div class="password-container">
                     <input type="password" class="form-control" name="password_repeat" id="password_repeat" required minlength="6"
                       placeholder="Repite tu contraseña">
-                    <button type="button" class="toggle-password" onclick="togglePassword('password_repeat')">
-                      <i class="fas fa-eye"></i>
+                    <button type="button" class="toggle-password" onclick="togglePassword('password_repeat')" aria-label="Mostrar u ocultar la contraseña">>
+                      <i class="fas fa-eye" aria-hidden="true"></i>
                     </button>
                   </div>
                   <div class="form-text" id="passwordMatchText">Las contraseñas deben coincidir</div>
@@ -244,7 +245,7 @@ if (isset($_POST['cambiar_password']) && isset($token_valido)) {
         </div>
       </div>
     </div>
-  </div>
+  </main>
   <?php include('footer.php'); ?>
   <script>
     function togglePassword(fieldId) {

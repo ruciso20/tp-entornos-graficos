@@ -209,7 +209,8 @@ if ($rol == 'cliente') {
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $titulo_dashboard; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -280,7 +281,7 @@ if ($rol == 'cliente') {
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <main class="container mt-4">
 
         <!-- estadisticas propias segun el tipo de usuario -->
         <?php if ($rol == 'cliente'): ?>
@@ -301,7 +302,7 @@ if ($rol == 'cliente') {
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <h2>Panel de Control</h2>
+                        <h1>Panel de Control</h1>
                         <?php if ($rol == 'admin'): ?>
 
                             <?php include('dashboard/admin.php'); ?>
@@ -319,7 +320,7 @@ if ($rol == 'cliente') {
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     </div>
     <!-- footer -->
     <?php include('footer.php'); ?>
