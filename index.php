@@ -19,8 +19,7 @@ try {
         SELECT * FROM novedades 
         WHERE fecha_fin >= CURDATE() 
         AND estado = 'activa'
-        ORDER BY fecha_inicio DESC 
-        LIMIT 3
+        ORDER BY fecha_inicio DESC
     ");
 
     // obtener promociones destacadas según si el usuario está logueado o no
@@ -38,7 +37,6 @@ try {
                 ELSE 3
             END,
             p.fecha_inicio DESC 
-        LIMIT 12
     ");
 } catch (Exception $e) {
     // si hay error, continuamos sin datos
@@ -311,7 +309,7 @@ try {
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">🛍️ Stella Shopping Rosario</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"aria-controls="navbarNav" aria-expanded="false" aria-label="Mostrar u ocultar la navegación principal">>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Mostrar u ocultar la navegación principal">>
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
